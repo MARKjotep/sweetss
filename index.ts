@@ -299,7 +299,10 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
       }
       return target.data[nme];
     }
-    get css(): dict<string> {
+    get css(): {
+      import: CSSinR | _vars | dict<RM>;
+      charset: CSSinR | _vars | dict<RM>;
+    } {
       return new Proxy(this, this);
     }
   }
@@ -382,9 +385,11 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
                 _cx[ks] = CNAME + "_" + ks;
               }
             }
+
             if (v instanceof _css) {
               $$.O.items(v.get(k)).forEach(([pkey, y]) => {
                 let XPKEY = pkey;
+
                 const xxs = pkey.match(xs);
                 xxs?.forEach((kx) => {
                   const ks = kx.slice(1);
@@ -564,16 +569,19 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
       const xx: dict<dict<_media>> = {};
       const zz: dict<dict<_media>> = {};
       const mainx: dict<_media> = {};
+
       this.itms.forEach((dc) => {
         if (dc instanceof _vars) {
           mainx[dc._var] = dc._val;
         } else {
+          //
           $$.O.items(dc).forEach(([k, v]) => {
             if (k.startsWith(":")) {
               let vv = v as dict<any>;
-
               $$.O.assign(zz, this.__reCSS(`${sel}${k}`, vv));
             } else if (k.indexOf(" ") > -1) {
+              $$.O.assign(zz, this.__reCSS(`${sel}${k}`, v as dict<any>));
+            } else if (k.startsWith(".") || k.startsWith("#")) {
               $$.O.assign(zz, this.__reCSS(`${sel}${k}`, v as dict<any>));
             } else {
               if (Array.isArray(v)) {
@@ -1390,6 +1398,12 @@ export class ps {
   }
   static general(str: string) {
     return _pseu(" ~ " + str);
+  }
+  static with(str: string) {
+    if (!(str.startsWith(".") || str.startsWith("#"))) {
+      throw Error("should start with . or # - class / id");
+    }
+    return _pseu(str);
   }
 }
 
