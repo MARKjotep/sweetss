@@ -5,7 +5,7 @@ import {
   writeFile,
   writeFileSync,
 } from "node:fs";
-
+import { dirname } from "path";
 /**
  * Chi2
  */
@@ -70,6 +70,7 @@ export class $$ {
 }
 
 // -----------------
+const _ff = [];
 const _cx: dict<string> = {};
 
 function reCamel(_case: string) {
@@ -209,7 +210,7 @@ class _media {
 }
 export const med = (defValue: RM, g: mtype = {}) => new _media(defValue, g);
 export const _var = (vr: dict<RM>) => new _vars(vr);
-export const { cx, id, dom, keyframes, at, _css } = (function () {
+export const { cx, id, dom, keyframes, at, font, _css } = (function () {
   class callBack {
     data: dict<any>;
     pre: string;
@@ -303,6 +304,23 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
     }
   }
 
+  class FontFace {
+    dataarr: dict<any>[];
+    pre: string;
+    constructor(pre: string = "@font-face") {
+      this.dataarr = [];
+      this.pre = pre;
+    }
+    set(target: any, prop: string, val: CSSinR) {
+      target.dataarr.push(val);
+      return target;
+    }
+
+    get css(): { face: CSSinR | _vars | dict<RM> } {
+      return new Proxy(this, this);
+    }
+  }
+
   const domx = new cs("").css;
 
   const fv = {
@@ -311,6 +329,7 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
     cx: new cs(".").css,
     keyframes: new keyframes().css,
     at: new ats().css,
+    font: new FontFace().css,
   };
 
   // --------------
@@ -324,18 +343,12 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
     });
     return _pr;
   }
-  const isDir = (path: string) => {
-    try {
-      return statSync(path).isDirectory();
-    } catch (err) {
-      mkdirSync(path);
-      return true;
-    }
-  };
+
   const isFile = (path: string) => {
     try {
       return statSync(path).isFile();
     } catch (err) {
+      mkdirSync(dirname(path), { recursive: true });
       writeFileSync(path, Buffer.from(""));
       return true;
     }
@@ -352,6 +365,7 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
       const def = _media.default;
       const mprops: dict<any> = _media.prop;
       const fin: string[] = [];
+
       fin.push(`/* ------------------- */`);
       $$.O.keys(mprops).forEach((kh) => {
         medias[kh] = {};
@@ -429,8 +443,23 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
           });
         } else if (xx instanceof ats) {
           $$.O.items(xx.data).forEach(([k, v]) => {
-            const ch = v.indexOf("(") > -1 ? v : `"${v}"`;
-            fin.push(`${k} ${ch};`);
+            const ch: string = v.indexOf("(") > -1 ? v : `"${v}"`;
+            fin.push(`${k} ${ch.trim()};`);
+          });
+        } else if (xx instanceof FontFace) {
+          const fkey = `@font-face`;
+
+          xx.dataarr.forEach((k) => {
+            const yk = $$.O.items(k).reduce((vl, [rk, rv]) => {
+              vl[rk] = _css.__reVAL(rv);
+              return vl;
+            }, {} as dict<_media>);
+            const FRP: string[] = [];
+            $$.O.items(props(yk)).forEach(([pk, pv]) => {
+              FRP.push(`${reCamel(pk)} : ${pv.xs} ;`);
+            });
+            const FFG = fkey + "{\n\t" + FRP.join("\n\t") + "\n}";
+            fin.push(FFG);
           });
         }
       });
@@ -579,10 +608,12 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
 
       // ------
       const ce = this.__css;
-      if (isDir(path)) {
+      const cfl = path + name + ".css";
+      if (isFile(cfl)) {
         // --
-        writeFileSync(path + name + ".css", Buffer.from(ce));
+        writeFileSync(cfl, Buffer.from(ce));
       }
+
       if (map) {
         const mapcss = map + "css.js";
 
@@ -594,8 +625,8 @@ export const { cx, id, dom, keyframes, at, _css } = (function () {
           const fnal = prep + cxstr + ";";
           if (rmm) {
             const rg = new RegExp(`${prep}.*?};`, "gm");
-            const _rr = RFS.replace(rg, fnal);
-
+            const RFX = RFS.replace(/\n/gm, "");
+            const _rr = RFX.replace(rg, fnal);
             writeFileSync(mapcss, Buffer.from(_rr));
           } else {
             const _rr = RFS + fnal;
@@ -912,6 +943,9 @@ export class f {
   }
   static circle(...sfs: RM[]) {
     return `circle(${tup_rst(sfs, false, false, false, false)}) `;
+  }
+  static colorMix(...sfs: RM[]) {
+    return `color-mix(${tup_rst(sfs)}) `;
   }
   static conicGradient(...sfs: RM[]) {
     return `conic-gradient(${tup_rst(sfs)}) `;
@@ -1359,15 +1393,13 @@ export class ps {
   }
 }
 
-const KK: CSSinR = {};
-
 export const x = {
   DGRAY: {
     background: "#2f2f2f",
   },
-  MSIZES: ps.before()({
-    position: v.fixed,
-    right: 1.3,
+  MSIZES: ps.after()({
+    position: v.absolute,
+    right: 4.3,
     top: 1.3,
     content: med("xs", {
       sm: "sm",
@@ -1386,21 +1418,20 @@ export const x = {
     border: "1px dashed #80808070",
   },
   TRANS25: { transition: "all 0.25s" },
-  SCROLL2: (bg: any) => [
+  SCROLL2: (thumb: any, bg: any = v.inherit) => [
     ps.scrollbar()({
-      width: 1,
-      height: 1,
+      width: med(0.8, { no_hover: 0 }),
+      height: med(0.8, { no_hover: 0 }),
     }),
     ps.scrollbarTrack()({
-      backgroundColor: v.inherit,
+      background: bg,
     }),
     ps.scrollbarThumb()(
       {
-        backgroundColor: bg,
+        background: thumb,
         borderRadius: 2,
         backgroundClip: "content-box",
         border: "2.5px solid transparent",
-        // transition: "all 0.25s",
       },
       ps.hover()({
         border: "1px solid transparent",
@@ -1408,35 +1439,10 @@ export const x = {
       }),
     ),
     ps.scrollbarCorner()({
-      backgroundColor: v.inherit,
+      background: bg,
     }),
   ],
-  SCROLLY: (bg: any) => [
-    ps.scrollbar()({
-      height: "10px",
-      width: "10px",
-      // color: bg,
-      background: c.transparent,
-    }),
-    ps.scrollbarTrack()({
-      background: c.transparent,
-    }),
-    ps.scrollbarCorner()({
-      background: c.transparent,
-    }),
-    ps.scrollbarThumb()(
-      {
-        background: "content-box currentColor",
-        border: "2px solid #2b222200",
-        borderRadius: 0.8,
-        minHeight: 4.8,
-        minWidth: 4.8,
-        color: "#80868b",
-      },
-      ps.hover()({ color: "#80868b" }),
-    ),
-    ps.scrollbarCorner()({}),
-  ],
+
   BACKDROP: (blur = 0.8) => {
     return {
       backdropFilter: f.blur(blur),
