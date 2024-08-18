@@ -25,6 +25,7 @@ interface mtype {
   xl?: RM;
   xxl?: RM;
   no_hover?: RM;
+  print?: RM;
 }
 type RM = V | _media | _vars | RM[];
 interface xtraCSS {
@@ -185,6 +186,7 @@ class _media {
     xl: "@media (width >= 1280px)",
     xxl: "@media (width >= 1536px)",
     no_hover: "@media (pointer: coarse)",
+    print: "@media print",
   };
   static default = "xs";
   constructor(defValue: RM, g: dict<any> = {}) {
@@ -220,7 +222,12 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
     }
     set(target: any, prop: string, val: CSSinR) {
       const nme = this.pre + prop;
-      target.data[nme] = val;
+      if (val instanceof _css) {
+        target.data[nme] = val;
+      } else {
+        target.data[nme] = new _css(...[val]);
+      }
+
       return target;
     }
     get(target: any, prop: string) {
@@ -245,7 +252,7 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
     constructor(pre: string = "") {
       super(pre);
     }
-    get css(): dict<_css> {
+    get css(): dict<CSSinR> {
       return new Proxy(this, this);
     }
   }
@@ -385,7 +392,6 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
                 _cx[ks] = CNAME + "_" + ks;
               }
             }
-
             if (v instanceof _css) {
               $$.O.items(v.get(k)).forEach(([pkey, y]) => {
                 let XPKEY = pkey;
