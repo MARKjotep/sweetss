@@ -613,12 +613,14 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
       name,
       path = "./",
       map,
+      cname,
     }: {
       name: string;
       path: string;
       map?: string;
+      cname?: string;
     }) {
-      CNAME = name;
+      CNAME = cname ?? name;
 
       // ------
       const ce = this.__css;
