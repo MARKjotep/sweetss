@@ -1442,8 +1442,8 @@ export const x = {
   TRANS25: { transition: "all 0.25s" },
   SCROLL2: (thumb: any, bg: any = v.inherit) => [
     ps.scrollbar()({
-      width: med(0.8, { no_hover: 0 }),
-      height: med(0.8, { no_hover: 0 }),
+      width: med(1, { no_hover: 0 }),
+      height: med(1, { no_hover: 0 }),
     }),
     ps.scrollbarTrack()({
       background: bg,
