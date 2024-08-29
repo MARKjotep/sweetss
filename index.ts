@@ -286,7 +286,7 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
   }
 
   class ats {
-    data: dict<any>;
+    data: dict<any[]>;
     pre: string;
     constructor(pre: string = "@") {
       this.data = {};
@@ -294,7 +294,12 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
     }
     set(target: any, prop: string, val: dict<any>) {
       const nme = this.pre + prop;
-      target.data[nme] = val;
+      if (nme in target.data) {
+        target.data[nme].push(val);
+      } else {
+        target.data[nme] = [val];
+      }
+
       return target;
     }
     get(target: any, prop: string) {
@@ -389,7 +394,7 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
               if (k.slice(1).startsWith("root")) {
               } else {
                 const ks = k.slice(1);
-                _cx[ks] = CNAME + "_" + ks;
+                _cx[ks] = (CNAME ? CNAME + "_" : "") + ks;
               }
             }
             if (v instanceof _css) {
@@ -400,17 +405,23 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
                 xxs?.forEach((kx) => {
                   const ks = kx.slice(1);
                   if (!(ks in _cx)) {
-                    _cx[ks] = CNAME + "_" + ks;
+                    _cx[ks] = (CNAME ? CNAME + "_" : "") + ks;
                   }
                 });
 
                 if (k.slice(1).startsWith("root")) {
                 } else {
                   if (pkey.indexOf(".") > -1) {
-                    XPKEY = pkey.replaceAll(".", "." + CNAME + "_");
+                    XPKEY = pkey.replaceAll(
+                      ".",
+                      "." + (CNAME ? CNAME + "_" : ""),
+                    );
                   }
                   if (pkey.indexOf("#") > -1) {
-                    XPKEY = pkey.replaceAll("#", "#" + CNAME + "_");
+                    XPKEY = pkey.replaceAll(
+                      "#",
+                      "#" + (CNAME ? CNAME + "_" : ""),
+                    );
                   }
                 }
 
@@ -432,7 +443,8 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
         } else if (xx instanceof keyframes) {
           $$.O.items(xx.data).forEach(([k, v]) => {
             const kfKEY = `@keyframes ${k}`;
-            // $$.p = [kfKEY, "{}"];
+            const kfKWebkit = `@-webkit-keyframes ${k}`;
+
             $$.O.items(v as dict<dict<RM>>).forEach(([kfX, y]) => {
               const yk = $$.O.items(y).reduce((vl, [rk, rv]) => {
                 vl[rk] = _css.__reVAL(rv);
@@ -444,18 +456,29 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
                   if (!(kfKEY in kfs[pkk])) {
                     kfs[pkk][kfKEY] = {};
                   }
-                  if (!(kfX in kfs[pkk][kfKEY])) {
+                  if (!(kfKWebkit in kfs[pkk])) {
+                    kfs[pkk][kfKWebkit] = {};
+                  }
+                  if (!(kfX in kfs[pkk][kfKWebkit])) {
                     kfs[pkk][kfKEY][kfX] = [];
                   }
-                  kfs[pkk][kfKEY][kfX].push(`${reCamel(pk)} : ${pvv} ;`);
+                  if (!(kfX in kfs[pkk][kfKWebkit])) {
+                    kfs[pkk][kfKWebkit][kfX] = [];
+                  }
+
+                  const rcv = `${reCamel(pk)} : ${pvv} ;`;
+                  kfs[pkk][kfKEY][kfX].push(rcv);
+                  kfs[pkk][kfKWebkit][kfX].push(rcv);
                 });
               });
             });
           });
         } else if (xx instanceof ats) {
           $$.O.items(xx.data).forEach(([k, v]) => {
-            const ch: string = v.indexOf("(") > -1 ? v : `"${v}"`;
-            fin.push(`${k} ${ch.trim()};`);
+            v.forEach((vv) => {
+              const ch: string = vv.indexOf("(") > -1 ? vv : `"${vv}"`;
+              fin.push(`${k} ${ch.trim()};`);
+            });
           });
         } else if (xx instanceof FontFace) {
           const fkey = `@font-face`;
