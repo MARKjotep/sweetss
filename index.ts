@@ -702,6 +702,7 @@ export const v = {
   center: "center",
   flex_start: "flex-start",
   flex_end: "flex-end",
+  space_evenly: "space-evenly",
   stretch: "stretch",
   wrap: "wrap",
   column: "column",
