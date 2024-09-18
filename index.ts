@@ -252,7 +252,7 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
     constructor(pre: string = "") {
       super(pre);
     }
-    get css(): dict<CSSinR> {
+    get css(): dict<CSSinR | _css> {
       return new Proxy(this, this);
     }
   }
