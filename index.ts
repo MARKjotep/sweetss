@@ -32,6 +32,7 @@ interface xtraCSS {
   src?: string;
   webkitBackdropFilter?: string;
   textFillColor?: string;
+  lineClamp?: string;
   webkitTextFillColor?: string;
 }
 export type CSSinR = {
@@ -92,6 +93,8 @@ const norems = [
   "transitionDelay",
   "animationDelay",
   "fillOpacity",
+  "lineClamp",
+  "webkitLineClamp",
 ];
 function val_xxx(sel: string, val: V | _vars, kk = { rem: true, deg: false }) {
   const { rem, deg } = kk;
@@ -1030,10 +1033,10 @@ export class f {
     return `matrix3d(${tup_rst(sfs)}) `;
   }
   static max(...sfs: RM[]) {
-    return `max(${tup_rst(sfs)}) `;
+    return `max(${tup_rst(sfs, false)}) `;
   }
   static min(...sfs: RM[]) {
-    return `min(${tup_rst(sfs)}) `;
+    return `min(${tup_rst(sfs, false)}) `;
   }
   static opacity(...sfs: RM[]) {
     return `opacity(${tup_rst(sfs)}) `;
