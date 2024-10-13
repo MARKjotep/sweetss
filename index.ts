@@ -612,7 +612,15 @@ export const { cx, id, dom, keyframes, at, font, _css } = (function () {
               let vv = v as dict<any>;
               $$.O.assign(zz, this.__reCSS(`${sel}${k}`, vv));
             } else if (k.indexOf(" ") > -1) {
-              $$.O.assign(zz, this.__reCSS(`${sel}${k}`, v as dict<any>));
+              //
+              const slc = k.match(/^.*?\./gm);
+              const islc = slc?.[0].slice(0, -1);
+
+              const lk = k
+                .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
+                .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+
+              $$.O.assign(zz, this.__reCSS(`${sel}${lk}`, v as dict<any>));
             } else if (k.startsWith(".") || k.startsWith("#")) {
               $$.O.assign(zz, this.__reCSS(`${sel}${k}`, v as dict<any>));
             } else {
