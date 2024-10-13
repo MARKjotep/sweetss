@@ -132,7 +132,7 @@ function _pseu(sel: string) {
     const vals: any = itm.reduce((val, i) => {
       if (i instanceof _vars) {
         val = { ...val, ...{ [i._var]: i._val } };
-      } else {
+      } else if (typeof i == "object") {
         val = { ...val, ...i };
       }
       return val;
