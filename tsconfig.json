@@ -1,21 +1,30 @@
 {
   "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "outDir": "../../DIST/sweetss",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "noImplicitThis": false,
     "noImplicitAny": true,
-    // "checkJs": true,
+    "allowJs": true,
+    "checkJs": false,
     "removeComments": true,
     "emitDecoratorMetadata": true,
-    "allowJs": true,
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "module": "NodeNext",
     "strict": true,
-    "lib": ["ESNext", "DOM"],
-    "noImplicitThis": false,
-    "outDir": "../../dist/sweetss",
-    "composite": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "rootDir": "",
-    "baseUrl": ""
-  }
+    "composite": false,
+    "declaration": true
+  },
+  "exclude": [
+    "**/.*",
+    "./**/css",
+    "./**/private",
+    "./css",
+    "*.js",
+    "node_modules"
+  ]
 }
