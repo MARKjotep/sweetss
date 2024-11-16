@@ -1,0 +1,24 @@
+{
+  "name": "sweetss",
+  "version": "1.0.9",
+  "description": "CSS in JS",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MARKjotep/sweetss.git"
+  },
+  "keywords": [
+    "css",
+    "js"
+  ],
+  "author": "MARKjotep",
+  "license": "MIT",
+  "types": "./index.d.ts",
+  "bugs": {
+    "url": "https://github.com/MARKjotep/sweetss/issues"
+  },
+  "homepage": "https://github.com/MARKjotep/sweetss#readme",
+  "scripts": {
+    "build": "tsc ; dist=../../DIST/sweetss/ ; cp -r package.json $dist ;"
+  }
+}
