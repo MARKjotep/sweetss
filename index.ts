@@ -1,10 +1,10 @@
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 type V = string | number | boolean;
+type RM = V | media | _vars | RM[];
 interface obj<T> {
   [Key: string]: T;
 }
-type RM = V | media | _vars | RM[];
 interface xtraCSS {
   src?: string;
   webkitBackdropFilter?: string;
@@ -26,6 +26,9 @@ interface mtype {
 type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
+
+export type CSSinTS = obj<CSSinR | CSSinR[]>;
+
 export class $$ {
   static set p(a: any) {
     if (Array.isArray(a)) {
@@ -59,6 +62,18 @@ const is = {
     return (
       val instanceof Uint8Array || val instanceof ArrayBuffer || is.str(val)
     );
+  },
+  file: (path: string) => {
+    try {
+      return statSync(path).isFile();
+    } catch (err) {
+      mkdirSync(dirname(path), { recursive: true });
+      writeFileSync(path, Buffer.from(""));
+      return true;
+    }
+  },
+  classOrId(k: string): boolean {
+    return k.startsWith(".") || k.startsWith("#");
   },
 };
 const str = {
@@ -115,9 +130,7 @@ function val_xxx(
   options = { rem: true, deg: false },
 ): string {
   const { rem, deg } = options;
-  if (val instanceof _vars) {
-    return val.__();
-  }
+  if (val instanceof _vars) return val.__();
   if (is.arr(val)) {
     return val.map((item) => val_xxx(sel, item)).join(" ");
   }
@@ -138,93 +151,45 @@ function tup_rst(
   qt: boolean = false,
 ) {
   const fnal: string[] = sfs.map((ff) => {
-    if (is.str(ff)) {
-      return qt ? `'${ff}'` : ff;
-    } else if (ff instanceof _vars) {
-      return ff.__();
-    } else if (is.number(ff)) {
-      return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
-    }
+    if (is.str(ff)) return qt ? `'${ff}'` : ff;
+    if (ff instanceof _vars) return ff.__();
+    if (is.number(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
     return "";
   });
 
   return fnal.join(wcom ? ", " : " ");
 }
-function _pseu(sel: string) {
-  //
-  return function (...itm: (CSSinR | _vars | obj<RM>)[]) {
-    const vals: any = itm.reduce((val, i) => {
-      if (i instanceof _vars) {
-        val = { ...val, ...{ [i._var]: i._val } };
-      } else if (is.obj(i)) {
-        val = { ...val, ...i };
-      }
-      return val;
-    }, {});
-    if (sel.startsWith("::before") || sel.startsWith("::after")) {
-      if (!("content" in vals)) {
-        vals.content = "";
-      }
-    }
-    return {
-      ...{
-        [sel]: {
-          ...vals,
-        },
-      },
-    };
-  };
-}
+
 function _props(sel: string, prp: media) {
   O.items(prp).forEach(([mk, mv]) => {
     prp[mk] = val_xxx(sel, mv);
   });
   return prp;
 }
-function extractSelectors(cssContent: string) {
-  const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
-  const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
+const parseCSS = (css: string): string => {
+  return css
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\s*([{}:;,])\s*/g, "$1")
+    .trim();
+};
+function _pseu(sel: string) {
+  return function (...itm: (CSSinR | _vars | obj<RM>)[]) {
+    const vals = itm.reduce<obj<any>>((val, i) => {
+      if (i instanceof _vars) {
+        val[i._var] = i._val;
+      } else if (is.obj(i)) {
+        Object.assign(val, i);
+      }
+      return val;
+    }, {});
 
-  const classes = new Set();
-  const ids = new Set();
+    if (sel.startsWith("::before") || sel.startsWith("::after")) {
+      vals.content ??= ""; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
+    }
 
-  let match;
-
-  // Extract classes
-  while ((match = classRegex.exec(cssContent)) !== null) {
-    classes.add(match[1]);
-  }
-
-  // Extract IDs
-  while ((match = idRegex.exec(cssContent)) !== null) {
-    ids.add(match[1]);
-  }
-
-  return {
-    classes: Array.from(classes) as string[],
-    ids: Array.from(ids) as string[],
+    return { [sel]: vals };
   };
 }
-const isFile = (path: string) => {
-  try {
-    return statSync(path).isFile();
-  } catch (err) {
-    mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, Buffer.from(""));
-    return true;
-  }
-};
-const removeSpacesAndComments = (css: string): string => {
-  let cleanedCss = css.replace(/\/\*[\s\S]*?\*\//g, "");
-
-  // Remove spaces around braces, semicolons, and colons, but preserve important spaces in values
-  cleanedCss = cleanedCss.replace(/\s*([{}:;,])\s*/g, "$1");
-
-  // Trim leading and trailing spaces for the entire CSS string
-  cleanedCss = cleanedCss.trim();
-  return cleanedCss;
-};
-
 export class ps {
   static attr(d: obj<string>) {
     const [k, v] = O.items(d)[0];
@@ -749,7 +714,7 @@ export class media {
     }
 
     O.items(g).forEach(([k, v]) => {
-      if (Array.isArray(v)) {
+      if (is.arr(v)) {
         DM[k] = tup_rst(v, false, false);
       } else {
         DM[k] = v;
@@ -761,244 +726,8 @@ export class media {
     media.default = def;
   }
 }
-let ANAME = "";
-const _cx: obj<string> = {};
-const XCSS = (sel: string, vals: obj<string>) => {
-  const xname = ANAME ? ANAME + "_" : "";
-  const oit = O.items(vals)
-    .map(([kk, vv]) => `${kk} : ${vv}`)
-    .join("; \n\t");
 
-  const { classes, ids } = extractSelectors(sel);
-
-  [classes, ids].flat().forEach((cl) => {
-    _cx[cl] = xname + cl;
-  });
-
-  sel = sel.replaceAll(/\.|\#/g, (m) => m + xname);
-
-  return `${sel}\t{\n\t${oit}\n\t}`;
-};
-
-export class css {
-  private static __reval(val: RM): media {
-    if (val instanceof media) {
-      return val;
-    } else if (val instanceof _vars) {
-      return med(val.__());
-    } else {
-      return med(val);
-    }
-  }
-  private static get(sel: string, vv: any, medias: obj<obj<media>>) {
-    const props: obj<media> = {};
-    if (is.obj(vv)) {
-      if (vv instanceof _vars) {
-        if (!props[vv._var]) props[vv._var] = {};
-        O.ass(props[vv._var], vv._val);
-      } else {
-        O.items(vv).forEach(([k, v]) => {
-          if (k.startsWith(":") || k.startsWith(",")) {
-            const selk = sel + k;
-            if (!medias[selk]) medias[selk] = {};
-            this.get(selk, v, medias);
-          } else if (k.startsWith(" ")) {
-            //
-            const slc = k.match(/^.*?\./gm);
-            const islc = slc?.[0].slice(0, -1);
-            const lk = k
-              .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
-              .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
-
-            const selk = sel + lk;
-            if (!medias[selk]) medias[selk] = {};
-            this.get(selk, v, medias);
-          } else if (k.startsWith(".") || k.startsWith("#")) {
-            $$.p = [k, v];
-          } else {
-            if (!props[k]) props[k] = {};
-            if (is.arr(v)) {
-              const avx = v
-                .reduce<string[]>((vl, ky) => {
-                  vl.push(val_xxx(k, ky));
-                  return vl;
-                }, [])
-                .join(is.arr(v[0]) ? ", " : " ");
-              O.ass(props[k], _props(k, this.__reval(avx)));
-            } else {
-              O.ass(props[k], _props(k, this.__reval(v)));
-            }
-          }
-        });
-      }
-    }
-    O.length(props) && O.ass(medias[sel], props);
-  }
-  private static load() {
-    const mprops = media.prop;
-    type mtype = keyof typeof mprops;
-    const def = media.default as mtype;
-    const medias: obj<obj<{ [P in mtype]: any }>> = {};
-    const KFm: obj<obj<obj<{ [P in mtype]: any }>>> = {};
-    const props: { [P in mtype]?: obj<string[]> } = {};
-    const kprops: { [P in mtype]?: obj<string[]> } = {};
-    const cs2: obj<obj<obj<string>>> = {};
-    const fin: string[] = [];
-
-    //
-
-    O.keys(mprops).forEach((kh) => {
-      props[kh as mtype] = {};
-      kprops[kh as mtype] = {};
-      cs2[kh as mtype] = {};
-    });
-
-    O.vals(CSS).forEach((az) => {
-      if (az instanceof CB) {
-        O.items(az.data).forEach(([k, v]) => {
-          if (!medias[k]) medias[k] = {};
-          v.forEach((vv) => {
-            this.get(k, vv, medias);
-          });
-        });
-      } else if (az instanceof keyframes) {
-        O.items(az.data).forEach(([k, v]) => {
-          const kfKEY = `@keyframes ${k}`;
-          const kfKWebkit = `@-webkit-keyframes ${k}`;
-          v.forEach((vv) => {
-            const KM: obj<obj<{ [P in mtype]: any }>> = {};
-            O.items(vv).forEach(([x, y]) => {
-              if (!KM[x]) KM[x] = {};
-              this.get(x, y, KM);
-            });
-            O.ass(KFm, { [kfKEY]: KM, [kfKWebkit]: KM });
-          });
-        });
-      } else if (az instanceof ats) {
-        O.items(az.data).forEach(([k, v]) => {
-          v.forEach((vv) => {
-            const ch: string = vv.indexOf("(") > -1 ? vv : `"${vv}"`;
-            fin.push(`${k} ${ch.trim()};`);
-          });
-        });
-      } else if (az instanceof FontFace) {
-        const fkey = `@font-face`;
-        az.data.forEach((k) => {
-          const FF: obj<obj<{ [P in mtype]: any }>> = {};
-          if (!FF[fkey]) FF[fkey] = {};
-          const ffs = O.items(k)
-            .map(([k, v]) => `${str.camel(k)} : ${val_xxx(k, v)}`)
-            .join("; \n\t");
-          fin.push(`${fkey}\t{\n\t${ffs}\n}`);
-        });
-      }
-    });
-
-    O.items(medias).forEach(([k, v]) => {
-      O.items(v).forEach(([kk, vv]) => {
-        O.items(vv).forEach(([x, y]) => {
-          const xx = x as mtype;
-          let pvp = kk == "content" && !y.includes("(") ? `'${y}'` : y;
-          const stn = str.ngify({ [str.camel(kk)]: pvp });
-          if (!props[xx]![stn]) props[xx]![stn] = [];
-
-          props[xx]![stn].push(...k.split(",").map((s) => s.trim()));
-        });
-      });
-    });
-
-    O.items(KFm).forEach(([k, v]) => {
-      O.items(v).forEach(([kk, vv]) => {
-        const vls: obj<obj<string>> = {};
-        O.items(vv).forEach(([x, y]) => {
-          O.items(y).forEach(([xx, yy]) => {
-            const xs = xx as mtype;
-            if (!vls[xs]) vls[xs] = {};
-            vls[xs][x] = yy;
-          });
-        });
-        O.items(vls).forEach(([x, y]) => {
-          const xs = x as mtype;
-          if (!kprops[xs]![k]) kprops[xs]![k] = [];
-          kprops[xs]![k].push(XCSS(kk, y));
-        });
-      });
-    });
-
-    // formatted and combined classes with equal properties
-
-    O.items(props).forEach(([kk, vv]) => {
-      if (!cs2[kk]) cs2[kk] = {};
-      O.items(vv).forEach(([k, v]) => {
-        const ct = v.join(", ");
-        if (!cs2[kk][ct]) cs2[kk][ct] = {};
-        O.ass(cs2[kk][ct], str.parse(k));
-      });
-    });
-
-    O.items(cs2).forEach(([kk, vv]) => {
-      const mitm: string[] = [];
-      O.items(vv).forEach(([k, v]) => mitm.push(XCSS(k, v)));
-
-      O.items(kprops[kk as mtype]!).forEach(([k, v]) => {
-        mitm.push(`${k} {\n${v.join("\n")}\n}`);
-      });
-
-      if (mitm.length) {
-        fin.push(
-          `/* ------------------------ ${kk + (kk == def ? " ( default )" : "")} */`,
-        );
-        if (kk == def) {
-          fin.push(mitm.join("\n"));
-        } else {
-          fin.push(`${mprops[kk as mtype]}\t{\n${mitm.join("\n")}\n}`);
-        }
-      }
-    });
-
-    return fin.join("\n");
-  }
-  static save({
-    name,
-    prefix,
-    path = "./",
-    map,
-    minify = false,
-  }: {
-    name: string;
-    path: string;
-    map?: string;
-    prefix?: string;
-    minify?: boolean;
-  }) {
-    ANAME = prefix ?? name;
-    const ce = this.load();
-    const cfl = path + name + ".css";
-    isFile(cfl);
-
-    let rr = minify ? removeSpacesAndComments(ce) : ce;
-    writeFileSync(cfl, Buffer.from(rr));
-    if (map) {
-      const mapcss = map + "css.js";
-      if (isFile(mapcss)) {
-        const RFS = readFileSync(mapcss).toString();
-        const cxstr = JSON.stringify(_cx);
-        const prep = `export const ${name} = `;
-        const rmm = RFS.match(prep);
-        const fnal = prep + cxstr + ";";
-        if (rmm) {
-          const rg = new RegExp(`${prep}.*?};`, "gm");
-          const RFX = RFS.replace(/\n/gm, "");
-          const _rr = RFX.replace(rg, fnal);
-          writeFileSync(mapcss, Buffer.from(_rr));
-        } else {
-          const _rr = RFS + fnal;
-          writeFileSync(mapcss, _rr);
-        }
-      }
-    }
-  }
-}
+// const _cx: obj<string> = {};
 
 class CB {
   data: obj<any[]> = {};
@@ -1021,7 +750,7 @@ class CB {
     }
     return undefined;
   }
-  get css(): obj<CSSinR | CSSinR[]> {
+  get css(): CSSinTS {
     return new Proxy(this, this);
   }
 }
@@ -1101,20 +830,267 @@ class FontFace {
     this.data.push(val);
     return true;
   }
-
   get css(): { face: CSSinR | _vars | obj<RM> } {
     return new Proxy(this, this);
   }
 }
 
-export const CSS = {
-  dom: new CB("").css,
-  id: new CB("#").css,
-  cx: new CB(".").css,
-  kf: new keyframes().css,
-  at: new ats().css,
-  font: new FontFace().css,
-};
+interface saver {
+  name: string;
+  path: string;
+  map?: string;
+  prefix?: string;
+  minify?: boolean;
+}
+
+class __css {
+  private static __reval(val: RM): media {
+    if (val instanceof media) {
+      return val;
+    } else if (val instanceof _vars) {
+      return med(val.__());
+    } else {
+      return med(val);
+    }
+  }
+  private static xSelector(cssContent: string) {
+    const extractMatches = (regex: RegExp) =>
+      Array.from(cssContent.matchAll(regex), (match) => match[1]);
+
+    const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
+    const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
+
+    return {
+      classes: [...new Set(extractMatches(classRegex))],
+      ids: [...new Set(extractMatches(idRegex))],
+    };
+  }
+  private static xscc(
+    sel: string,
+    vals: obj<string>,
+    prefix?: string,
+    _cxp: obj<string> = {},
+  ) {
+    const xname = prefix ? prefix + "_" : "";
+    const oit = O.items(vals)
+      .map(([kk, vv]) => `${kk}: ${vv};`)
+      .join(" \n  ");
+    const { classes, ids } = this.xSelector(sel);
+    [classes, ids].flat().forEach((cl) => {
+      _cxp[cl] = xname + cl;
+    });
+    sel = sel.replaceAll(/\.|\#/g, (m) => m + xname);
+    return `${sel} {\n  ${oit}\n}`;
+  }
+  private static processVars(vv: _vars, props: obj<media>): void {
+    if (!props[vv._var]) props[vv._var] = {};
+    O.ass(props[vv._var], vv._val);
+  }
+  private static get(sel: string, vv: any, medias: obj<obj<media>>) {
+    const props: obj<media> = {};
+    if (!is.obj(vv)) return;
+    //
+    if (vv instanceof _vars) {
+      this.processVars(vv, props);
+    } else {
+      O.items(vv).forEach(([k, v]) => {
+        if (k.startsWith(":") || k.startsWith(",")) {
+          const selk = sel + k;
+          if (!medias[selk]) medias[selk] = {};
+          this.get(selk, v, medias);
+        } else if (k.startsWith(" ")) {
+          //
+          const slc = k.match(/^.*?\./gm);
+          const islc = slc?.[0].slice(0, -1);
+          const lk = k
+            .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
+            .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+
+          const selk = sel + lk;
+          if (!medias[selk]) medias[selk] = {};
+          this.get(selk, v, medias);
+        } else if (is.classOrId(k)) {
+          $$.p = [k, v];
+        } else {
+          if (!props[k]) props[k] = {};
+          if (is.arr(v)) {
+            const avx = v
+              .reduce<string[]>((vl, ky) => {
+                vl.push(val_xxx(k, ky));
+                return vl;
+              }, [])
+              .join(is.arr(v[0]) ? ", " : " ");
+            O.ass(props[k], _props(k, this.__reval(avx)));
+          } else {
+            O.ass(props[k], _props(k, this.__reval(v)));
+          }
+        }
+      });
+    }
+    if (O.length(props)) O.ass(medias[sel], props);
+  }
+  static load(CSS: css, prefix: string = "", _cxp: obj<string> = {}) {
+    const mprops = media.prop;
+    type mtype = keyof typeof mprops;
+    const def = media.default as mtype;
+    const medias: obj<obj<{ [P in mtype]: any }>> = {};
+    const KFm: obj<obj<obj<{ [P in mtype]: any }>>> = {};
+    const props: { [P in mtype]?: obj<string[]> } = {};
+    const kprops: { [P in mtype]?: obj<string[]> } = {};
+    const cs2: obj<obj<obj<string>>> = {};
+    const fin: string[] = [];
+
+    //
+
+    O.keys(mprops).forEach((kh) => {
+      props[kh as mtype] = {};
+      kprops[kh as mtype] = {};
+      cs2[kh as mtype] = {};
+    });
+
+    O.vals(CSS).forEach((az) => {
+      if (az instanceof CB) {
+        O.items(az.data).forEach(([k, v]) => {
+          if (!medias[k]) medias[k] = {};
+          v.forEach((vv) => {
+            this.get(k, vv, medias);
+          });
+        });
+      } else if (az instanceof keyframes) {
+        O.items(az.data).forEach(([k, v]) => {
+          const kfKEY = `@keyframes ${k}`;
+          const kfKWebkit = `@-webkit-keyframes ${k}`;
+          v.forEach((vv) => {
+            const KM: obj<obj<{ [P in mtype]: any }>> = {};
+            O.items(vv).forEach(([x, y]) => {
+              if (!KM[x]) KM[x] = {};
+              this.get(x, y, KM);
+            });
+            O.ass(KFm, { [kfKEY]: KM, [kfKWebkit]: KM });
+          });
+        });
+      } else if (az instanceof ats) {
+        O.items(az.data).forEach(([k, v]) => {
+          v.forEach((vv) => {
+            const ch: string = vv.indexOf("(") > -1 ? vv : `"${vv}"`;
+            fin.push(`${k} ${ch.trim()};`);
+          });
+        });
+      } else if (az instanceof FontFace) {
+        const fkey = `@font-face`;
+        az.data.forEach((k) => {
+          const FF: obj<obj<{ [P in mtype]: any }>> = {};
+          if (!FF[fkey]) FF[fkey] = {};
+          const ffs = O.items(k)
+            .map(([k, v]) => `${str.camel(k)} : ${val_xxx(k, v)}`)
+            .join("; \n\t");
+          fin.push(`${fkey}\t{\n\t${ffs}\n}`);
+        });
+      }
+    });
+
+    O.items(medias).forEach(([k, v]) => {
+      O.items(v).forEach(([kk, vv]) => {
+        O.items(vv).forEach(([x, y]) => {
+          const xx = x as mtype;
+          let pvp = kk == "content" && !y.includes("(") ? `'${y}'` : y;
+          const stn = str.ngify({ [str.camel(kk)]: pvp });
+          if (!props[xx]![stn]) props[xx]![stn] = [];
+          props[xx]![stn].push(...k.split(",").map((s) => s.trim()));
+        });
+      });
+    });
+
+    O.items(KFm).forEach(([k, v]) => {
+      O.items(v).forEach(([kk, vv]) => {
+        const vls: obj<obj<string>> = {};
+        O.items(vv).forEach(([x, y]) => {
+          O.items(y).forEach(([xx, yy]) => {
+            const xs = xx as mtype;
+            if (!vls[xs]) vls[xs] = {};
+            vls[xs][x] = yy;
+          });
+        });
+        O.items(vls).forEach(([x, y]) => {
+          const xs = x as mtype;
+          if (!kprops[xs]![k]) kprops[xs]![k] = [];
+          kprops[xs]![k].push(this.xscc(kk, y, prefix, _cxp));
+        });
+      });
+    });
+
+    O.items(props).forEach(([kk, vv]) => {
+      if (!cs2[kk]) cs2[kk] = {};
+      O.items(vv).forEach(([k, v]) => {
+        const ct = v.join(", ");
+        if (!cs2[kk][ct]) cs2[kk][ct] = {};
+        O.ass(cs2[kk][ct], str.parse(k));
+      });
+    });
+
+    O.items(cs2).forEach(([kk, vv]) => {
+      const mitm: string[] = [];
+      O.items(vv).forEach(([k, v]) => mitm.push(this.xscc(k, v, prefix, _cxp)));
+
+      O.items(kprops[kk as mtype]!).forEach(([k, v]) => {
+        mitm.push(`${k} {\n${v.join("\n")}\n}`);
+      });
+
+      if (mitm.length) {
+        fin.push(
+          `/* ------------------------ ${kk + (kk == def ? " ( default )" : "")} */`,
+        );
+        if (kk == def) {
+          fin.push(mitm.join("\n"));
+        } else {
+          fin.push(`${mprops[kk as mtype]}\t{\n${mitm.join("\n")}\n}`);
+        }
+      }
+    });
+
+    return fin.join("\n");
+  }
+}
+
+export class css {
+  dom = new CB("").css;
+  id = new CB("#").css;
+  cx = new CB(".").css;
+  kf = new keyframes().css;
+  at = new ats().css;
+  font = new FontFace().css;
+  save: ({ name, path }: saver) => void;
+  constructor() {
+    this.save = ({ name, path, map, prefix = "", minify = false }: saver) => {
+      const _ccx: obj<string> = {};
+      const ce = __css.load(this, prefix ?? name, _ccx);
+      //
+      const cfl = path + name + ".css";
+      is.file(cfl);
+      let rr = minify ? parseCSS(ce) : ce;
+      writeFileSync(cfl, Buffer.from(rr));
+      if ((map ??= path)) {
+        const mapcss = map + "css.js";
+        if (is.file(mapcss)) {
+          const RFS = readFileSync(mapcss).toString();
+          const cxstr = JSON.stringify(_ccx);
+          const prep = `export const ${name} = `;
+          const rmm = RFS.match(prep);
+          const fnal = prep + cxstr + ";";
+          if (rmm) {
+            const rg = new RegExp(`${prep}.*?};`, "gm");
+            const RFX = RFS.replace(/\n/gm, "");
+            const _rr = RFX.replace(rg, fnal);
+            writeFileSync(mapcss, _rr);
+          } else {
+            const _rr = RFS + fnal;
+            writeFileSync(mapcss, _rr);
+          }
+        }
+      }
+    };
+  }
+}
 
 export const v = {
   important: " !important",
