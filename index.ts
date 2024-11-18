@@ -1,5 +1,6 @@
-import { readFileSync, writeFileSync } from "node:fs";
-import { is, str, O } from "../__";
+import { writeFileSync } from "node:fs";
+import { $$, is, str, O } from "../_misc/__";
+import { file, write } from "bun";
 type V = string | number | boolean;
 type RM = V | media | _vars | RM[];
 interface obj<T> {
@@ -29,22 +30,18 @@ type CSSinR = {
 
 export type CSSinTS = obj<CSSinR | CSSinR[]>;
 
-export class $$ {
-  static set p(a: any) {
-    if (Array.isArray(a)) {
-      console.log(...a);
-    } else {
-      console.log(a);
+const _is = {
+  file: (path: string, data?: string) => {
+    try {
+      writeFileSync(path, data ?? "", { flag: "wx" });
+    } catch (error) {
+      //
     }
-  }
-  static rand(min = 6, max?: number) {
-    if (max) {
-      return Math.round(Math.random() * (max - min) + min);
-    }
-    const rndInt = Math.floor(Math.random() * min) + 1;
-    return rndInt - 1;
-  }
-}
+    return true;
+  },
+};
+
+export { $$ };
 
 const norems = [
   "zIndex",
@@ -1000,18 +997,26 @@ export class css {
   font = new FontFace().css;
   save: ({ name, path }: saver) => void;
   constructor() {
-    this.save = ({ name, path, map, prefix = "", minify = false }: saver) => {
+    this.save = async ({
+      name,
+      path,
+      map,
+      prefix = "",
+      minify = false,
+    }: saver) => {
       const _ccx: obj<string> = {};
       const ce = __css.load(this, prefix ?? name, _ccx);
       //
       const cfl = path + name + ".css";
-      is.file(cfl);
+      _is.file(cfl);
       let rr = minify ? parseCSS(ce) : ce;
-      writeFileSync(cfl, Buffer.from(rr));
+      await write(cfl, rr);
+
       if ((map ??= path)) {
         const mapcss = map + "css.js";
-        if (is.file(mapcss)) {
-          const RFS = readFileSync(mapcss).toString();
+        if (_is.file(mapcss)) {
+          const RFS = await file(mapcss).text();
+
           const cxstr = JSON.stringify(_ccx);
           const prep = `export const ${name} = `;
           const rmm = RFS.match(prep);
@@ -1020,10 +1025,11 @@ export class css {
             const rg = new RegExp(`${prep}.*?};`, "gm");
             const RFX = RFS.replace(/\n/gm, "");
             const _rr = RFX.replace(rg, fnal);
-            writeFileSync(mapcss, _rr);
+
+            await write(mapcss, _rr);
           } else {
             const _rr = RFS + fnal;
-            writeFileSync(mapcss, _rr);
+            await write(mapcss, _rr);
           }
         }
       }
