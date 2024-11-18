@@ -1163,6 +1163,7 @@ export const v = {
 
 /**
  * COLORS
+ *
  */
 export const c = {
   aliceBlue: "#F0F8FF",
