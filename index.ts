@@ -1,5 +1,5 @@
-import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { readFileSync, writeFileSync } from "node:fs";
+import { is, str, O } from "../__";
 type V = string | number | boolean;
 type RM = V | media | _vars | RM[];
 interface obj<T> {
@@ -45,68 +45,7 @@ export class $$ {
     return rndInt - 1;
   }
 }
-const is = {
-  bool: (v: any): v is boolean => typeof v === "boolean",
-  str: (v: any): v is string => typeof v === "string",
-  arr: (v: any) => Array.isArray(v),
-  fn: (v: any): v is Function => typeof v === "function",
-  obj: (v: any): v is object => typeof v === "object",
-  num: (v: any): v is number => typeof v === "number",
-  number: (value: any) => {
-    return !isNaN(parseFloat(value)) && isFinite(value);
-  },
-  dict: (val: object) => {
-    return is.obj(val) && val !== null && !is.arr(val);
-  },
-  arraybuff: (val: any) => {
-    return (
-      val instanceof Uint8Array || val instanceof ArrayBuffer || is.str(val)
-    );
-  },
-  file: (path: string) => {
-    try {
-      return statSync(path).isFile();
-    } catch (err) {
-      mkdirSync(dirname(path), { recursive: true });
-      writeFileSync(path, Buffer.from(""));
-      return true;
-    }
-  },
-  classOrId(k: string): boolean {
-    return k.startsWith(".") || k.startsWith("#");
-  },
-};
-const str = {
-  strip: (char: string, tostrip: string) => {
-    let _char = char;
-    if (_char.startsWith(tostrip)) {
-      _char = _char.slice(1);
-    }
-    if (_char.endsWith(tostrip)) {
-      _char = _char.slice(0, -1);
-    }
-    return _char;
-  },
-  ngify: (str: object) => JSON.stringify(str),
-  parse: (str: string) => JSON.parse(str),
-  camel: (_case: string) => {
-    if (_case.startsWith("webkit")) {
-      _case = "--" + _case;
-    }
-    return _case.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-  },
-};
-const O = {
-  vals: Object.values,
-  keys: Object.keys,
-  items: Object.entries,
-  has: Object.hasOwn,
-  define: Object.defineProperty,
-  ass: Object.assign,
-  length: (ob: Object) => {
-    return Object.keys(ob).length;
-  },
-};
+
 const norems = [
   "zIndex",
   "opacity",
