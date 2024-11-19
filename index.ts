@@ -1,9 +1,11 @@
 import { writeFileSync } from "node:fs";
-import { $$, is, str, O } from "../_misc/__";
+import { is, str, O } from "../_misc/__";
 import { file, write } from "bun";
+import { v } from "./v";
+import { c } from "./colors";
 type V = string | number | boolean;
 type RM = V | media | _vars | RM[];
-interface obj<T> {
+export interface obj<T> {
   [Key: string]: T;
 }
 interface xtraCSS {
@@ -24,9 +26,42 @@ interface mtype {
   no_hover?: RM;
   print?: RM;
 }
+type PMtype = keyof mtype;
 type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
+
+export class $$ {
+  static set p(a: any) {
+    if (is.arr(a)) {
+      console.log(...a);
+    } else {
+      console.log(a);
+    }
+  }
+  static rand(min = 6, max?: number) {
+    if (max) {
+      return Math.round(Math.random() * (max - min) + min);
+    }
+    const rndInt = Math.floor(Math.random() * min) + 1;
+    return rndInt - 1;
+  }
+}
+
+class Mapper<K, V> extends Map<K, V> {
+  obj(obj?: object | null) {
+    obj && O.items(obj).forEach(([k, v]) => this.set(k as K, v));
+  }
+  map(map: Map<K, V>) {
+    map.forEach((v, k) => {
+      this.set(k, v);
+    });
+  }
+  ass<T>(key: K, obj: T) {
+    if (!this.has(key)) this.set(key, {} as any);
+    O.ass(this.get(key)!, obj);
+  }
+}
 
 export type CSSinTS = obj<CSSinR | CSSinR[]>;
 
@@ -40,8 +75,6 @@ const _is = {
     return true;
   },
 };
-
-export { $$ };
 
 const norems = [
   "zIndex",
@@ -95,7 +128,6 @@ function tup_rst(
 
   return fnal.join(wcom ? ", " : " ");
 }
-
 function _props(sel: string, prp: media) {
   O.items(prp).forEach(([mk, mv]) => {
     prp[mk] = val_xxx(sel, mv);
@@ -126,6 +158,8 @@ function _pseu(sel: string) {
     return { [sel]: vals };
   };
 }
+
+//
 export class ps {
   static attr(d: obj<string>) {
     const [k, v] = O.items(d)[0];
@@ -663,17 +697,74 @@ export class media {
   }
 }
 
-// const _cx: obj<string> = {};
+/*
+-------------------------
+Clas ID KF process
+-------------------------
+*/
+
+type CMapper = Mapper<string, Mapper<string, media>>;
+function CIK(
+  sel: string,
+  vv: any,
+  medias: CMapper,
+  cid: Mapper<string, string>,
+  fix: string,
+) {
+  if (!is.obj(vv)) return;
+  const props: Mapper<string, media> = new Mapper();
+  if (vv instanceof _vars) {
+    props.ass(vv._var, vv._val);
+  } else {
+    O.items(vv).forEach(([k, v]) => {
+      if (v)
+        if (k.startsWith(":") || k.startsWith(",")) {
+          CIK(sel + k, v, medias, cid, fix);
+        } else if (k.startsWith(" ")) {
+          const slc = k.match(/^.*?\./gm);
+          const islc = slc?.[0].slice(0, -1);
+          const lk = k
+            .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
+            .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+          CIK(sel + lk, v, medias, cid, fix);
+        } else if (is.classOrId(k)) {
+          $$.p = [k, v];
+        } else {
+          props.set(k, _props(k, reval(v)));
+        }
+    });
+  }
+
+  const { classes, ids } = xselect(sel);
+  [classes, ids].flat().forEach((cl) => {
+    cid.set(cl, fix + cl);
+  });
+
+  sel = fix ? applyPrefix(sel, fix) : sel;
+  if (medias.has(sel)) {
+    medias.get(sel)?.map(props);
+  } else {
+    medias.set(sel, props);
+  }
+}
 
 class CB {
+  fix: string;
   data: obj<any[]> = {};
-  constructor(private pre: string = "") {}
+  cid: Mapper<string, string> = new Mapper();
+  datax: Mapper<string, CMapper> = new Mapper();
+  constructor(
+    private pre: string = "",
+    fix: string = "",
+  ) {
+    this.fix = fix ? fix + "_" : fix;
+  }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
     const VL = is.arr(val) ? val : [val];
-    if (!(nme in this.data)) {
-      this.data[nme] = [];
-    }
+    VL.forEach((vv) => {
+      CIK(nme, vv, this.datax, this.cid, this.fix);
+    });
     this.data[nme] = VL;
     return true;
   }
@@ -683,6 +774,10 @@ class CB {
       return nme;
     } else if (prop == "data") {
       return this.data as any;
+    } else if (prop == "datax") {
+      return this.datax as any;
+    } else if (prop == "cid") {
+      return this.cid as any;
     }
     return undefined;
   }
@@ -692,27 +787,37 @@ class CB {
 }
 
 class keyframes {
-  data: obj<any[]>;
-  pre: string;
-  constructor(pre: string = "") {
+  data: obj<any[]> = {};
+  cid: Mapper<string, string> = new Mapper();
+  datax: Mapper<string, Mapper<string, CMapper>> = new Mapper();
+  constructor() {
     this.data = {};
-    this.pre = pre;
   }
   set(target: any, prop: string, val: obj<any>) {
-    const nme = this.pre + prop;
+    const nme = prop;
     const VL = is.arr(val) ? val : [val];
-    if (!(nme in this.data)) {
-      this.data[nme] = [];
-    }
+    const kfKEY = `@keyframes ${nme}`;
+    const kfKWebkit = `@-webkit-keyframes ${nme}`;
+    const dx: Mapper<string, CMapper> = new Mapper();
+    VL.forEach((vv) => {
+      O.items(vv).forEach(([x, y]) => {
+        CIK(x, y as CSSinR, dx, this.cid, "");
+      });
+    });
+    this.datax.set(kfKEY, dx);
+    this.datax.set(kfKWebkit, dx);
+
     this.data[nme] = VL;
     return true;
   }
   get(target: any, prop: string) {
-    const nme = this.pre + prop;
+    const nme = prop;
     if (nme in this.data) {
       return nme;
     } else if (prop == "data") {
       return this.data as any;
+    } else if (prop == "datax") {
+      return this.datax as any;
     }
     return undefined;
   }
@@ -771,164 +876,46 @@ class FontFace {
   }
 }
 
-interface saver {
-  name: string;
-  path: string;
-  map?: string;
-  prefix?: string;
-  minify?: boolean;
-}
+/*
+-------------------------
+
+-------------------------
+*/
+
+const applyPrefix = (sel: string, prefix: string) => {
+  return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
+};
+const reval = (val: RM): media => {
+  if (val instanceof media) return val;
+  else if (val instanceof _vars) return med(val.__());
+  else return med(val);
+};
+const xselect = (cssContent: string) => {
+  const xmatch = (regex: RegExp) =>
+    Array.from(cssContent.matchAll(regex), (match) => match[1]);
+  const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
+  const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
+  return {
+    classes: [...new Set(xmatch(classRegex))],
+    ids: [...new Set(xmatch(idRegex))],
+  };
+};
+const xscc = (sel: string, vals: obj<string>) => {
+  const oit = O.items(vals)
+    .map(([kk, vv]) => `${kk}: ${vv};`)
+    .join(" \n  ");
+  return `${sel} {\n  ${oit}\n}`;
+};
 
 class __css {
-  private static __reval(val: RM): media {
-    if (val instanceof media) {
-      return val;
-    } else if (val instanceof _vars) {
-      return med(val.__());
-    } else {
-      return med(val);
-    }
-  }
-  private static xSelector(cssContent: string) {
-    const extractMatches = (regex: RegExp) =>
-      Array.from(cssContent.matchAll(regex), (match) => match[1]);
-
-    const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
-    const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
-
-    return {
-      classes: [...new Set(extractMatches(classRegex))],
-      ids: [...new Set(extractMatches(idRegex))],
-    };
-  }
-  private static xscc(
-    sel: string,
-    vals: obj<string>,
-    prefix?: string,
-    _cxp: obj<string> = {},
-  ) {
-    const xname = prefix ? prefix + "_" : "";
-    const oit = O.items(vals)
-      .map(([kk, vv]) => `${kk}: ${vv};`)
-      .join(" \n  ");
-    const { classes, ids } = this.xSelector(sel);
-    [classes, ids].flat().forEach((cl) => {
-      _cxp[cl] = xname + cl;
-    });
-    sel = sel.replaceAll(/\.|\#/g, (m) => m + xname);
-    return `${sel} {\n  ${oit}\n}`;
-  }
-  private static processVars(vv: _vars, props: obj<media>): void {
-    if (!props[vv._var]) props[vv._var] = {};
-    O.ass(props[vv._var], vv._val);
-  }
-  private static get(sel: string, vv: any, medias: obj<obj<media>>) {
-    const props: obj<media> = {};
-    if (!is.obj(vv)) return;
-    //
-    if (vv instanceof _vars) {
-      this.processVars(vv, props);
-    } else {
-      O.items(vv).forEach(([k, v]) => {
-        if (k.startsWith(":") || k.startsWith(",")) {
-          const selk = sel + k;
-          if (!medias[selk]) medias[selk] = {};
-          this.get(selk, v, medias);
-        } else if (k.startsWith(" ")) {
-          //
-          const slc = k.match(/^.*?\./gm);
-          const islc = slc?.[0].slice(0, -1);
-          const lk = k
-            .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
-            .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
-
-          const selk = sel + lk;
-          if (!medias[selk]) medias[selk] = {};
-          this.get(selk, v, medias);
-        } else if (is.classOrId(k)) {
-          $$.p = [k, v];
-        } else {
-          if (!props[k]) props[k] = {};
-          if (is.arr(v)) {
-            const avx = v
-              .reduce<string[]>((vl, ky) => {
-                vl.push(val_xxx(k, ky));
-                return vl;
-              }, [])
-              .join(is.arr(v[0]) ? ", " : " ");
-            O.ass(props[k], _props(k, this.__reval(avx)));
-          } else {
-            O.ass(props[k], _props(k, this.__reval(v)));
-          }
-        }
-      });
-    }
-    if (O.length(props)) O.ass(medias[sel], props);
-  }
-  static load(CSS: css, prefix: string = "", _cxp: obj<string> = {}) {
-    const mprops = media.prop;
-    type mtype = keyof typeof mprops;
-    const def = media.default as mtype;
-    const medias: obj<obj<{ [P in mtype]: any }>> = {};
-    const KFm: obj<obj<obj<{ [P in mtype]: any }>>> = {};
-    const props: { [P in mtype]?: obj<string[]> } = {};
-    const kprops: { [P in mtype]?: obj<string[]> } = {};
-    const cs2: obj<obj<obj<string>>> = {};
-    const fin: string[] = [];
-
-    //
-
-    O.keys(mprops).forEach((kh) => {
-      props[kh as mtype] = {};
-      kprops[kh as mtype] = {};
-      cs2[kh as mtype] = {};
-    });
-
-    O.vals(CSS).forEach((az) => {
-      if (az instanceof CB) {
-        O.items(az.data).forEach(([k, v]) => {
-          if (!medias[k]) medias[k] = {};
-          v.forEach((vv) => {
-            this.get(k, vv, medias);
-          });
-        });
-      } else if (az instanceof keyframes) {
-        O.items(az.data).forEach(([k, v]) => {
-          const kfKEY = `@keyframes ${k}`;
-          const kfKWebkit = `@-webkit-keyframes ${k}`;
-          v.forEach((vv) => {
-            const KM: obj<obj<{ [P in mtype]: any }>> = {};
-            O.items(vv).forEach(([x, y]) => {
-              if (!KM[x]) KM[x] = {};
-              this.get(x, y, KM);
-            });
-            O.ass(KFm, { [kfKEY]: KM, [kfKWebkit]: KM });
-          });
-        });
-      } else if (az instanceof ats) {
-        O.items(az.data).forEach(([k, v]) => {
-          v.forEach((vv) => {
-            const ch: string = vv.indexOf("(") > -1 ? vv : `"${vv}"`;
-            fin.push(`${k} ${ch.trim()};`);
-          });
-        });
-      } else if (az instanceof FontFace) {
-        const fkey = `@font-face`;
-        az.data.forEach((k) => {
-          const FF: obj<obj<{ [P in mtype]: any }>> = {};
-          if (!FF[fkey]) FF[fkey] = {};
-          const ffs = O.items(k)
-            .map(([k, v]) => `${str.camel(k)} : ${val_xxx(k, v)}`)
-            .join("; \n\t");
-          fin.push(`${fkey}\t{\n\t${ffs}\n}`);
-        });
-      }
-    });
-
-    O.items(medias).forEach(([k, v]) => {
-      O.items(v).forEach(([kk, vv]) => {
+  css: string = "";
+  cid: obj<string> = {};
+  constructor() {}
+  processCB(az: CB, props: { [P in PMtype]?: obj<string[]> }) {
+    az.datax.forEach((v, k) => {
+      v.forEach((vv, kk) => {
         O.items(vv).forEach(([x, y]) => {
-          const xx = x as mtype;
+          const xx = x as PMtype;
           let pvp = kk == "content" && !y.includes("(") ? `'${y}'` : y;
           const stn = str.ngify({ [str.camel(kk)]: pvp });
           if (!props[xx]![stn]) props[xx]![stn] = [];
@@ -936,25 +923,73 @@ class __css {
         });
       });
     });
-
-    O.items(KFm).forEach(([k, v]) => {
-      O.items(v).forEach(([kk, vv]) => {
+    az.cid.forEach((v, k) => {
+      this.cid[k] = v;
+    });
+  }
+  processKF(az: keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
+    az.datax.forEach((v, k) => {
+      v.forEach((vv, kk) => {
         const vls: obj<obj<string>> = {};
-        O.items(vv).forEach(([x, y]) => {
+        vv.forEach((y, x) => {
           O.items(y).forEach(([xx, yy]) => {
-            const xs = xx as mtype;
+            const xs = xx as PMtype;
             if (!vls[xs]) vls[xs] = {};
             vls[xs][x] = yy;
           });
         });
         O.items(vls).forEach(([x, y]) => {
-          const xs = x as mtype;
+          const xs = x as PMtype;
           if (!kprops[xs]![k]) kprops[xs]![k] = [];
-          kprops[xs]![k].push(this.xscc(kk, y, prefix, _cxp));
+          kprops[xs]![k].push(xscc(kk, y));
         });
       });
     });
+  }
+  processAT(az: ats, fin: string[]) {
+    O.items(az.data).forEach(([k, v]) => {
+      v.forEach((vv: string) => {
+        const ch: string = vv.includes("(") ? vv : `"${vv}"`;
+        fin.push(`${k} ${ch.trim()};`);
+      });
+    });
+  }
+  processFF(az: FontFace, fin: string[]) {
+    const fkey = `@font-face`;
+    az.data.forEach((k) => {
+      const FF: obj<obj<{ [P in PMtype]: any }>> = {};
+      if (!FF[fkey]) FF[fkey] = {};
+      const ffs = O.items(k)
+        .map(([k, v]) => `${str.camel(k)} : ${val_xxx(k, v)}`)
+        .join("; \n\t");
+      fin.push(`${fkey}\t{\n\t${ffs}\n}`);
+    });
+  }
+  load(CSS: css) {
+    const mprops = media.prop;
+    const def = media.default as mtype;
+    const props: { [P in PMtype]?: obj<string[]> } = {};
+    const kprops: { [P in PMtype]?: obj<string[]> } = {};
+    const cs2: obj<obj<obj<string>>> = {};
+    const fin: string[] = [];
+    //
+    O.keys(mprops).forEach((kh) => {
+      props[kh as PMtype] = {};
+      kprops[kh as PMtype] = {};
+      cs2[kh as PMtype] = {};
+    });
 
+    O.vals(CSS).forEach((az) => {
+      if (az instanceof CB) this.processCB(az, props);
+      else if (az instanceof keyframes) this.processKF(az, kprops);
+      else if (az instanceof ats) this.processAT(az, fin);
+      else if (az instanceof FontFace) this.processFF(az, fin);
+    });
+    /*
+    -------------------------
+    
+    -------------------------
+    */
     O.items(props).forEach(([kk, vv]) => {
       if (!cs2[kk]) cs2[kk] = {};
       O.items(vv).forEach(([k, v]) => {
@@ -963,15 +998,12 @@ class __css {
         O.ass(cs2[kk][ct], str.parse(k));
       });
     });
-
     O.items(cs2).forEach(([kk, vv]) => {
       const mitm: string[] = [];
-      O.items(vv).forEach(([k, v]) => mitm.push(this.xscc(k, v, prefix, _cxp)));
-
-      O.items(kprops[kk as mtype]!).forEach(([k, v]) => {
+      O.items(vv).forEach(([k, v]) => mitm.push(xscc(k, v)));
+      O.items(kprops[kk as PMtype]!).forEach(([k, v]) => {
         mitm.push(`${k} {\n${v.join("\n")}\n}`);
       });
-
       if (mitm.length) {
         fin.push(
           `/* ------------------------ ${kk + (kk == def ? " ( default )" : "")} */`,
@@ -979,37 +1011,41 @@ class __css {
         if (kk == def) {
           fin.push(mitm.join("\n"));
         } else {
-          fin.push(`${mprops[kk as mtype]}\t{\n${mitm.join("\n")}\n}`);
+          fin.push(`${mprops[kk as PMtype]}\t{\n${mitm.join("\n")}\n}`);
         }
       }
     });
-
-    return fin.join("\n");
+    this.css = fin.join("\n");
+    return this;
   }
 }
-
+interface saver {
+  path: string;
+  map?: string;
+  minify?: boolean;
+}
 export class css {
-  dom = new CB("").css;
-  id = new CB("#").css;
-  cx = new CB(".").css;
+  dom: CSSinTS;
+  id: CSSinTS;
+  cx: CSSinTS;
   kf = new keyframes().css;
   at = new ats().css;
   font = new FontFace().css;
-  save: ({ name, path }: saver) => void;
-  constructor() {
-    this.save = async ({
-      name,
-      path,
-      map,
-      prefix = "",
-      minify = false,
-    }: saver) => {
-      const _ccx: obj<string> = {};
-      const ce = __css.load(this, prefix ?? name, _ccx);
+  save: ({ path, map }: saver) => void;
+  constructor({ name, prefix }: { name: string; prefix?: string }) {
+    //
+    const pref = prefix ?? name;
+    this.dom = new CB("", pref).css;
+    this.id = new CB("#", pref).css;
+    this.cx = new CB(".", pref).css;
+
+    this.save = async ({ path, map, minify = false }: saver) => {
+      const ce = new __css().load(this);
       //
+      ce.cid;
       const cfl = path + name + ".css";
       _is.file(cfl);
-      let rr = minify ? parseCSS(ce) : ce;
+      let rr = minify ? parseCSS(ce.css) : ce.css;
       await write(cfl, rr);
 
       if ((map ??= path)) {
@@ -1017,7 +1053,7 @@ export class css {
         if (_is.file(mapcss)) {
           const RFS = await file(mapcss).text();
 
-          const cxstr = JSON.stringify(_ccx);
+          const cxstr = JSON.stringify(ce.cid);
           const prep = `export const ${name} = `;
           const rmm = RFS.match(prep);
           const fnal = prep + cxstr + ";";
@@ -1025,7 +1061,6 @@ export class css {
             const rg = new RegExp(`${prep}.*?};`, "gm");
             const RFX = RFS.replace(/\n/gm, "");
             const _rr = RFX.replace(rg, fnal);
-
             await write(mapcss, _rr);
           } else {
             const _rr = RFS + fnal;
@@ -1037,259 +1072,7 @@ export class css {
   }
 }
 
-export const v = {
-  important: " !important",
-  visible: "visible",
-  hidden: "hidden",
-  auto: "auto",
-  none: "none",
-  clip: "clip",
-  scroll: "scroll",
-  initial: "initial",
-  inherit: "inherit",
-
-  // # FLEXS -----------------------
-  flex: "flex",
-  center: "center",
-  flex_start: "flex-start",
-  flex_end: "flex-end",
-  space_evenly: "space-evenly",
-  stretch: "stretch",
-  wrap: "wrap",
-  column: "column",
-  column_reverse: "column-reverse",
-  row: "row",
-  row_reverse: "row-reverse",
-  space_between: "space-between",
-  space_around: "space-around",
-
-  // # 100s -----------------------
-  pr100: "100%",
-  pr50: "50%",
-  i100vh: "100vh",
-  i100vw: "100vw",
-
-  // # Display -----------------------
-  block: "block",
-
-  // # Position -----------------------
-  sticky: "sticky",
-  fixed: "fixed",
-  absolute: "absolute",
-  relative: "relative",
-
-  // # Cursors -----------------------
-  pointer: "pointer",
-  grabbing: "grabbing",
-
-  // # Inputs -----------------------
-  checkbox: "checkbox",
-
-  // # borders ------
-  solid: "solid",
-  inset: "inset",
-
-  // # Fonts -----------------------
-  bold: "bold",
-  currentColor: "currentColor",
-
-  forwards: "forwards",
-  text: "text",
-  // # posi -----------------------
-  norepeat: "no-repeat",
-  nowrap: "nowrap",
-
-  // # Blend -----------------------
-  difference: "difference",
-
-  // # Transform -----------------------
-  preserve3d: "preserve-3d",
-};
-
-/**
- * COLORS
- *
- */
-export const c = {
-  aliceBlue: "#F0F8FF",
-  antiqueWhite: "#FAEBD7",
-  aqua: "#00FFFF",
-  aquamarine: "#7FFFD4",
-  azure: "#F0FFFF",
-  beige: "#F5F5DC",
-  bisque: "#FFE4C4",
-  black: "#000000",
-  blanchedAlmond: "#FFEBCD",
-  blue: "#0000FF",
-  blueViolet: "#8A2BE2",
-  brown: "#A52A2A",
-  burlyWood: "#DEB887",
-  cadetBlue: "#5F9EA0",
-  chartreuse: "#7FFF00",
-  chocolate: "#D2691E",
-  coral: "#FF7F50",
-  cornflowerBlue: "#6495ED",
-  cornsilk: "#FFF8DC",
-  crimson: "#DC143C",
-  cyan: "#00FFFF",
-  darkBlue: "#00008B",
-  darkCyan: "#008B8B",
-  darkGoldenrod: "#B8860B",
-  darkGray: "#A9A9A9",
-  darkGreen: "#006400",
-  darkKhaki: "#BDB76B",
-  darkMagenta: "#8B008B",
-  darkOliveGreen: "#556B2F",
-  darkOrange: "#FF8C00",
-  darkOrchid: "#9932CC",
-  darkRed: "#8B0000",
-  darkSalmon: "#E9967A",
-  darkSeaGreen: "#8FBC8B",
-  darkSlateBlue: "#483D8B",
-  darkSlateGray: "#2F4F4F",
-  darkTurquoise: "#00CED1",
-  darkViolet: "#9400D3",
-  deepPink: "#FF1493",
-  deepSkyBlue: "#00BFFF",
-  dimGray: "#696969",
-  dodgerBlue: "#1E90FF",
-  fireBrick: "#B22222",
-  floralWhite: "#FFFAF0",
-  forestGreen: "#228B22",
-  fuchsia: "#FF00FF",
-  gainsboro: "#DCDCDC",
-  ghostWhite: "#F8F8FF",
-  gold: "#FFD700",
-  goldenrod: "#DAA520",
-  gray: "#808080",
-  green: "#008000",
-  greenYellow: "#ADFF2F",
-  honeyDew: "#F0FFF0",
-  hotPink: "#FF69B4",
-  indianRed: "#CD5C5C",
-  indigo: "#4B0082",
-  ivory: "#FFFFF0",
-  khaki: "#F0E68C",
-  lavender: "#E6E6FA",
-  lavenderBlush: "#FFF0F5",
-  lawnGreen: "#7CFC00",
-  lemonChiffon: "#FFFACD",
-  lightBlue: "#ADD8E6",
-  lightCoral: "#F08080",
-  lightCyan: "#E0FFFF",
-  lightGoldenrodYellow: "#FAFAD2",
-  lightGray: "#D3D3D3",
-  lightGreen: "#90EE90",
-  lightPink: "#FFB6C1",
-  lightSalmon: "#FFA07A",
-  lightSeaGreen: "#20B2AA",
-  lightSkyBlue: "#87CEFA",
-  lightSlateGray: "#778899",
-  lightSteelBlue: "#B0C4DE",
-  lightYellow: "#FFFFE0",
-  lime: "#00FF00",
-  limeGreen: "#32CD32",
-  linen: "#FAF0E6",
-  magenta: "#FF00FF",
-  maroon: "#800000",
-  mediumAquamarine: "#66CDAA",
-  mediumBlue: "#0000CD",
-  mediumOrchid: "#BA55D3",
-  mediumPurple: "#9370DB",
-  mediumSeaGreen: "#3CB371",
-  mediumSlateBlue: "#7B68EE",
-  mediumSpringGreen: "#00FA9A",
-  mediumTurquoise: "#48D1CC",
-  mediumVioletRed: "#C71585",
-  midnightBlue: "#191970",
-  mintCream: "#F5FFFA",
-  mistyRose: "#FFE4E1",
-  moccasin: "#FFE4B5",
-  navajoWhite: "#FFDEAD",
-  navy: "#000080",
-  oldLace: "#FDF5E6",
-  olive: "#808000",
-  oliveDrab: "#6B8E23",
-  orange: "#FFA500",
-  orangeRed: "#FF4500",
-  orchid: "#DA70D6",
-  paleGoldenrod: "#EEE8AA",
-  paleGreen: "#98FB98",
-  paleTurquoise: "#AFEEEE",
-  paleVioletRed: "#DB7093",
-  papayaWhip: "#FFEFD5",
-  peachPuff: "#FFDAB9",
-  peru: "#CD853F",
-  pink: "#FFC0CB",
-  plum: "#DDA0DD",
-  powderBlue: "#B0E0E6",
-  purple: "#800080",
-  rebeccaPurple: "#663399",
-  red: "#FF0000",
-  rosyBrown: "#BC8F8F",
-  royalBlue: "#4169E1",
-  saddleBrown: "#8B4513",
-  salmon: "#FA8072",
-  sandyBrown: "#F4A460",
-  seaGreen: "#2E8B57",
-  seaShell: "#FFF5EE",
-  sienna: "#A0522D",
-  silver: "#C0C0C0",
-  skyBlue: "#87CEEB",
-  slateBlue: "#6A5ACD",
-  slateGray: "#708090",
-  snow: "#FFFAFA",
-  springGreen: "#00FF7F",
-  steelBlue: "#4682B4",
-  tan: "#D2B48C",
-  teal: "#008080",
-  thistle: "#D8BFD8",
-  tomato: "#FF6347",
-  turquoise: "#40E0D0",
-  violet: "#EE82EE",
-  wheat: "#F5DEB3",
-  white: "#FFFFFF",
-  whiteSmoke: "#F5F5F5",
-  yellow: "#FFFF00",
-  yellowGreen: "#9ACD32",
-  transparent: "transparent",
-  /**
-   * currentColor
-   */
-  color: "currentColor",
-  rbga: (r = 0, g = 0, b = 0, a: number = 1) => {
-    const _rgb = [r, g, b, a];
-    return `rgba(${_rgb.join(",")})`;
-  },
-  rand: () => {
-    const rit = O.items(c);
-    const rnd = $$.rand(0, rit.length - 1);
-    const xmp = ["transparent", "rgba", "rand", "color", "hex2rbga"];
-    let [kk, vv] = rit[rnd];
-
-    while (xmp.includes(kk)) {
-      const rnd = $$.rand(0, rit.length - 1);
-      [kk, vv] = rit[rnd];
-    }
-    return vv;
-  },
-  hex2rbga: (hexCode: string, opacity: number = 1.0) => {
-    let hex = hexCode.replace("#", "");
-    if (hex.length === 3) {
-      hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
-    }
-
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-
-    if (opacity > 1 && opacity <= 100) {
-      opacity = opacity / 100;
-    }
-
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  },
-};
+export { v, c };
 
 export const x = {
   DGRAY: {
@@ -1340,7 +1123,6 @@ export const x = {
       background: bg,
     }),
   ],
-
   BACKDROP: (blur = 0.8) => {
     return {
       backdropFilter: f.blur(blur),
