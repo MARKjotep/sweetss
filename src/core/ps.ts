@@ -1,15 +1,14 @@
 import { CSSinR } from "..";
-import { O, is, obj, V } from "./__";
+import { isObj, obj, oItems, V } from "./@";
+
 import { _vars, RM } from "./mvar";
-
-
 
 function _pseu(sel: string) {
   return function (...itm: (CSSinR | _vars | obj<RM>)[]) {
     const vals = itm.reduce<obj<any>>((val, i) => {
       if (i instanceof _vars) {
         val[i._var] = i._val;
-      } else if (is.obj(i)) {
+      } else if (isObj(i)) {
         Object.assign(val, i);
       }
       return val;
@@ -25,7 +24,7 @@ function _pseu(sel: string) {
 
 export class ps {
   static attr(d: obj<string>) {
-    const [k, v] = O.items(d)[0];
+    const [k, v] = oItems(d)[0];
     return _pseu(`[${k}="${v}"]`);
   }
   //# Pseudo Elements -----------------------

@@ -45,17 +45,17 @@ declare const v: {
     preserve3d: string;
 };
 
-type V = string | number | boolean;
-interface obj$1<T> {
+interface obj<T> {
     [Key: string]: T;
 }
+type V = string | number | boolean;
 
 declare const x: {
     DGRAY: {
         background: string;
     };
     MSIZES: {
-        [x: string]: obj$1<any>;
+        [x: string]: obj<any>;
     };
     BORDER1: {
         border: string;
@@ -64,7 +64,7 @@ declare const x: {
         transition: string;
     };
     SCROLL2: (thumb: any, bg?: any) => {
-        [x: string]: obj$1<any>;
+        [x: string]: obj<any>;
     }[];
     BACKDROP: (blur?: number) => {
         backdropFilter: string;
@@ -250,7 +250,7 @@ declare class media {
         print: string;
     };
     static default: string;
-    constructor(defValue: RM, g?: obj$1<any>);
+    constructor(defValue: RM, g?: obj<any>);
     static setDefault(def: keyof typeof media.prop): void;
 }
 declare class _vars {
@@ -258,300 +258,300 @@ declare class _vars {
     k: string;
     _cvar: string;
     _val: media;
-    constructor(vr?: obj$1<RM>);
+    constructor(vr?: obj<RM>);
     __(fallback?: V): string;
     new(val: RM): _vars;
     not(val: RM): _vars;
 }
 type RM = V | media | _vars | RM[];
 declare const med: (defValue: RM, g?: mtype) => media;
-declare const _var: (vr: obj$1<RM>) => _vars;
+declare const _var: (vr: obj<RM>) => _vars;
 
 declare class ps {
-    static attr(d: obj$1<string>): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static attr(d: obj<string>): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static after(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static after(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static before(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static before(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static backdrop(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static backdrop(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static cue(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static cue(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static cueRegion(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static cueRegion(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static firstLetter(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static firstLetter(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static firstLine(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static firstLine(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static marker(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static marker(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static part(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static part(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static placeholder(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static placeholder(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static selection(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static selection(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static slotted(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static slotted(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static spellingError(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static spellingError(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static targetText(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static targetText(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static viewTransition(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static viewTransition(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static viewTransitionGroup(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static viewTransitionGroup(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static viewTransitionImagePair(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static viewTransitionImagePair(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static viewTransitionNew(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static viewTransitionNew(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static viewTransitionOld(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static viewTransitionOld(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static scrollbar(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static scrollbar(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static scrollbarThumb(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static scrollbarThumb(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static scrollbarTrack(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static scrollbarTrack(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static scrollbarCorner(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static scrollbarCorner(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static active(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static active(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static anyLink(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static anyLink(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static autofill(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static autofill(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static blank(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static blank(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static checked(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static checked(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static current(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static current(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static default(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static default(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static defined(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static defined(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static disabled(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static disabled(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static empty(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static empty(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static enabled(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static enabled(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static first(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static first(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static firstChild(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static firstChild(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static firstOfType(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static firstOfType(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static fullscreen(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static fullscreen(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static future(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static future(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static focus(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static focus(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static focusVisible(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static focusVisible(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static focusWithin(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static focusWithin(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static host(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static host(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static hover(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static hover(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static indeterminate(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static indeterminate(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static inRange(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static inRange(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static invalid(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static invalid(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static lastChild(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static lastChild(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static lastOfType(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static lastOfType(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static left(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static left(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static link(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static link(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static localLink(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static localLink(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static modal(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static modal(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static onlyChild(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static onlyChild(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static onlyOfType(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static onlyOfType(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static optional(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static optional(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static outOfRange(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static outOfRange(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static past(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static past(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static pictureInPicture(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static pictureInPicture(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static placeholderShown(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static placeholderShown(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static paused(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static paused(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static playing(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static playing(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static readOnly(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static readOnly(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static readWrite(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static readWrite(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static required(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static required(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static right(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static right(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static root(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static root(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static scope(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static scope(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static target(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static target(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static targetWithin(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static targetWithin(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static userInvalid(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static userInvalid(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static valid(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static valid(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static visited(xx?: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static visited(xx?: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static dir(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static dir(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static has(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static has(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static host_(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static host_(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static hostContext(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static hostContext(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static is(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static is(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static lang(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static lang(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static not(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static not(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthChild(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthChild(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthCol(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthCol(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthLastChild(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthLastChild(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthLastCol(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthLastCol(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthLastOfType(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthLastOfType(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static nthOfType(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static nthOfType(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static state(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static state(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static where(xx: V): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static where(xx: V): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static and(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static and(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static child(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static child(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static desc(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static desc(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static next(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static next(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static general(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static general(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
-    static with(str: string): (...itm: (CSSinR | _vars | obj$1<RM>)[]) => {
-        [x: string]: obj$1<any>;
+    static with(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+        [x: string]: obj<any>;
     };
 }
 
@@ -610,10 +610,6 @@ declare class f {
     static translateZ(...sfs: RM[]): string;
     static url(...sfs: RM[]): string;
     static var(st: string, opt?: RM): string;
-}
-
-interface obj<T> {
-  [Key: string]: T;
 }
 
 interface xtraCSS {

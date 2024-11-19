@@ -1,10 +1,4 @@
-const rand = (min = 6, max?: number) => {
-  if (max) {
-    return Math.round(Math.random() * (max - min) + min);
-  }
-  const rndInt = Math.floor(Math.random() * min) + 1;
-  return rndInt - 1;
-};
+import { rand } from "./@";
 
 export const c = {
   aliceBlue: "#F0F8FF",

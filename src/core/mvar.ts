@@ -1,4 +1,15 @@
-import { O, str, is, V, obj } from "./__";
+import {
+  isArr,
+  isNum,
+  isNumber,
+  isStr,
+  oAss,
+  obj,
+  oItems,
+  oLen,
+  reCamel,
+  V,
+} from "./@";
 
 export interface mtype {
   xs?: RM;
@@ -34,7 +45,7 @@ export function val_xxx(
 ): string {
   const { rem, deg } = options;
   if (val instanceof _vars) return val.__();
-  if (is.arr(val)) {
+  if (isArr(val)) {
     return val.map((item) => val_xxx(sel, item)).join(" ");
   }
   if (typeof val === "number") {
@@ -55,9 +66,9 @@ function tup_rst(
   qt: boolean = false,
 ) {
   const fnal: string[] = sfs.map((ff) => {
-    if (is.str(ff)) return qt ? `'${ff}'` : ff;
+    if (isStr(ff)) return qt ? `'${ff}'` : ff;
     if (ff instanceof _vars) return ff.__();
-    if (is.number(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
+    if (isNumber(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
     return "";
   });
 
@@ -86,14 +97,14 @@ export class media {
       g[defM] = defValue;
     }
 
-    O.items(g).forEach(([k, v]) => {
-      if (is.arr(v)) {
+    oItems(g).forEach(([k, v]) => {
+      if (isArr(v)) {
         DM[k] = tup_rst(v, false, false);
       } else {
         DM[k] = v;
       }
     });
-    O.ass(this, DM);
+    oAss(this, DM);
   }
   static setDefault(def: keyof typeof media.prop) {
     media.default = def;
@@ -106,10 +117,10 @@ export class _vars {
   _cvar = "";
   _val: media = {};
   constructor(vr: obj<RM> = {}) {
-    if (O.length(vr)) {
-      const [k, v] = O.items(vr)[0];
+    if (oLen(vr)) {
+      const [k, v] = oItems(vr)[0];
       this.k = k;
-      this._var = "--" + str.camel(k);
+      this._var = "--" + reCamel(k);
       this._val = v instanceof media ? v : med(v);
     }
   }

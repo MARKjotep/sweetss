@@ -3,8 +3,8 @@ import { x } from "./core/x";
 import { c } from "./core/colors";
 import { ps } from "./core/ps";
 import { f } from "./core/f";
-import { obj } from "../src/core/__";
 import { _vars, RM, med, _var } from "./core/mvar";
+import { obj } from "./core/@";
 interface xtraCSS {
     src?: string;
     webkitBackdropFilter?: string;

@@ -1,4 +1,4 @@
-import { is, str } from "./__";
+import { isNumber, isStr, reCamel } from "./@";
 import { _vars, RM } from "./mvar";
 
 function tup_rst(
@@ -9,9 +9,9 @@ function tup_rst(
   qt: boolean = false,
 ) {
   const fnal: string[] = sfs.map((ff) => {
-    if (is.str(ff)) return qt ? `'${ff}'` : ff;
+    if (isStr(ff)) return qt ? `'${ff}'` : ff;
     if (ff instanceof _vars) return ff.__();
-    if (is.number(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
+    if (isNumber(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
     return "";
   });
 
@@ -182,7 +182,7 @@ export class f {
     return `url(${tup_rst(sfs)}) `;
   }
   static var(st: string, opt: RM = "") {
-    st = "--" + str.camel(st);
+    st = "--" + reCamel(st);
     let _opt = opt ? ", " + tup_rst([opt], false, false) : "";
     return `var(${tup_rst([st], false)}${_opt})`;
   }

@@ -1,5 +1,5 @@
 import { CSSinR } from "..";
-import { obj, V } from "./__";
+import { obj, V } from "./@";
 import { _vars, RM } from "./mvar";
 export declare class ps {
     static attr(d: obj<string>): (...itm: (CSSinR | _vars | obj<RM>)[]) => {

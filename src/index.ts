@@ -4,7 +4,6 @@ import { c } from "./core/colors";
 import { ps } from "./core/ps";
 import { f } from "./core/f";
 import { readFileSync, writeFileSync } from "node:fs";
-import { is, str, O, V, obj } from "../src/core/__";
 import {
   media,
   _vars,
@@ -15,10 +14,23 @@ import {
   med,
   _var,
 } from "./core/mvar";
+import {
+  isArr,
+  isClassOrId,
+  isObj,
+  ngify,
+  oAss,
+  obj,
+  oItems,
+  oKeys,
+  oVals,
+  reCamel,
+  sparse,
+} from "./core/@";
 
 class Mapper<K, V> extends Map<K, V> {
   obj(obj?: object | null) {
-    obj && O.items(obj).forEach(([k, v]) => this.set(k as K, v));
+    obj && oItems(obj).forEach(([k, v]) => this.set(k as K, v));
   }
   map(map: Map<K, V>) {
     map.forEach((v, k) => {
@@ -27,7 +39,7 @@ class Mapper<K, V> extends Map<K, V> {
   }
   ass<T>(key: K, obj: T) {
     if (!this.has(key)) this.set(key, {} as any);
-    O.ass(this.get(key)!, obj);
+    oAss(this.get(key)!, obj);
   }
 }
 type CMapper = Mapper<string, Mapper<string, media>>;
@@ -42,7 +54,7 @@ interface xtraCSS {
 
 export class $$ {
   static set p(a: any) {
-    if (is.arr(a)) {
+    if (isArr(a)) {
       console.log(...a);
     } else {
       console.log(a);
@@ -75,7 +87,7 @@ const _is = {
 //
 
 function _props(sel: string, prp: media) {
-  O.items(prp).forEach(([mk, mv]) => {
+  oItems(prp).forEach(([mk, mv]) => {
     prp[mk] = val_xxx(sel, mv);
   });
   return prp;
@@ -102,12 +114,12 @@ function CIK(
   cid: Mapper<string, string>,
   fix: string,
 ) {
-  if (!is.obj(vv)) return;
+  if (!isObj(vv)) return;
   const props: Mapper<string, media> = new Mapper();
   if (vv instanceof _vars) {
     props.ass(vv._var, vv._val);
   } else {
-    O.items(vv).forEach(([k, v]) => {
+    oItems(vv).forEach(([k, v]) => {
       if (v)
         if (k.startsWith(":") || k.startsWith(",")) {
           CIK(sel + k, v, medias, cid, fix);
@@ -118,7 +130,7 @@ function CIK(
             .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
             .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
           CIK(sel + lk, v, medias, cid, fix);
-        } else if (is.classOrId(k)) {
+        } else if (isClassOrId(k)) {
           $$.p = [k, v];
         } else {
           props.set(k, _props(k, reval(v)));
@@ -152,7 +164,7 @@ class CB {
   }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
-    const VL = is.arr(val) ? val : [val];
+    const VL = isArr(val) ? val : [val];
     VL.forEach((vv) => {
       CIK(nme, vv, this.datax, this.cid, this.fix);
     });
@@ -186,12 +198,12 @@ class keyframes {
   }
   set(target: any, prop: string, val: obj<any>) {
     const nme = prop;
-    const VL = is.arr(val) ? val : [val];
+    const VL = isArr(val) ? val : [val];
     const kfKEY = `@keyframes ${nme}`;
     const kfKWebkit = `@-webkit-keyframes ${nme}`;
     const dx: Mapper<string, CMapper> = new Mapper();
     VL.forEach((vv) => {
-      O.items(vv).forEach(([x, y]) => {
+      oItems(vv).forEach(([x, y]) => {
         CIK(x, y as CSSinR, dx, this.cid, "");
       });
     });
@@ -292,7 +304,7 @@ const xselect = (cssContent: string) => {
   };
 };
 const xscc = (sel: string, vals: obj<string>) => {
-  const oit = O.items(vals)
+  const oit = oItems(vals)
     .map(([kk, vv]) => `${kk}: ${vv};`)
     .join(" \n  ");
   return `${sel} {\n  ${oit}\n}`;
@@ -305,10 +317,10 @@ class __css {
   processCB(az: CB, props: { [P in PMtype]?: obj<string[]> }) {
     az.datax.forEach((v, k) => {
       v.forEach((vv, kk) => {
-        O.items(vv).forEach(([x, y]) => {
+        oItems(vv).forEach(([x, y]) => {
           const xx = x as PMtype;
           let pvp = kk == "content" && !y.includes("(") ? `'${y}'` : y;
-          const stn = str.ngify({ [str.camel(kk)]: pvp });
+          const stn = ngify({ [reCamel(kk)]: pvp });
           if (!props[xx]![stn]) props[xx]![stn] = [];
           props[xx]![stn].push(...k.split(",").map((s) => s.trim()));
         });
@@ -323,13 +335,13 @@ class __css {
       v.forEach((vv, kk) => {
         const vls: obj<obj<string>> = {};
         vv.forEach((y, x) => {
-          O.items(y).forEach(([xx, yy]) => {
+          oItems(y).forEach(([xx, yy]) => {
             const xs = xx as PMtype;
             if (!vls[xs]) vls[xs] = {};
             vls[xs][x] = yy;
           });
         });
-        O.items(vls).forEach(([x, y]) => {
+        oItems(vls).forEach(([x, y]) => {
           const xs = x as PMtype;
           if (!kprops[xs]![k]) kprops[xs]![k] = [];
           kprops[xs]![k].push(xscc(kk, y));
@@ -338,7 +350,7 @@ class __css {
     });
   }
   processAT(az: ats, fin: string[]) {
-    O.items(az.data).forEach(([k, v]) => {
+    oItems(az.data).forEach(([k, v]) => {
       v.forEach((vv: string) => {
         const ch: string = vv.includes("(") ? vv : `"${vv}"`;
         fin.push(`${k} ${ch.trim()};`);
@@ -350,8 +362,8 @@ class __css {
     az.data.forEach((k) => {
       const FF: obj<obj<{ [P in PMtype]: any }>> = {};
       if (!FF[fkey]) FF[fkey] = {};
-      const ffs = O.items(k)
-        .map(([k, v]) => `${str.camel(k)} : ${val_xxx(k, v)}`)
+      const ffs = oItems(k)
+        .map(([k, v]) => `${reCamel(k)} : ${val_xxx(k, v)}`)
         .join("; \n\t");
       fin.push(`${fkey}\t{\n\t${ffs}\n}`);
     });
@@ -364,13 +376,13 @@ class __css {
     const cs2: obj<obj<obj<string>>> = {};
     const fin: string[] = [];
     //
-    O.keys(mprops).forEach((kh) => {
+    oKeys(mprops).forEach((kh) => {
       props[kh as PMtype] = {};
       kprops[kh as PMtype] = {};
       cs2[kh as PMtype] = {};
     });
 
-    O.vals(CSS).forEach((az) => {
+    oVals(CSS).forEach((az) => {
       if (az instanceof CB) this.processCB(az, props);
       else if (az instanceof keyframes) this.processKF(az, kprops);
       else if (az instanceof ats) this.processAT(az, fin);
@@ -381,18 +393,18 @@ class __css {
     
     -------------------------
     */
-    O.items(props).forEach(([kk, vv]) => {
+    oItems(props).forEach(([kk, vv]) => {
       if (!cs2[kk]) cs2[kk] = {};
-      O.items(vv).forEach(([k, v]) => {
+      oItems(vv).forEach(([k, v]) => {
         const ct = v.join(", ");
         if (!cs2[kk][ct]) cs2[kk][ct] = {};
-        O.ass(cs2[kk][ct], str.parse(k));
+        oAss(cs2[kk][ct], sparse(k));
       });
     });
-    O.items(cs2).forEach(([kk, vv]) => {
+    oItems(cs2).forEach(([kk, vv]) => {
       const mitm: string[] = [];
-      O.items(vv).forEach(([k, v]) => mitm.push(xscc(k, v)));
-      O.items(kprops[kk as PMtype]!).forEach(([k, v]) => {
+      oItems(vv).forEach(([k, v]) => mitm.push(xscc(k, v)));
+      oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
         mitm.push(`${k} {\n${v.join("\n")}\n}`);
       });
       if (mitm.length) {

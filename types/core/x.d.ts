@@ -3,7 +3,7 @@ export declare const x: {
         background: string;
     };
     MSIZES: {
-        [x: string]: import("./__").obj<any>;
+        [x: string]: import("./@").obj<any>;
     };
     BORDER1: {
         border: string;
@@ -12,7 +12,7 @@ export declare const x: {
         transition: string;
     };
     SCROLL2: (thumb: any, bg?: any) => {
-        [x: string]: import("./__").obj<any>;
+        [x: string]: import("./@").obj<any>;
     }[];
     BACKDROP: (blur?: number) => {
         backdropFilter: string;
