@@ -3,6 +3,7 @@ import { is, str, O } from "../_misc/__";
 import { file, write } from "bun";
 import { v } from "./v";
 import { c } from "./colors";
+export { v, c };
 type V = string | number | boolean;
 type RM = V | media | _vars | RM[];
 export interface obj<T> {
@@ -1019,11 +1020,7 @@ class __css {
     return this;
   }
 }
-interface saver {
-  path: string;
-  map?: string;
-  minify?: boolean;
-}
+
 export class css {
   dom: CSSinTS;
   id: CSSinTS;
@@ -1031,7 +1028,15 @@ export class css {
   kf = new keyframes().css;
   at = new ats().css;
   font = new FontFace().css;
-  save: ({ path, map }: saver) => void;
+  save: ({
+    path,
+    map,
+    minify,
+  }: {
+    path: string;
+    map?: string;
+    minify?: boolean;
+  }) => void;
   constructor({ name, prefix }: { name: string; prefix?: string }) {
     //
     const pref = prefix ?? name;
@@ -1039,7 +1044,15 @@ export class css {
     this.id = new CB("#", pref).css;
     this.cx = new CB(".", pref).css;
 
-    this.save = async ({ path, map, minify = false }: saver) => {
+    this.save = async ({
+      path,
+      map,
+      minify,
+    }: {
+      path: string;
+      map?: string;
+      minify?: boolean;
+    }) => {
       const ce = new __css().load(this);
       //
       ce.cid;
@@ -1072,8 +1085,11 @@ export class css {
   }
 }
 
-export { v, c };
+/*
+-------------------------
 
+-------------------------
+*/
 export const x = {
   DGRAY: {
     background: "#2f2f2f",
