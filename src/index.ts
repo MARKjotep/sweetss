@@ -3,9 +3,8 @@ import { x } from "./core/x";
 import { c } from "./core/colors";
 import { ps } from "./core/ps";
 import { f } from "./core/f";
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { is, str, O, V, obj } from "../src/core/__";
-import { file, write } from "bun";
 import {
   media,
   _vars,
@@ -452,13 +451,13 @@ export class css {
       const cfl = path + pe + name + ".css";
       _is.file(cfl);
       let rr = minify ? parseCSS(ce.css) : ce.css;
-      await write(cfl, rr);
+      writeFileSync(cfl, rr);
 
       if ((map ??= path)) {
         const mp = map.endsWith("/") ? "" : "/";
         const mapcss = map + mp + "css.js";
         if (_is.file(mapcss)) {
-          const RFS = await file(mapcss).text();
+          const RFS = readFileSync(mapcss).toString();
 
           const cxstr = JSON.stringify(ce.cid);
           const prep = `export const ${name} = `;
@@ -468,10 +467,10 @@ export class css {
             const rg = new RegExp(`${prep}.*?};`, "gm");
             const RFX = RFS.replace(/\n/gm, "");
             const _rr = RFX.replace(rg, fnal);
-            await write(mapcss, _rr);
+            writeFileSync(mapcss, _rr);
           } else {
             const _rr = RFS + fnal;
-            await write(mapcss, _rr);
+            writeFileSync(mapcss, _rr);
           }
         }
       }

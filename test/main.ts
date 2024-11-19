@@ -6,9 +6,11 @@ const { dom, cx, id, kf, font, save } = new css({
   prefix: "",
 });
 
-cx.hello = {
-  color: "red",
-};
+cx.hello = [
+  {
+    color: "red",
+  },
+];
 
 save({
   path: "./test",
