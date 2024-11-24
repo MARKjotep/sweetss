@@ -15,7 +15,8 @@ function _pseu(sel: string) {
     }, {});
 
     if (sel.startsWith("::before") || sel.startsWith("::after")) {
-      vals.content ??= ""; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
+      const vc = vals.content;
+      vals.content = vc ? `"${vc}"` : "''"; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
     }
     return { [sel]: vals };
   };

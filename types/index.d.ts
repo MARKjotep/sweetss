@@ -4,7 +4,7 @@ import { c } from "./core/colors";
 import { ps } from "./core/ps";
 import { f } from "./core/f";
 import { _vars, RM, med, _var } from "./core/mvar";
-import { obj } from "./core/@";
+import { $$, obj } from "./core/@";
 interface xtraCSS {
     src?: string;
     webkitBackdropFilter?: string;
@@ -42,5 +42,5 @@ export declare class css {
     });
 }
 export type CSS = obj<CSSinR | CSSinR[]>;
-export { med, _var, ps, f };
+export { $$, med, _var, ps, f };
 export { v, c, x };

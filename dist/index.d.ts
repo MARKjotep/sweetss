@@ -45,6 +45,9 @@ declare const v: {
     preserve3d: string;
 };
 
+declare class $$ {
+    static set p(a: any);
+}
 interface obj<T> {
     [Key: string]: T;
 }
@@ -650,4 +653,4 @@ declare class css {
 }
 type CSS = obj<CSSinR | CSSinR[]>;
 
-export { type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };
+export { $$, type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };

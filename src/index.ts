@@ -15,6 +15,7 @@ import {
   _var,
 } from "./core/mvar";
 import {
+  $$,
   isArr,
   isClassOrId,
   isFile,
@@ -474,5 +475,5 @@ export class css {
   }
 }
 export type CSS = obj<CSSinR | CSSinR[]>;
-export { med, _var, ps, f };
+export { $$, med, _var, ps, f };
 export { v, c, x };
