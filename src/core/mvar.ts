@@ -1,6 +1,5 @@
 import {
   isArr,
-  isNum,
   isNumber,
   isStr,
   oAss,

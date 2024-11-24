@@ -1,7 +1,5 @@
-import { isNumber, isStr, reCamel } from "./@";
+import { reCamel } from "./@";
 import { _vars, RM, tup_rst } from "./mvar";
-
-
 
 export class f {
   static attr(...sfs: RM[]) {

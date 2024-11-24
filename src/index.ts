@@ -18,7 +18,6 @@ import {
   $$,
   isArr,
   isClassOrId,
-  isFile,
   isObj,
   Mapper,
   ngify,
@@ -30,6 +29,7 @@ import {
   reCamel,
   sparse,
 } from "./core/@";
+import { isFile } from "./core/@n";
 
 type CMapper = Mapper<string, Mapper<string, media>>;
 
