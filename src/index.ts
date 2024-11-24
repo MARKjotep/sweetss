@@ -17,7 +17,9 @@ import {
 import {
   isArr,
   isClassOrId,
+  isFile,
   isObj,
+  Mapper,
   ngify,
   oAss,
   obj,
@@ -28,20 +30,6 @@ import {
   sparse,
 } from "./core/@";
 
-class Mapper<K, V> extends Map<K, V> {
-  obj(obj?: object | null) {
-    obj && oItems(obj).forEach(([k, v]) => this.set(k as K, v));
-  }
-  map(map: Map<K, V>) {
-    map.forEach((v, k) => {
-      this.set(k, v);
-    });
-  }
-  ass<T>(key: K, obj: T) {
-    if (!this.has(key)) this.set(key, {} as any);
-    oAss(this.get(key)!, obj);
-  }
-}
 type CMapper = Mapper<string, Mapper<string, media>>;
 
 interface xtraCSS {
@@ -52,39 +40,9 @@ interface xtraCSS {
   webkitTextFillColor?: string;
 }
 
-export class $$ {
-  static set p(a: any) {
-    if (isArr(a)) {
-      console.log(...a);
-    } else {
-      console.log(a);
-    }
-  }
-  static rand(min = 6, max?: number) {
-    if (max) {
-      return Math.round(Math.random() * (max - min) + min);
-    }
-    const rndInt = Math.floor(Math.random() * min) + 1;
-    return rndInt - 1;
-  }
-}
-
 export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
-
-const _is = {
-  file: (path: string, data?: string) => {
-    try {
-      writeFileSync(path, data ?? "", { flag: "wx" });
-    } catch (error) {
-      //
-    }
-    return true;
-  },
-};
-
-//
 
 function _props(sel: string, prp: media) {
   oItems(prp).forEach(([mk, mv]) => {
@@ -116,25 +74,28 @@ function CIK(
 ) {
   if (!isObj(vv)) return;
   const props: Mapper<string, media> = new Mapper();
+
+  const processProps = (k: string, v: any) => {
+    if (k.startsWith(":") || k.startsWith(",")) {
+      CIK(sel + k, v, medias, cid, fix);
+    } else if (k.startsWith(" ")) {
+      const slc = k.match(/^.*?\./gm);
+      const islc = slc?.[0].slice(0, -1);
+      const lk = k
+        .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
+        .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+      CIK(sel + lk, v, medias, cid, fix);
+    } else if (isClassOrId(k)) {
+      console.log(k, v);
+    } else {
+      props.set(k, _props(k, reval(v)));
+    }
+  };
+
   if (vv instanceof _vars) {
     props.ass(vv._var, _props(vv._var, reval(vv._val)));
   } else {
-    oItems(vv).forEach(([k, v]) => {
-      if (k.startsWith(":") || k.startsWith(",")) {
-        CIK(sel + k, v, medias, cid, fix);
-      } else if (k.startsWith(" ")) {
-        const slc = k.match(/^.*?\./gm);
-        const islc = slc?.[0].slice(0, -1);
-        const lk = k
-          .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
-          .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
-        CIK(sel + lk, v, medias, cid, fix);
-      } else if (isClassOrId(k)) {
-        $$.p = [k, v];
-      } else {
-        props.set(k, _props(k, reval(v)));
-      }
-    });
+    oItems(vv).forEach(([k, v]) => processProps(k, v));
   }
 
   const { classes, ids } = xselect(sel);
@@ -149,7 +110,6 @@ function CIK(
     medias.set(sel, props);
   }
 }
-
 class CB {
   fix: string;
   data: obj<any[]> = {};
@@ -289,8 +249,8 @@ const applyPrefix = (sel: string, prefix: string) => {
 };
 const reval = (val: RM): media => {
   if (val instanceof media) return val;
-  else if (val instanceof _vars) return med(val.__());
-  else return med(val);
+  if (val instanceof _vars) return med(val.__());
+  return med(val);
 };
 const xselect = (cssContent: string) => {
   const xmatch = (regex: RegExp) =>
@@ -308,27 +268,49 @@ const xscc = (sel: string, vals: obj<string>) => {
     .join(" \n  ");
   return `${sel} {\n  ${oit}\n}`;
 };
+const formatContentValue = (key: string, value: string): string => {
+  return key === "content" && !value.includes("(") ? `'${value}'` : value;
+};
+const ensurePropsInitialized = (
+  props: { [P in PMtype]?: obj<string[]> },
+  type: PMtype,
+  key: string,
+) => {
+  if (!props[type]![key]) props[type]![key] = [];
+};
+const addPropertyValues = (
+  props: { [P in PMtype]?: obj<string[]> },
+  type: PMtype,
+  key: string,
+  values: string,
+) => {
+  props[type]![key].push(...values.split(",").map((s) => s.trim()));
+};
 
 class __css {
   css: string = "";
   cid: obj<string> = {};
   constructor() {}
+  private updateCid(cid: Map<string, string>) {
+    cid.forEach((v, k) => {
+      this.cid[k] = v;
+    });
+  }
   processCB(az: CB, props: { [P in PMtype]?: obj<string[]> }) {
     az.datax.forEach((v, k) => {
       v.forEach((vv, kk) => {
         oItems(vv).forEach(([x, y]) => {
           const xx = x as PMtype;
-          let pvp = kk == "content" && !y.includes("(") ? `'${y}'` : y;
+          let pvp = formatContentValue(xx, y);
           const stn = ngify({ [reCamel(kk)]: pvp });
-          if (!props[xx]![stn]) props[xx]![stn] = [];
-          props[xx]![stn].push(...k.split(",").map((s) => s.trim()));
+          ensurePropsInitialized(props, xx, stn);
+          addPropertyValues(props, xx, stn, k);
         });
       });
     });
-    az.cid.forEach((v, k) => {
-      this.cid[k] = v;
-    });
+    this.updateCid(az.cid);
   }
+
   processKF(az: keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
     az.datax.forEach((v, k) => {
       v.forEach((vv, kk) => {
@@ -342,29 +324,30 @@ class __css {
         });
         oItems(vls).forEach(([x, y]) => {
           const xs = x as PMtype;
-          if (!kprops[xs]![k]) kprops[xs]![k] = [];
+          ensurePropsInitialized(kprops, xs, k);
           kprops[xs]![k].push(xscc(kk, y));
         });
       });
     });
   }
   processAT(az: ats, fin: string[]) {
-    oItems(az.data).forEach(([k, v]) => {
-      v.forEach((vv: string) => {
-        const ch: string = vv.includes("(") ? vv : `"${vv}"`;
-        fin.push(`${k} ${ch.trim()};`);
-      });
-    });
+    for (const [key, values] of oItems(az.data)) {
+      for (const value of values) {
+        const formattedValue = value.includes("(") ? value : `"${value}"`;
+        fin.push(`${key} ${formattedValue.trim()};`);
+      }
+    }
   }
   processFF(az: FontFace, fin: string[]) {
-    const fkey = `@font-face`;
-    az.data.forEach((k) => {
-      const FF: obj<obj<{ [P in PMtype]: any }>> = {};
-      if (!FF[fkey]) FF[fkey] = {};
-      const ffs = oItems(k)
-        .map(([k, v]) => `${reCamel(k)} : ${val_xxx(k, v)}`)
-        .join("; \n\t");
-      fin.push(`${fkey}\t{\n\t${ffs}\n}`);
+    const FONT_FACE = "@font-face";
+    az.data.forEach((fontData) => {
+      const fontProperties = oItems(fontData)
+        .map(
+          ([property, value]) =>
+            `${reCamel(property)}: ${val_xxx(property, value)}`,
+        )
+        .join(";\n\t");
+      fin.push(`${FONT_FACE} {\n\t${fontProperties}\n}`);
     });
   }
   load(CSS: css) {
@@ -408,7 +391,7 @@ class __css {
       });
       if (mitm.length) {
         fin.push(
-          `/* ------------------------ ${kk + (kk == def ? " ( default )" : "")} */`,
+          `/* -------------- ${kk + (kk == def ? " ( default )" : "")} */`,
         );
         if (kk == def) {
           fin.push(mitm.join("\n"));
@@ -445,7 +428,7 @@ export class css {
     this.id = new CB("#", pref).css;
     this.cx = new CB(".", pref).css;
 
-    this.save = async ({
+    this.save = ({
       path,
       map,
       minify,
@@ -454,34 +437,36 @@ export class css {
       map?: string;
       minify?: boolean;
     }) => {
-      const ce = new __css().load(this);
-      //
+      const css = new __css().load(this);
+      const pathEnd = path.endsWith("/") ? "" : "/";
+      const cssFilePath = path + pathEnd + name + ".css";
 
-      const pe = path.endsWith("/") ? "" : "/";
-
-      const cfl = path + pe + name + ".css";
-      _is.file(cfl);
-      let rr = minify ? parseCSS(ce.css) : ce.css;
-      writeFileSync(cfl, rr);
+      isFile(cssFilePath);
+      const cssContent = minify ? parseCSS(css.css) : css.css;
+      writeFileSync(cssFilePath, cssContent);
 
       if ((map ??= path)) {
-        const mp = map.endsWith("/") ? "" : "/";
-        const mapcss = map + mp + "css.js";
-        if (_is.file(mapcss)) {
-          const RFS = readFileSync(mapcss).toString();
+        const mapEnd = map.endsWith("/") ? "" : "/";
+        const mapFilePath = map + mapEnd + "css.js";
 
-          const cxstr = JSON.stringify(ce.cid);
-          const prep = `export const ${name} = `;
-          const rmm = RFS.match(prep);
-          const fnal = prep + cxstr + ";";
-          if (rmm) {
-            const rg = new RegExp(`${prep}.*?};`, "gm");
-            const RFX = RFS.replace(/\n/gm, "");
-            const _rr = RFX.replace(rg, fnal);
-            writeFileSync(mapcss, _rr);
+        if (isFile(mapFilePath)) {
+          const mapFileContent = readFileSync(mapFilePath).toString();
+          const exportPrefix = `export const ${name} = `;
+          const cssIdString = JSON.stringify(css.cid);
+          const newExport = exportPrefix + cssIdString + ";";
+
+          const hasExistingExport = mapFileContent.match(exportPrefix);
+          if (hasExistingExport) {
+            const exportRegex = new RegExp(`${exportPrefix}.*?};`, "gm");
+            const singleLineContent = mapFileContent.replace(/\n/gm, "");
+            const updatedContent = singleLineContent.replace(
+              exportRegex,
+              newExport,
+            );
+            writeFileSync(mapFilePath, updatedContent);
           } else {
-            const _rr = RFS + fnal;
-            writeFileSync(mapcss, _rr);
+            const updatedContent = mapFileContent + newExport;
+            writeFileSync(mapFilePath, updatedContent);
           }
         }
       }

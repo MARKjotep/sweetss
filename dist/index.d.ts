@@ -619,10 +619,6 @@ interface xtraCSS {
     lineClamp?: string;
     webkitTextFillColor?: string;
 }
-declare class $$ {
-    static set p(a: any);
-    static rand(min?: number, max?: number): number;
-}
 type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
@@ -654,4 +650,4 @@ declare class css {
 }
 type CSS = obj<CSSinR | CSSinR[]>;
 
-export { $$, type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };
+export { type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };

@@ -14,6 +14,7 @@ export declare function val_xxx(sel: string, val: V | _vars, options?: {
     rem: boolean;
     deg: boolean;
 }): string;
+export declare function tup_rst(sfs: RM[], noRem?: boolean, wcom?: boolean, ideg?: boolean, qt?: boolean): string;
 export declare class media {
     [key: string]: any;
     static readonly prop: {

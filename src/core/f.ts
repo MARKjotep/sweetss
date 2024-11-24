@@ -1,22 +1,7 @@
 import { isNumber, isStr, reCamel } from "./@";
-import { _vars, RM } from "./mvar";
+import { _vars, RM, tup_rst } from "./mvar";
 
-function tup_rst(
-  sfs: RM[],
-  noRem: boolean = true,
-  wcom: boolean = true,
-  ideg: boolean = false,
-  qt: boolean = false,
-) {
-  const fnal: string[] = sfs.map((ff) => {
-    if (isStr(ff)) return qt ? `'${ff}'` : ff;
-    if (ff instanceof _vars) return ff.__();
-    if (isNumber(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
-    return "";
-  });
 
-  return fnal.join(wcom ? ", " : " ");
-}
 
 export class f {
   static attr(...sfs: RM[]) {

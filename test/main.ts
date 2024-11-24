@@ -1,4 +1,4 @@
-import { $$, ps, f, med, _var, c, v, x, css } from "../src";
+import { ps, f, med, _var, c, v, x, css } from "../dist";
 
 const fxs = __filename.split("/").slice(-3);
 const { dom, cx, id, kf, font, save } = new css({
@@ -12,6 +12,7 @@ cx.hello = [
   {
     color: "red",
     margin: 0,
+    transform: f.translateX(2),
   },
   _fheight,
 ];

@@ -12,10 +12,6 @@ interface xtraCSS {
     lineClamp?: string;
     webkitTextFillColor?: string;
 }
-export declare class $$ {
-    static set p(a: any);
-    static rand(min?: number, max?: number): number;
-}
 export type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };

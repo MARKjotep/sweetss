@@ -58,7 +58,7 @@ export function val_xxx(
   return valStr.includes("(") ? valStr : `${valStr}`;
 }
 
-function tup_rst(
+export function tup_rst(
   sfs: RM[],
   noRem: boolean = true,
   wcom: boolean = true,
@@ -98,11 +98,7 @@ export class media {
     }
 
     oItems(g).forEach(([k, v]) => {
-      if (isArr(v)) {
-        DM[k] = tup_rst(v, false, false);
-      } else {
-        DM[k] = v;
-      }
+      DM[k] = isArr(v) ? tup_rst(v, false, false) : v;
     });
     oAss(this, DM);
   }

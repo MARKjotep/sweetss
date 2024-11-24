@@ -1,5 +1,5 @@
 import { CSSinR } from "..";
-import { isObj, obj, oItems, V } from "./@";
+import { isObj, oAss, obj, oItems, V } from "./@";
 
 import { _vars, RM } from "./mvar";
 
@@ -9,7 +9,7 @@ function _pseu(sel: string) {
       if (i instanceof _vars) {
         val[i._var] = i._val;
       } else if (isObj(i)) {
-        Object.assign(val, i);
+        oAss(val, i);
       }
       return val;
     }, {});
@@ -17,7 +17,6 @@ function _pseu(sel: string) {
     if (sel.startsWith("::before") || sel.startsWith("::after")) {
       vals.content ??= ""; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
     }
-
     return { [sel]: vals };
   };
 }
