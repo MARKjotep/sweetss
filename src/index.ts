@@ -117,24 +117,23 @@ function CIK(
   if (!isObj(vv)) return;
   const props: Mapper<string, media> = new Mapper();
   if (vv instanceof _vars) {
-    props.ass(vv._var, vv._val);
+    props.ass(vv._var, _props(vv._var, reval(vv._val)));
   } else {
     oItems(vv).forEach(([k, v]) => {
-      if (v)
-        if (k.startsWith(":") || k.startsWith(",")) {
-          CIK(sel + k, v, medias, cid, fix);
-        } else if (k.startsWith(" ")) {
-          const slc = k.match(/^.*?\./gm);
-          const islc = slc?.[0].slice(0, -1);
-          const lk = k
-            .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
-            .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
-          CIK(sel + lk, v, medias, cid, fix);
-        } else if (isClassOrId(k)) {
-          $$.p = [k, v];
-        } else {
-          props.set(k, _props(k, reval(v)));
-        }
+      if (k.startsWith(":") || k.startsWith(",")) {
+        CIK(sel + k, v, medias, cid, fix);
+      } else if (k.startsWith(" ")) {
+        const slc = k.match(/^.*?\./gm);
+        const islc = slc?.[0].slice(0, -1);
+        const lk = k
+          .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
+          .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+        CIK(sel + lk, v, medias, cid, fix);
+      } else if (isClassOrId(k)) {
+        $$.p = [k, v];
+      } else {
+        props.set(k, _props(k, reval(v)));
+      }
     });
   }
 
@@ -184,7 +183,7 @@ class CB {
     }
     return undefined;
   }
-  get css(): CSSinTS {
+  get css(): CSS {
     return new Proxy(this, this);
   }
 }
@@ -424,9 +423,9 @@ class __css {
 }
 
 export class css {
-  dom: CSSinTS;
-  id: CSSinTS;
-  cx: CSSinTS;
+  dom: CSS;
+  id: CSS;
+  cx: CSS;
   kf = new keyframes().css;
   at = new ats().css;
   font = new FontFace().css;
@@ -489,6 +488,6 @@ export class css {
     };
   }
 }
-export type CSSinTS = obj<CSSinR | CSSinR[]>;
+export type CSS = obj<CSSinR | CSSinR[]>;
 export { med, _var, ps, f };
 export { v, c, x };

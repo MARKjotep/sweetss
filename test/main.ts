@@ -1,4 +1,4 @@
-import { $$, ps, f, med, _var, c, v, x, css } from "../dist";
+import { $$, ps, f, med, _var, c, v, x, css } from "../src";
 
 const fxs = __filename.split("/").slice(-3);
 const { dom, cx, id, kf, font, save } = new css({
@@ -6,10 +6,14 @@ const { dom, cx, id, kf, font, save } = new css({
   prefix: "",
 });
 
+const _fheight = _var({ _fheight: 10 });
+
 cx.hello = [
   {
     color: "red",
+    margin: 0,
   },
+  _fheight,
 ];
 
 save({

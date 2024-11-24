@@ -627,9 +627,9 @@ type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
 declare class css {
-    dom: CSSinTS;
-    id: CSSinTS;
-    cx: CSSinTS;
+    dom: CSS;
+    id: CSS;
+    cx: CSS;
     kf: obj<{
         from?: CSSinR;
         to?: CSSinR;
@@ -652,6 +652,6 @@ declare class css {
         prefix?: string;
     });
 }
-type CSSinTS = obj<CSSinR | CSSinR[]>;
+type CSS = obj<CSSinR | CSSinR[]>;
 
-export { $$, type CSSinR, type CSSinTS, _var, c, css, f, med, ps, v, x };
+export { $$, type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };

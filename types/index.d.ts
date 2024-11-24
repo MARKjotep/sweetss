@@ -20,9 +20,9 @@ export type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
 export declare class css {
-    dom: CSSinTS;
-    id: CSSinTS;
-    cx: CSSinTS;
+    dom: CSS;
+    id: CSS;
+    cx: CSS;
     kf: obj<{
         from?: CSSinR;
         to?: CSSinR;
@@ -45,6 +45,6 @@ export declare class css {
         prefix?: string;
     });
 }
-export type CSSinTS = obj<CSSinR | CSSinR[]>;
+export type CSS = obj<CSSinR | CSSinR[]>;
 export { med, _var, ps, f };
 export { v, c, x };
