@@ -450,25 +450,25 @@ export class css {
         const mapEnd = map.endsWith("/") ? "" : "/";
         const mapFilePath = map + mapEnd + "css.js";
 
-        if (isFile(mapFilePath)) {
-          const mapFileContent = readFileSync(mapFilePath).toString();
-          const exportPrefix = `export const ${name} = `;
-          const cssIdString = JSON.stringify(css.cid);
-          const newExport = exportPrefix + cssIdString + ";";
+        isFile(mapFilePath);
 
-          const hasExistingExport = mapFileContent.match(exportPrefix);
-          if (hasExistingExport) {
-            const exportRegex = new RegExp(`${exportPrefix}.*?};`, "gm");
-            const singleLineContent = mapFileContent.replace(/\n/gm, "");
-            const updatedContent = singleLineContent.replace(
-              exportRegex,
-              newExport,
-            );
-            writeFileSync(mapFilePath, updatedContent);
-          } else {
-            const updatedContent = mapFileContent + newExport;
-            writeFileSync(mapFilePath, updatedContent);
-          }
+        const mapFileContent = readFileSync(mapFilePath).toString();
+        const exportPrefix = `export const ${name} = `;
+        const cssIdString = JSON.stringify(css.cid);
+        const newExport = exportPrefix + cssIdString + ";";
+
+        const hasExistingExport = mapFileContent.match(exportPrefix);
+        if (hasExistingExport) {
+          const exportRegex = new RegExp(`${exportPrefix}.*?};`, "gm");
+          const singleLineContent = mapFileContent.replace(/\n/gm, "");
+          const updatedContent = singleLineContent.replace(
+            exportRegex,
+            newExport,
+          );
+          writeFileSync(mapFilePath, updatedContent);
+        } else {
+          const updatedContent = mapFileContent + newExport;
+          writeFileSync(mapFilePath, updatedContent);
         }
       }
     };
