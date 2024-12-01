@@ -29,7 +29,7 @@ import {
   reCamel,
   sparse,
 } from "./core/@";
-import { isFile } from "./core/@n";
+import { isDir, isFile } from "./core/@n";
 
 type CMapper = Mapper<string, Mapper<string, media>>;
 
@@ -442,6 +442,7 @@ export class css {
       const pathEnd = path.endsWith("/") ? "" : "/";
       const cssFilePath = path + pathEnd + name + ".css";
 
+      isDir(path + pathEnd);
       isFile(cssFilePath);
       const cssContent = minify ? parseCSS(css.css) : css.css;
       writeFileSync(cssFilePath, cssContent);

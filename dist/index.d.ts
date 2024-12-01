@@ -45,13 +45,13 @@ declare const v: {
     preserve3d: string;
 };
 
-declare class $$ {
-    static set p(a: any);
-}
 interface obj<T> {
     [Key: string]: T;
 }
 type V = string | number | boolean;
+declare class $$ {
+    static set p(a: any);
+}
 
 declare const x: {
     DGRAY: {
