@@ -127,9 +127,6 @@ export class _vars {
   new(val: RM) {
     return new _vars({ [this.k]: val });
   }
-  not(val: RM) {
-    return new _vars({ [this.k]: val });
-  }
 }
 export type PMtype = keyof mtype;
 export type RM = V | media | _vars | RM[];

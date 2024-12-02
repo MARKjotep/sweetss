@@ -40,7 +40,6 @@ export declare class _vars {
     constructor(vr?: obj<RM>);
     __(fallback?: V): string;
     new(val: RM): _vars;
-    not(val: RM): _vars;
 }
 export type PMtype = keyof mtype;
 export type RM = V | media | _vars | RM[];

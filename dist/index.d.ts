@@ -264,7 +264,6 @@ declare class _vars {
     constructor(vr?: obj<RM>);
     __(fallback?: V): string;
     new(val: RM): _vars;
-    not(val: RM): _vars;
 }
 type RM = V | media | _vars | RM[];
 declare const med: (defValue: RM, g?: mtype) => media;
