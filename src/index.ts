@@ -1,8 +1,9 @@
-import { v } from "./core/v";
-import { x } from "./core/x";
-import { c } from "./core/colors";
-import { ps } from "./core/ps";
-import { f } from "./core/f";
+export * from "./core/v";
+export * from "./core/x";
+export * from "./core/colors";
+export * from "./core/ps";
+export * from "./core/f";
+
 import { readFileSync, writeFileSync } from "node:fs";
 import {
   media,
@@ -311,7 +312,6 @@ class __css {
     });
     this.updateCid(az.cid);
   }
-
   processKF(az: keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
     az.datax.forEach((v, k) => {
       v.forEach((vv, kk) => {
@@ -476,5 +476,4 @@ export class css {
   }
 }
 export type CSS = obj<CSSinR | CSSinR[]>;
-export { $$, med, _var, ps, f };
-export { v, c, x };
+export { $$, med, _var };
