@@ -15,6 +15,9 @@ interface xtraCSS {
 export type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
+export type CSS = obj<CSSinR | CSSinR[] | {
+    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
+}>;
 export declare class css {
     dom: CSS;
     id: CSS;
@@ -41,5 +44,4 @@ export declare class css {
         prefix?: string;
     });
 }
-export type CSS = obj<CSSinR | CSSinR[]>;
 export { $$, med, _var };

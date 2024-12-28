@@ -46,12 +46,17 @@ export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
 
-function _props(sel: string, prp: media) {
+export type CSS = obj<
+  CSSinR | CSSinR[] | { [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[] }
+>;
+
+const _props = (sel: string, prp: media) => {
   oItems(prp).forEach(([mk, mv]) => {
     prp[mk] = val_xxx(sel, mv);
   });
   return prp;
-}
+};
+
 const parseCSS = (css: string): string => {
   return css
     .replace(/\/\*[\s\S]*?\*\//g, "")
@@ -67,13 +72,13 @@ Clas ID KF process
 -------------------------
 */
 
-function CIK(
+const CIK = (
   sel: string,
   vv: any,
   medias: CMapper,
   cid: Mapper<string, string>,
   fix: string,
-) {
+) => {
   if (!isObj(vv)) return;
   const props: Mapper<string, media> = new Mapper();
 
@@ -81,26 +86,26 @@ function CIK(
     if (k.startsWith(":") || k.startsWith(",")) {
       CIK(sel + k, v, medias, cid, fix);
     } else if (k.startsWith(" ")) {
-      const slc = k.match(/^.*?\./gm);
+      const slc = k.match(/^.*?\w/gm);
       const islc = slc?.[0].slice(0, -1);
-      const lk = k
-        .replaceAll(/, *?\./gm, `, ${sel}${islc}.`)
-        .replaceAll(/, *?\#/gm, `, ${sel}${islc}#`);
+      const lk = k.replaceAll(/, /gm, `, ${sel}${islc}`);
       CIK(sel + lk, v, medias, cid, fix);
     } else if (isClassOrId(k)) {
-      console.log(k, v);
+      console.log(sel + k, v);
+      CIK(sel + k, v, medias, cid, fix);
+      //
     } else {
-      props.set(k, _props(k, reval(v)));
+      props.set(k, _props(k, valToMedia(v)));
     }
   };
 
   if (vv instanceof _vars) {
-    props.ass(vv._var, _props(vv._var, reval(vv._val)));
+    props.ass(vv._var, _props(vv._var, valToMedia(vv._val)));
   } else {
     oItems(vv).forEach(([k, v]) => processProps(k, v));
   }
 
-  const { classes, ids } = xselect(sel);
+  const { classes, ids } = mapIDClass(sel);
   [classes, ids].flat().forEach((cl) => {
     cid.set(cl, fix + cl);
   });
@@ -111,7 +116,8 @@ function CIK(
   } else {
     medias.set(sel, props);
   }
-}
+};
+
 class CB {
   fix: string;
   data: obj<any[]> = {};
@@ -249,12 +255,12 @@ class FontFace {
 const applyPrefix = (sel: string, prefix: string) => {
   return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
 };
-const reval = (val: RM): media => {
+const valToMedia = (val: RM): media => {
   if (val instanceof media) return val;
   if (val instanceof _vars) return med(val.__());
   return med(val);
 };
-const xselect = (cssContent: string) => {
+const mapIDClass = (cssContent: string) => {
   const xmatch = (regex: RegExp) =>
     Array.from(cssContent.matchAll(regex), (match) => match[1]);
   const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
@@ -264,7 +270,7 @@ const xselect = (cssContent: string) => {
     ids: [...new Set(xmatch(idRegex))],
   };
 };
-const xscc = (sel: string, vals: obj<string>) => {
+const toProperty = (sel: string, vals: obj<string>) => {
   const oit = oItems(vals)
     .map(([kk, vv]) => `${kk}: ${vv};`)
     .join(" \n  ");
@@ -326,7 +332,7 @@ class __css {
         oItems(vls).forEach(([x, y]) => {
           const xs = x as PMtype;
           ensurePropsInitialized(kprops, xs, k);
-          kprops[xs]![k].push(xscc(kk, y));
+          kprops[xs]![k].push(toProperty(kk, y));
         });
       });
     });
@@ -386,7 +392,7 @@ class __css {
     });
     oItems(cs2).forEach(([kk, vv]) => {
       const mitm: string[] = [];
-      oItems(vv).forEach(([k, v]) => mitm.push(xscc(k, v)));
+      oItems(vv).forEach(([k, v]) => mitm.push(toProperty(k, v)));
       oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
         mitm.push(`${k} {\n${v.join("\n")}\n}`);
       });
@@ -451,6 +457,7 @@ export class css {
         const mapEnd = map.endsWith("/") ? "" : "/";
         const mapFilePath = map + mapEnd + "css.js";
 
+        isDir(map + mapEnd);
         isFile(mapFilePath);
 
         const mapFileContent = readFileSync(mapFilePath).toString();
@@ -475,5 +482,5 @@ export class css {
     };
   }
 }
-export type CSS = obj<CSSinR | CSSinR[]>;
+
 export { $$, med, _var };

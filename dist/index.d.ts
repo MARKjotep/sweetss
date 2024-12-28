@@ -624,6 +624,9 @@ interface xtraCSS {
 type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
+type CSS = obj<CSSinR | CSSinR[] | {
+    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
+}>;
 declare class css {
     dom: CSS;
     id: CSS;
@@ -650,6 +653,5 @@ declare class css {
         prefix?: string;
     });
 }
-type CSS = obj<CSSinR | CSSinR[]>;
 
 export { $$, type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };
