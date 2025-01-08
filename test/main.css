@@ -1,6 +1,6 @@
-/* ------------------------ xs ( default ) */
+/* -------------- xs ( default ) */
 .hello {
-  color: red; 
+  color: orange; 
   margin: 0rem; 
   transform: translateX(2rem) ; 
   --_fheight: 10rem;

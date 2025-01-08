@@ -1,3 +1,51 @@
+type V = string | number | boolean;
+type obj<T> = Record<string, T>;
+
+declare class $$ {
+    static set p(a: any);
+}
+
+interface mtype {
+    xs?: RM;
+    sm?: RM;
+    smd?: RM;
+    md?: RM;
+    lg?: RM;
+    xl?: RM;
+    xxl?: RM;
+    no_hover?: RM;
+    print?: RM;
+}
+declare class media {
+    [key: string]: any;
+    static readonly prop: {
+        xs: string;
+        sm: string;
+        smd: string;
+        md: string;
+        lg: string;
+        xl: string;
+        xxl: string;
+        no_hover: string;
+        print: string;
+    };
+    static default: string;
+    constructor(defValue: RM, g?: obj<any>);
+    static setDefault(def: keyof typeof media.prop): void;
+}
+declare class _vars {
+    _var: string;
+    k: string;
+    _cvar: string;
+    _val: media;
+    constructor(vr?: obj<RM>);
+    __(fallback?: V): string;
+    new(val: RM): _vars;
+}
+type RM = V | media | _vars | RM[];
+declare const med: (defValue: RM, g?: mtype) => media;
+declare const _var: (vr: obj<RM>) => _vars;
+
 declare const v: {
     important: string;
     visible: string;
@@ -44,14 +92,6 @@ declare const v: {
     difference: string;
     preserve3d: string;
 };
-
-interface obj<T> {
-    [Key: string]: T;
-}
-type V = string | number | boolean;
-declare class $$ {
-    static set p(a: any);
-}
 
 declare const x: {
     DGRAY: {
@@ -228,46 +268,19 @@ declare const c: {
     hex2rbga: (hexCode: string, opacity?: number) => string;
 };
 
-interface mtype {
-    xs?: RM;
-    sm?: RM;
-    smd?: RM;
-    md?: RM;
-    lg?: RM;
-    xl?: RM;
-    xxl?: RM;
-    no_hover?: RM;
-    print?: RM;
+interface xtraCSS {
+    src?: string;
+    webkitBackdropFilter?: string;
+    textFillColor?: string;
+    lineClamp?: string;
+    webkitTextFillColor?: string;
 }
-declare class media {
-    [key: string]: any;
-    static readonly prop: {
-        xs: string;
-        sm: string;
-        smd: string;
-        md: string;
-        lg: string;
-        xl: string;
-        xxl: string;
-        no_hover: string;
-        print: string;
-    };
-    static default: string;
-    constructor(defValue: RM, g?: obj<any>);
-    static setDefault(def: keyof typeof media.prop): void;
-}
-declare class _vars {
-    _var: string;
-    k: string;
-    _cvar: string;
-    _val: media;
-    constructor(vr?: obj<RM>);
-    __(fallback?: V): string;
-    new(val: RM): _vars;
-}
-type RM = V | media | _vars | RM[];
-declare const med: (defValue: RM, g?: mtype) => media;
-declare const _var: (vr: obj<RM>) => _vars;
+type CSSinR = {
+    [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
+};
+type CSS = obj<CSSinR | CSSinR[] | {
+    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
+}>;
 
 declare class ps {
     static attr(d: obj<string>): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
@@ -614,19 +627,6 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
-interface xtraCSS {
-    src?: string;
-    webkitBackdropFilter?: string;
-    textFillColor?: string;
-    lineClamp?: string;
-    webkitTextFillColor?: string;
-}
-type CSSinR = {
-    [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
-};
-type CSS = obj<CSSinR | CSSinR[] | {
-    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
-}>;
 declare class css {
     dom: CSS;
     id: CSS;

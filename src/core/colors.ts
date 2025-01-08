@@ -1,4 +1,4 @@
-import { rand } from "./@";
+import { rand } from "../@";
 
 export const c = {
   aliceBlue: "#F0F8FF",

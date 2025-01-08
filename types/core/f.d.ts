@@ -1,4 +1,4 @@
-import { RM } from "./mvar";
+import { RM } from "../media";
 export declare class f {
     static attr(...sfs: RM[]): string;
     static blur(...sfs: RM[]): string;

@@ -1,6 +1,6 @@
-import { CSSinR } from "..";
-import { obj, V } from "./@";
-import { _vars, RM } from "./mvar";
+import { CSSinR } from "../base";
+import { obj, V } from "../@";
+import { _vars, RM } from "../media";
 export declare class ps {
     static attr(d: obj<string>): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
         [x: string]: obj<any>;

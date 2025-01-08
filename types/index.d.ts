@@ -3,36 +3,25 @@ export * from "./core/x";
 export * from "./core/colors";
 export * from "./core/ps";
 export * from "./core/f";
-import { _vars, RM, med, _var } from "./core/mvar";
-import { $$, obj } from "./core/@";
-interface xtraCSS {
-    src?: string;
-    webkitBackdropFilter?: string;
-    textFillColor?: string;
-    lineClamp?: string;
-    webkitTextFillColor?: string;
-}
-export type CSSinR = {
-    [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
-};
-export type CSS = obj<CSSinR | CSSinR[] | {
-    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
-}>;
+import { $$ } from "./@";
+import { CSS, CSSinR } from "./base";
+export { $$, CSS, CSSinR };
+export { _var, med } from "./media";
 export declare class css {
     dom: CSS;
     id: CSS;
     cx: CSS;
-    kf: obj<{
+    kf: import("./@").obj<{
         from?: CSSinR;
         to?: CSSinR;
         "%"?: CSSinR;
-    } | obj<CSSinR>>;
+    } | import("./@").obj<CSSinR>>;
     at: {
-        import: CSSinR | _vars | obj<RM>;
-        charset: CSSinR | _vars | obj<RM>;
+        import: CSSinR | import("./media")._vars | import("./@").obj<import("./media").RM>;
+        charset: CSSinR | import("./media")._vars | import("./@").obj<import("./media").RM>;
     };
     font: {
-        face: CSSinR | _vars | obj<RM>;
+        face: CSSinR | import("./media")._vars | import("./@").obj<import("./media").RM>;
     };
     save: ({ path, map, minify, }: {
         path: string;
@@ -44,4 +33,3 @@ export declare class css {
         prefix?: string;
     });
 }
-export { $$, med, _var };

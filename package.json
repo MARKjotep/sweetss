@@ -8,8 +8,12 @@
     "dist"
   ],
   "scripts": {
-    "cp_core": "mkdir -p ./src/core; cp -L ../_misc/@.ts ./src/core; cp -L ../_misc/@n.ts ./src/core;",
-    "build": "tsc && bun build ./src/index.ts --outdir ./dist --minify --packages external --target bun && rollup -c ./util/rollup.config.js"
+    "util": "cp -r ../misc/util ./",
+    "dirs": "for dir in ./src ./dist ./test ./util ./types; do mkdir -p $dir; done",
+    "@": "ln -sf ../../misc/@/ ./src",
+    "ts": "ln -sf ../misc/tsconfig.json ./;",
+    "init": "bun run dirs && bun run util && bun run @ && bun run ts;",
+    "build": "rm -r ./types ; tsc && bun build ./src/index.ts --outdir ./dist --minify --packages external --target bun && rollup -c ./util/rollup.config.js"
   },
   "repository": {
     "type": "git",

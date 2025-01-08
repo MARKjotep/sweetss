@@ -8,7 +8,7 @@ import {
   oLen,
   reCamel,
   V,
-} from "./@";
+} from "../@";
 
 export interface mtype {
   xs?: RM;
@@ -128,6 +128,7 @@ export class _vars {
     return new _vars({ [this.k]: val });
   }
 }
+
 export type PMtype = keyof mtype;
 export type RM = V | media | _vars | RM[];
 

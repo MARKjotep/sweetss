@@ -1,5 +1,5 @@
-import { reCamel } from "./@";
-import { _vars, RM, tup_rst } from "./mvar";
+import { reCamel } from "../@";
+import { _vars, RM, tup_rst } from "../media";
 
 export class f {
   static attr(...sfs: RM[]) {

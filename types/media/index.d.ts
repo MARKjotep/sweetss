@@ -1,4 +1,4 @@
-import { obj, V } from "./@";
+import { obj, V } from "../@";
 export interface mtype {
     xs?: RM;
     sm?: RM;
