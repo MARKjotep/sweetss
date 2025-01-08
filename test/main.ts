@@ -10,7 +10,7 @@ const _fheight = _var({ _fheight: 10 });
 
 cx.hello = [
   {
-    color: "orange",
+    color: "red",
     margin: 0,
     transform: f.translateX(2),
   },
