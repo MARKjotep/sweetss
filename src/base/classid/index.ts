@@ -1,6 +1,6 @@
-import { isArr, obj } from "../../@";
+import { isArr } from "../../@";
 import { processCIK } from "../../css";
-import { Base, CSSinR, CSS } from "../util";
+import { Base, CSSinR, CSS } from "../__";
 
 export class Cid extends Base {
   prefix: string;

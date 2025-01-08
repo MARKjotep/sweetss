@@ -1,5 +1,7 @@
-import { reCamel } from "../@";
-import { _vars, RM, tup_rst } from "../media";
+import { isNumber, isStr, reCamel } from "../@";
+import { tup_rst } from "../css";
+import { RM } from "../media";
+import { _vars } from "../var";
 
 export class f {
   static attr(...sfs: RM[]) {

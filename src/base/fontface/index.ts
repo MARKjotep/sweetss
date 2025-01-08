@@ -1,6 +1,7 @@
 import { obj } from "../../@";
-import { Base, CSSinR } from "../util";
-import { _vars, RM } from "../../media";
+import { Base, CSSinR } from "../__";
+import { RM } from "../../media";
+import { _vars } from "../../var";
 
 export class FontFace extends Base {
   constructor() {

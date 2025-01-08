@@ -5,6 +5,17 @@ declare class $$ {
     static set p(a: any);
 }
 
+declare class _vars {
+    _var: string;
+    k: string;
+    _cvar: string;
+    _val: media;
+    constructor(vr?: obj<RM>);
+    __(fallback?: V): string;
+    new(val: RM): _vars;
+}
+declare const _var: (vr: obj<RM>) => _vars;
+
 interface mtype {
     xs?: RM;
     sm?: RM;
@@ -33,18 +44,22 @@ declare class media {
     constructor(defValue: RM, g?: obj<any>);
     static setDefault(def: keyof typeof media.prop): void;
 }
-declare class _vars {
-    _var: string;
-    k: string;
-    _cvar: string;
-    _val: media;
-    constructor(vr?: obj<RM>);
-    __(fallback?: V): string;
-    new(val: RM): _vars;
-}
 type RM = V | media | _vars | RM[];
 declare const med: (defValue: RM, g?: mtype) => media;
-declare const _var: (vr: obj<RM>) => _vars;
+
+interface xtraCSS {
+    src?: string;
+    webkitBackdropFilter?: string;
+    textFillColor?: string;
+    lineClamp?: string;
+    webkitTextFillColor?: string;
+}
+type CSSinR = {
+    [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
+};
+type CSS = obj<CSSinR | CSSinR[] | {
+    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
+}>;
 
 declare const v: {
     important: string;
@@ -267,20 +282,6 @@ declare const c: {
     rand: () => string | ((r?: number, g?: number, b?: number, a?: number) => string) | any | ((hexCode: string, opacity?: number) => string);
     hex2rbga: (hexCode: string, opacity?: number) => string;
 };
-
-interface xtraCSS {
-    src?: string;
-    webkitBackdropFilter?: string;
-    textFillColor?: string;
-    lineClamp?: string;
-    webkitTextFillColor?: string;
-}
-type CSSinR = {
-    [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
-};
-type CSS = obj<CSSinR | CSSinR[] | {
-    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
-}>;
 
 declare class ps {
     static attr(d: obj<string>): (...itm: (CSSinR | _vars | obj<RM>)[]) => {

@@ -1,4 +1,4 @@
 bun.lockb
 .DS_Store
 .vscode
-types
+types/

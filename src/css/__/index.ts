@@ -1,8 +1,6 @@
+import { val_xxx } from "..";
 import { css } from "../..";
 import {
-  isClassOrId,
-  isObj,
-  Mapper,
   ngify,
   oAss,
   obj,
@@ -11,88 +9,9 @@ import {
   oVals,
   reCamel,
   sparse,
-  V,
 } from "../../@";
-import { At, Cid, Keyframes, FontFace, CMapper } from "../../base";
-import { _vars, med, media, mtype, PMtype, RM, val_xxx } from "../../media";
-
-const _props = (sel: string, prp: media) => {
-  oItems(prp).forEach(([mk, mv]) => {
-    prp[mk] = val_xxx(sel, mv);
-  });
-  return prp;
-};
-
-const valToMedia = (val: RM): media => {
-  if (val instanceof media) return val;
-  if (val instanceof _vars) return med(val.__());
-  return med(val);
-};
-
-const mapIDClass = (cssContent: string) => {
-  const xmatch = (regex: RegExp) =>
-    Array.from(cssContent.matchAll(regex), (match) => match[1]);
-  const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
-  const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
-  return {
-    classes: [...new Set(xmatch(classRegex))],
-    ids: [...new Set(xmatch(idRegex))],
-  };
-};
-
-const applyPrefix = (sel: string, prefix: string) => {
-  return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
-};
-/*
--------------------------
-Clas ID KF process
--------------------------
-*/
-export const processCIK = (
-  sel: string,
-  vv: any,
-  medias: CMapper,
-  cid: Mapper<string, string>,
-  fix: string,
-) => {
-  if (!isObj(vv)) return;
-  const props: Mapper<string, media> = new Mapper();
-
-  const processProps = (k: string, v: any) => {
-    if (k.startsWith(":") || k.startsWith(",")) {
-      processCIK(sel + k, v, medias, cid, fix);
-    } else if (k.startsWith(" ")) {
-      const slc = k.match(/^.*?\w/gm);
-      const islc = slc?.[0].slice(0, -1);
-      const lk = k.replaceAll(/, /gm, `, ${sel}${islc}`);
-      processCIK(sel + lk, v, medias, cid, fix);
-    } else if (isClassOrId(k)) {
-      console.log(sel + k, v);
-      processCIK(sel + k, v, medias, cid, fix);
-      //
-    } else {
-      props.set(k, _props(k, valToMedia(v)));
-    }
-  };
-
-  if (vv instanceof _vars) {
-    props.ass(vv._var, _props(vv._var, valToMedia(vv._val)));
-  } else {
-    oItems(vv).forEach(([k, v]) => processProps(k, v));
-  }
-
-  const { classes, ids } = mapIDClass(sel);
-  [classes, ids].flat().forEach((cl) => {
-    cid.set(cl, fix + cl);
-  });
-
-  sel = fix ? applyPrefix(sel, fix) : sel;
-  if (medias.has(sel)) {
-    medias.get(sel)?.map(props);
-  } else {
-    medias.set(sel, props);
-  }
-};
+import { At, Cid, Keyframes, FontFace } from "../../base";
+import { media, mtype, PMtype } from "../../media";
 
 const formatContentValue = (key: string, value: string): string => {
   return key === "content" && !value.includes("(") ? `'${value}'` : value;
@@ -179,7 +98,7 @@ export class __css {
       const fontProperties = oItems(fontData)
         .map(
           ([property, value]) =>
-            `${reCamel(property)}: ${val_xxx(property, value as V)}`,
+            `${reCamel(property)}: ${val_xxx(property, value as any)}`,
         )
         .join(";\n\t");
       fin.push(`${FONT_FACE} {\n\t${fontProperties}\n}`);

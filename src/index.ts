@@ -1,16 +1,8 @@
-export * from "./core/v";
-export * from "./core/x";
-export * from "./core/colors";
-export * from "./core/ps";
-export * from "./core/f";
 import { readFileSync, writeFileSync } from "node:fs";
 import { $$ } from "./@";
 import { isDir, isFile } from "./@/bun";
 import { At, CSS, CSSinR, Cid, Keyframes, FontFace } from "./base";
 import { __css } from "./css";
-
-export { $$, CSS, CSSinR };
-export { _var, med } from "./media";
 
 const parseCSS = (css: string): string => {
   return css
@@ -74,6 +66,7 @@ export class css {
         const newExport = exportPrefix + cssIdString + ";";
 
         const hasExistingExport = mapFileContent.match(exportPrefix);
+
         if (hasExistingExport) {
           const exportRegex = new RegExp(`${exportPrefix}.*?};`, "gm");
           const singleLineContent = mapFileContent.replace(/\n/gm, "");
@@ -90,3 +83,13 @@ export class css {
     };
   }
 }
+
+export * from "./misc/v";
+export * from "./misc/x";
+export * from "./misc/colors";
+export * from "./misc/ps";
+export * from "./misc/f";
+//
+export { $$, CSS, CSSinR };
+export { med } from "./media";
+export { _var } from "./var";

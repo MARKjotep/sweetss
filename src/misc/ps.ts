@@ -1,7 +1,8 @@
 import { CSSinR } from "../base";
 import { isObj, oAss, obj, oItems, V } from "../@";
 
-import { _vars, RM } from "../media";
+import { RM } from "../media";
+import { _vars } from "../var";
 
 function _pseu(sel: string) {
   return function (...itm: (CSSinR | _vars | obj<RM>)[]) {

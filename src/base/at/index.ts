@@ -1,6 +1,7 @@
 import { obj } from "../../@";
-import { _vars, RM } from "../../media";
-import { Base, CSSinR } from "../util";
+import { RM } from "../../media";
+import { _vars } from "../../var";
+import { Base, CSSinR } from "../__";
 
 export class At extends Base {
   constructor() {

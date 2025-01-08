@@ -1,21 +1,77 @@
-import { css } from "..";
 import {
+  isArr,
   isClassOrId,
+  isNumber,
   isObj,
+  isStr,
   Mapper,
-  ngify,
-  oAss,
-  obj,
   oItems,
-  oKeys,
-  oVals,
-  reCamel,
-  sparse,
   V,
 } from "../@";
-import { At, Cid, Keyframes, FontFace, CMapper } from "../base";
-import { _vars, med, media, mtype, PMtype, RM, val_xxx } from "../media";
+import { CMapper } from "../base";
+import { med, media, RM } from "../media";
+import { _vars } from "../var";
 
+export { __css } from "./__";
+
+const norems = [
+  "zIndex",
+  "opacity",
+  "aspectRatio",
+  "flexGrow",
+  "order",
+  "flexShrink",
+  "flexBasis",
+  "flex",
+  "transitionDelay",
+  "animationDelay",
+  "fillOpacity",
+  "lineClamp",
+  "webkitLineClamp",
+];
+
+export function val_xxx(
+  sel: string,
+  val: V | _vars,
+  options = { rem: true, deg: false },
+): string {
+  const { rem, deg } = options;
+  if (val instanceof _vars) return val.__();
+  if (isArr(val)) {
+    return val.map((item) => val_xxx(sel, item)).join(" ");
+  }
+  if (typeof val === "number") {
+    let valueStr = val.toString();
+    if (rem && !norems.includes(sel)) valueStr += "rem";
+    if (deg) valueStr += "deg";
+    return valueStr;
+  }
+  const valStr = val.toString();
+  return valStr.includes("(") ? valStr : `${valStr}`;
+}
+
+export function tup_rst(
+  sfs: RM[],
+  noRem: boolean = true,
+  wcom: boolean = true,
+  ideg: boolean = false,
+  qt: boolean = false,
+) {
+  const fnal: string[] = sfs.map((ff) => {
+    if (isStr(ff)) return qt ? `'${ff}'` : ff;
+    if (ff instanceof _vars) return ff.__();
+    if (isNumber(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
+    return "";
+  });
+
+  return fnal.join(wcom ? ", " : " ");
+}
+
+/*
+-------------------------
+
+-------------------------
+*/
 const _props = (sel: string, prp: media) => {
   oItems(prp).forEach(([mk, mv]) => {
     prp[mk] = val_xxx(sel, mv);
@@ -93,149 +149,3 @@ export const processCIK = (
     medias.set(sel, props);
   }
 };
-
-const formatContentValue = (key: string, value: string): string => {
-  return key === "content" && !value.includes("(") ? `'${value}'` : value;
-};
-
-const ensurePropsInitialized = (
-  props: { [P in PMtype]?: obj<string[]> },
-  type: PMtype,
-  key: string,
-) => {
-  if (!props[type]![key]) props[type]![key] = [];
-};
-
-const addPropertyValues = (
-  props: { [P in PMtype]?: obj<string[]> },
-  type: PMtype,
-  key: string,
-  values: string,
-) => {
-  props[type]![key].push(...values.split(",").map((s) => s.trim()));
-};
-
-const toProperty = (sel: string, vals: obj<string>) => {
-  const oit = oItems(vals)
-    .map(([kk, vv]) => `${kk}: ${vv};`)
-    .join(" \n  ");
-  return `${sel} {\n  ${oit}\n}`;
-};
-
-export class __css {
-  css: string = "";
-  cid: obj<string> = {};
-  constructor() {}
-  private updateCid(cid: Map<string, string>) {
-    cid.forEach((v, k) => {
-      this.cid[k] = v;
-    });
-  }
-  processCB(az: Cid, props: { [P in PMtype]?: obj<string[]> }) {
-    az.datax.forEach((v, k) => {
-      v.forEach((vv, kk) => {
-        oItems(vv).forEach(([x, y]) => {
-          const xx = x as PMtype;
-          let pvp = formatContentValue(xx, y);
-          const stn = ngify({ [reCamel(kk)]: pvp });
-          ensurePropsInitialized(props, xx, stn);
-          addPropertyValues(props, xx, stn, k);
-        });
-      });
-    });
-    this.updateCid(az.cid);
-  }
-  processKF(az: Keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
-    az.datax.forEach((v, k) => {
-      v.forEach((vv, kk) => {
-        const vls: obj<obj<string>> = {};
-        vv.forEach((y, x) => {
-          oItems(y).forEach(([xx, yy]) => {
-            const xs = xx as PMtype;
-            if (!vls[xs]) vls[xs] = {};
-            vls[xs][x] = yy;
-          });
-        });
-        oItems(vls).forEach(([x, y]) => {
-          const xs = x as PMtype;
-          ensurePropsInitialized(kprops, xs, k);
-          kprops[xs]![k].push(toProperty(kk, y));
-        });
-      });
-    });
-  }
-  processAT(az: At, fin: string[]) {
-    for (const [key, values] of az.data) {
-      for (const value of values) {
-        const formattedValue = value.includes("(") ? value : `"${value}"`;
-        fin.push(`${key} ${formattedValue.trim()};`);
-      }
-    }
-  }
-  processFF(az: FontFace, fin: string[]) {
-    const FONT_FACE = "@font-face";
-
-    az.data.get("@font")?.forEach((fontData) => {
-      const fontProperties = oItems(fontData)
-        .map(
-          ([property, value]) =>
-            `${reCamel(property)}: ${val_xxx(property, value as V)}`,
-        )
-        .join(";\n\t");
-      fin.push(`${FONT_FACE} {\n\t${fontProperties}\n}`);
-    });
-  }
-  load(CSS: css) {
-    const mprops = media.prop;
-    const def = media.default as mtype;
-    const props: { [P in PMtype]?: obj<string[]> } = {};
-    const kprops: { [P in PMtype]?: obj<string[]> } = {};
-    const cs2: obj<obj<obj<string>>> = {};
-    const fin: string[] = [];
-    //
-    oKeys(mprops).forEach((kh) => {
-      props[kh as PMtype] = {};
-      kprops[kh as PMtype] = {};
-      cs2[kh as PMtype] = {};
-    });
-
-    oVals(CSS).forEach((az) => {
-      if (az instanceof Cid) this.processCB(az, props);
-      else if (az instanceof Keyframes) this.processKF(az, kprops);
-      else if (az instanceof At) this.processAT(az, fin);
-      else if (az instanceof FontFace) this.processFF(az, fin);
-    });
-    /*
-    -------------------------
-    
-    -------------------------
-    */
-    oItems(props).forEach(([kk, vv]) => {
-      if (!cs2[kk]) cs2[kk] = {};
-      oItems(vv).forEach(([k, v]) => {
-        const ct = v.join(", ");
-        if (!cs2[kk][ct]) cs2[kk][ct] = {};
-        oAss(cs2[kk][ct], sparse(k));
-      });
-    });
-    oItems(cs2).forEach(([kk, vv]) => {
-      const mitm: string[] = [];
-      oItems(vv).forEach(([k, v]) => mitm.push(toProperty(k, v)));
-      oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
-        mitm.push(`${k} {\n${v.join("\n")}\n}`);
-      });
-      if (mitm.length) {
-        fin.push(
-          `/* -------------- ${kk + (kk == def ? " ( default )" : "")} */`,
-        );
-        if (kk == def) {
-          fin.push(mitm.join("\n"));
-        } else {
-          fin.push(`${mprops[kk as PMtype]}\t{\n${mitm.join("\n")}\n}`);
-        }
-      }
-    });
-    this.css = fin.join("\n");
-    return this;
-  }
-}
