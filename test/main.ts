@@ -1,21 +1,23 @@
-import { ps, f, med, _var, c, v, x, css } from "../dist";
+import { ps, f, med, _var, c, v, x, css, $$ } from "../dist";
+import { cc } from "./ntest";
 
 const fxs = __filename.split("/").slice(-3);
 
-const { dom, cx, id, kf, font, save } = new css({
+const gc = new css({
   name: fxs[2].split(".")[0],
   prefix: "",
+  importCSS: cc,
 });
 
-const _fheight = _var({ _fheight: 10 });
+const { cx: cx2, save } = gc;
 
-cx.hello = [
+cx2.okay = [
   {
-    color: "orange",
-    margin: 0,
-    transform: f.translateX(2),
+    color: "#29e38d",
+    margin: 1,
+    transform: [f.translateX(2), f.scale(1)],
+    border: [1, "red", "dashed"],
   },
-  _fheight,
 ];
 
 save({

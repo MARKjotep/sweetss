@@ -1,20 +1,17 @@
 type V = string | number | boolean;
 type obj<T> = Record<string, T>;
 
+declare class Mapper<K, V> extends Map<K, V> {
+    obj(obj?: object | null): void;
+    map(map: Mapper<K, V>): void;
+    ass<T>(key: K, obj: T): void;
+    lacks(key: K): boolean;
+    init(key: K, val: V): V | undefined;
+}
+
 declare class $$ {
     static set p(a: any);
 }
-
-declare class _vars {
-    _var: string;
-    k: string;
-    _cvar: string;
-    _val: media;
-    constructor(vr?: obj<RM>);
-    __(fallback?: V): string;
-    new(val: RM): _vars;
-}
-declare const _var: (vr: obj<RM>) => _vars;
 
 interface mtype {
     xs?: RM;
@@ -29,6 +26,7 @@ interface mtype {
 }
 declare class media {
     [key: string]: any;
+    static default: Exclude<keyof mtype, "no_hover" | "print">;
     static readonly prop: {
         xs: string;
         sm: string;
@@ -40,13 +38,23 @@ declare class media {
         no_hover: string;
         print: string;
     };
-    static default: string;
     constructor(defValue: RM, g?: obj<any>);
-    static setDefault(def: keyof typeof media.prop): void;
 }
-type RM = V | media | _vars | RM[];
 declare const med: (defValue: RM, g?: mtype) => media;
 
+declare class _vars {
+    _var: string;
+    k: string;
+    _cvar: string;
+    _val: media;
+    constructor(vr?: obj<RM>);
+    __(fallback?: V): string;
+    new(val: RM): _vars;
+}
+declare const _var: (vr: obj<RM>) => _vars;
+
+type RM = V | media | _vars | RM[];
+type atCSS = CSSinR | _vars | obj<RM>;
 interface xtraCSS {
     src?: string;
     webkitBackdropFilter?: string;
@@ -628,31 +636,38 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
+interface saveCSS {
+    path: string;
+    map?: string;
+    minify?: boolean;
+}
+type kfT = obj<{
+    from?: CSSinR;
+    to?: CSSinR;
+    "%"?: CSSinR;
+} | obj<CSSinR>>;
 declare class css {
+    [k: string]: any;
+    name: string;
     dom: CSS;
     id: CSS;
     cx: CSS;
-    kf: obj<{
-        from?: CSSinR;
-        to?: CSSinR;
-        "%"?: CSSinR;
-    } | obj<CSSinR>>;
+    kf: kfT;
     at: {
-        import: CSSinR | _vars | obj<RM>;
-        charset: CSSinR | _vars | obj<RM>;
+        import: atCSS;
+        charset: atCSS;
     };
     font: {
-        face: CSSinR | _vars | obj<RM>;
+        face: atCSS;
     };
-    save: ({ path, map, minify, }: {
-        path: string;
-        map?: string;
-        minify?: boolean;
-    }) => void;
-    constructor({ name, prefix }: {
+    save: ({ path, map, minify }: saveCSS) => void;
+    cids: Mapper<string, obj<string>>;
+    constructor({ name, prefix, importCSS, }: {
         name: string;
         prefix?: string;
+        importCSS?: css | css[];
     });
+    import(css: css): void;
 }
 
-export { $$, type CSS, type CSSinR, _var, c, css, f, med, ps, v, x };
+export { $$, _var, c, css, f, med, ps, v, x };

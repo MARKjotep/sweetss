@@ -1,18 +1,51 @@
 import {
   isArr,
-  isClassOrId,
   isNumber,
-  isObj,
   isStr,
   Mapper,
+  oAss,
+  obj,
   oItems,
+  oKeys,
+  oVals,
+  sparse,
   V,
 } from "../@";
-import { CMapper } from "../base";
-import { med, media, RM } from "../media";
+import { css } from "../..";
+import { At, Cid, FontFace, Keyframes } from "../props";
+import { media, mtype } from "../media";
 import { _vars } from "../var";
 
-export { __css } from "./__";
+import { CB, KF, AT, FONT, toProperty } from "./process";
+
+export type RM = V | media | _vars | RM[];
+export type atCSS = CSSinR | _vars | obj<RM>;
+
+export type CMapper = Mapper<string, Mapper<string, media>>;
+
+interface xtraCSS {
+  src?: string;
+  webkitBackdropFilter?: string;
+  textFillColor?: string;
+  lineClamp?: string;
+  webkitTextFillColor?: string;
+}
+
+export type CSSinR = {
+  [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
+};
+export type CSS = obj<
+  CSSinR | CSSinR[] | { [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[] }
+>;
+
+export type kfT = obj<
+  | {
+      from?: CSSinR;
+      to?: CSSinR;
+      "%"?: CSSinR;
+    }
+  | obj<CSSinR>
+>;
 
 const norems = [
   "zIndex",
@@ -69,83 +102,88 @@ export function tup_rst(
 
 /*
 -------------------------
-
+ KEYFRAMES SHOULD HAVE THE SAME
 -------------------------
 */
-const _props = (sel: string, prp: media) => {
-  oItems(prp).forEach(([mk, mv]) => {
-    prp[mk] = val_xxx(sel, mv);
-  });
-  return prp;
-};
 
-const valToMedia = (val: RM): media => {
-  if (val instanceof media) return val;
-  if (val instanceof _vars) return med(val.__());
-  return med(val);
-};
+export type PMtype = keyof mtype;
 
-const mapIDClass = (cssContent: string) => {
-  const xmatch = (regex: RegExp) =>
-    Array.from(cssContent.matchAll(regex), (match) => match[1]);
-  const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
-  const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
-  return {
-    classes: [...new Set(xmatch(classRegex))],
-    ids: [...new Set(xmatch(idRegex))],
-  };
-};
-
-const applyPrefix = (sel: string, prefix: string) => {
-  return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
-};
-/*
--------------------------
-Clas ID KF process
--------------------------
-*/
-export const processCIK = (
-  sel: string,
-  vv: any,
-  medias: CMapper,
-  cid: Mapper<string, string>,
-  fix: string,
+export const ensurePropsInitialized = (
+  props: { [P in PMtype]?: obj<string[]> },
+  type: PMtype,
+  key: string,
 ) => {
-  if (!isObj(vv)) return;
-  const props: Mapper<string, media> = new Mapper();
-
-  const processProps = (k: string, v: any) => {
-    if (k.startsWith(":") || k.startsWith(",")) {
-      processCIK(sel + k, v, medias, cid, fix);
-    } else if (k.startsWith(" ")) {
-      const slc = k.match(/^.*?\w/gm);
-      const islc = slc?.[0].slice(0, -1);
-      const lk = k.replaceAll(/, /gm, `, ${sel}${islc}`);
-      processCIK(sel + lk, v, medias, cid, fix);
-    } else if (isClassOrId(k)) {
-      console.log(sel + k, v);
-      processCIK(sel + k, v, medias, cid, fix);
-      //
-    } else {
-      props.set(k, _props(k, valToMedia(v)));
-    }
-  };
-
-  if (vv instanceof _vars) {
-    props.ass(vv._var, _props(vv._var, valToMedia(vv._val)));
-  } else {
-    oItems(vv).forEach(([k, v]) => processProps(k, v));
-  }
-
-  const { classes, ids } = mapIDClass(sel);
-  [classes, ids].flat().forEach((cl) => {
-    cid.set(cl, fix + cl);
-  });
-
-  sel = fix ? applyPrefix(sel, fix) : sel;
-  if (medias.has(sel)) {
-    medias.get(sel)?.map(props);
-  } else {
-    medias.set(sel, props);
-  }
+  if (!props[type]![key]) props[type]![key] = [];
 };
+
+export class __css {
+  css: string = "";
+  cid: obj<string> = {};
+  constructor() {}
+  private updateCid(cid: Map<string, string>) {
+    cid.forEach((v, k) => {
+      this.cid[k] = v;
+    });
+  }
+
+  load(CSS: css) {
+    const mprops = media.prop;
+    const def = media.default as mtype;
+    const props: { [P in PMtype]?: obj<string[]> } = {};
+    const kprops: { [P in PMtype]?: obj<string[]> } = {};
+    const cs2: obj<obj<obj<string>>> = {};
+    const fin: string[] = [];
+    //
+    oKeys(mprops).forEach((kh) => {
+      props[kh as PMtype] = {};
+      kprops[kh as PMtype] = {};
+      cs2[kh as PMtype] = {};
+    });
+
+    oVals(CSS).forEach((az) => {
+      if (az instanceof Cid) {
+        const CC = CB(az, props);
+        this.updateCid(CC.cid);
+      } else if (az instanceof Keyframes) {
+        KF(az, kprops);
+      } else if (az instanceof At) {
+        AT(az, fin);
+      } else if (az instanceof FontFace) {
+        FONT(az, fin);
+      }
+    });
+    /*
+    -------------------------
+    
+    -------------------------
+    */
+    oItems(props).forEach(([kk, vv]) => {
+      if (!cs2[kk]) cs2[kk] = {};
+      oItems(vv).forEach(([k, v]) => {
+        const ct = v.join(", ");
+        if (!cs2[kk][ct]) cs2[kk][ct] = {};
+        oAss(cs2[kk][ct], sparse(k));
+      });
+    });
+
+    oItems(cs2).forEach(([kk, vv]) => {
+      const mitm: string[] = [];
+      oItems(vv).forEach(([k, v]) => mitm.push(toProperty(k, v)));
+      oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
+        mitm.push(`${k} {\n${v.join("\n")}\n}`);
+      });
+      if (mitm.length) {
+        fin.push(
+          `/* -------------- ${kk + (kk == def ? " ( default )" : "")} */`,
+        );
+        if (kk == def) {
+          fin.push(mitm.join("\n"));
+        } else {
+          fin.push(`${mprops[kk as PMtype]}\t{\n${mitm.join("\n")}\n}`);
+        }
+      }
+    });
+    this.css = fin.join("\n");
+    return this;
+  }
+}

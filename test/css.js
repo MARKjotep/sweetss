@@ -1,1 +1,1 @@
-export const main = {"hello":"hello"};
+export const ntest = {"okay":"g_okay"};export const main = {"okay":"okay"};

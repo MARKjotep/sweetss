@@ -1,3 +1,4 @@
+import { RM } from "../css";
 import { isArr, oAss, obj, oItems, V } from "../@";
 import { tup_rst } from "../css";
 import { _vars } from "../var";
@@ -16,6 +17,7 @@ export interface mtype {
 
 export class media {
   [key: string]: any;
+  static default: Exclude<keyof mtype, "no_hover" | "print"> = "xs";
   static readonly prop = {
     xs: "@media (width <= 480px)",
     sm: "@media (width >= 480px)",
@@ -27,7 +29,6 @@ export class media {
     no_hover: "@media (pointer: coarse)",
     print: "@media print",
   };
-  static default = "xs";
   constructor(defValue: RM, g: obj<any> = {}) {
     const defM = media.default;
     const DM: obj<RM> = {};
@@ -41,12 +42,8 @@ export class media {
     });
     oAss(this, DM);
   }
-  static setDefault(def: keyof typeof media.prop) {
-    media.default = def;
-  }
 }
 
-export type PMtype = keyof mtype;
-export type RM = V | media | _vars | RM[];
+// export type PMtype = keyof mtype;
 
 export const med = (defValue: RM, g: mtype = {}) => new media(defValue, g);

@@ -1,7 +1,13 @@
 /* -------------- xs ( default ) */
-.hello {
-  color: orange; 
-  margin: 0rem; 
-  transform: translateX(2rem) ; 
+.g_okay {
+  color: red; 
   --_fheight: 10rem;
+}
+.g_okay, .okay {
+  border: 1rem red dashed;
+}
+.okay {
+  color: #29e38d; 
+  margin: 1rem; 
+  transform: translateX(2rem) scale(1);
 }
