@@ -6,7 +6,7 @@ declare class Mapper<K, V> extends Map<K, V> {
     map(map: Mapper<K, V>): void;
     ass<T>(key: K, obj: T): void;
     lacks(key: K): boolean;
-    init(key: K, val: V): V | undefined;
+    init(key: K, val: V): V;
 }
 
 declare class $$ {
@@ -68,6 +68,11 @@ type CSSinR = {
 type CSS = obj<CSSinR | CSSinR[] | {
     [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
 }>;
+type kfT = obj<{
+    from?: CSSinR;
+    to?: CSSinR;
+    "%"?: CSSinR;
+} | obj<CSSinR>>;
 
 declare const v: {
     important: string;
@@ -637,18 +642,15 @@ declare class f {
 }
 
 interface saveCSS {
-    path: string;
-    map?: string;
+    dir: string | string[];
+    mapDir?: string;
+    mapName?: string;
     minify?: boolean;
 }
-type kfT = obj<{
-    from?: CSSinR;
-    to?: CSSinR;
-    "%"?: CSSinR;
-} | obj<CSSinR>>;
 declare class css {
     [k: string]: any;
     name: string;
+    prefix: string;
     dom: CSS;
     id: CSS;
     cx: CSS;
@@ -660,14 +662,14 @@ declare class css {
     font: {
         face: atCSS;
     };
-    save: ({ path, map, minify }: saveCSS) => void;
+    save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
     cids: Mapper<string, obj<string>>;
     constructor({ name, prefix, importCSS, }: {
         name: string;
         prefix?: string;
         importCSS?: css | css[];
     });
-    import(css: css): void;
 }
+declare function fileName(path: string): string;
 
-export { $$, _var, c, css, f, med, ps, v, x };
+export { $$, type CSS, _var, c, css, f, fileName, med, ps, v, x };

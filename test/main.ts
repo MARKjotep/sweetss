@@ -13,13 +13,13 @@ const { cx: cx2, save } = gc;
 
 cx2.okay = [
   {
-    color: "#29e38d",
+    color: "#1020af",
     margin: 1,
     transform: [f.translateX(2), f.scale(1)],
-    border: [1, "red", "dashed"],
+    border: [1, "#bad61c", "dashed"],
   },
 ];
 
 save({
-  path: "./test",
+  dir: __dirname,
 });

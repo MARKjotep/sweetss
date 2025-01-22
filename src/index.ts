@@ -11,13 +11,14 @@ export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
 
-export { $$ };
+export { $$, CSS };
 export { med } from "./media";
 export { _var } from "./var";
 
 interface saveCSS {
-  path: string;
-  map?: string;
+  dir: string | string[];
+  mapDir?: string;
+  mapName?: string;
   minify?: boolean;
 }
 
@@ -36,7 +37,7 @@ export class css {
   declare font: {
     face: atCSS;
   };
-  save: ({ path, map, minify }: saveCSS) => void;
+  save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
   cids: Mapper<string, obj<string>> = new Mapper();
   constructor({
     name,
@@ -52,21 +53,28 @@ export class css {
     this.prefix = prefix ?? name;
     loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
 
-    this.save = ({ path, map, minify }: saveCSS) => {
+    this.save = ({ dir, mapDir, mapName, minify }: saveCSS) => {
       const css = new __css().load(this);
-      const pathEnd = path.endsWith("/") ? "" : "/";
-      const cssFilePath = path + pathEnd + name + ".css";
 
-      isDir(path + pathEnd);
-      isFile(cssFilePath);
-      const cssContent = minify ? parseCSS(css.css) : css.css;
-      writeFileSync(cssFilePath, cssContent);
+      const _DIR = isArr(dir) ? dir : [dir];
 
-      if ((map ??= path)) {
-        const mapEnd = map.endsWith("/") ? "" : "/";
-        const mapFilePath = map + mapEnd + "css.js";
+      const cssContent = !minify ? parseCSS(css.css) : css.css;
+      _DIR.forEach((dd) => {
+        const pathEnd = dd.endsWith("/") ? "" : "/";
+        const cssFilePath = dd + pathEnd + name + ".css";
 
-        isDir(map + mapEnd);
+        isDir(dd + pathEnd);
+        isFile(cssFilePath);
+
+        writeFileSync(cssFilePath, cssContent);
+      });
+
+      if (dir[0] && (mapDir ??= dir[0])) {
+        const mapEnd = mapDir.endsWith("/") ? "" : "/";
+        const _mapName = mapName ? mapName : "css";
+        const mapFilePath = mapDir + mapEnd + _mapName + ".js";
+
+        isDir(mapDir + mapEnd);
         isFile(mapFilePath);
 
         this.cids.set(name, css.cid);
@@ -75,7 +83,6 @@ export class css {
       }
     };
   }
-  import(css: css) {}
 }
 
 const mapWriter = (filePath: string, cids: Mapper<string, obj<string>>) => {
@@ -126,7 +133,6 @@ function loader(this: css, pref: string, loads: css[]) {
       props[pr].load(l[pr]);
       oAss(cids, Object.fromEntries(l[pr].cid));
     });
-
     oLen(cids) && oAss(cg, cids);
   });
 
@@ -135,4 +141,8 @@ function loader(this: css, pref: string, loads: css[]) {
   });
 
   oAss(this, props);
+}
+
+export function fileName(path: string) {
+  return path.split("/").slice(-1)[0].split(".")[0];
 }

@@ -11,7 +11,7 @@ import {
   sparse,
   V,
 } from "../@";
-import { css } from "../..";
+import { css } from "../";
 import { At, Cid, FontFace, Keyframes } from "../props";
 import { media, mtype } from "../media";
 import { _vars } from "../var";
@@ -34,6 +34,7 @@ interface xtraCSS {
 export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
+
 export type CSS = obj<
   CSSinR | CSSinR[] | { [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[] }
 >;

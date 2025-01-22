@@ -7,7 +7,7 @@ export const cc = new css({
   prefix: "g",
 });
 
-const { dom, cx, id, kf, font } = cc;
+const { dom, cx, id, kf, save } = cc;
 
 const _fheight = _var({ _fheight: 10 });
 
@@ -18,3 +18,14 @@ cx.okay = [
   },
   _fheight,
 ];
+
+/*
+-------------------------
+
+-------------------------
+*/
+if (require.main === module) {
+  save({
+    dir: "./test",
+  });
+}
