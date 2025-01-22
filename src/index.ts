@@ -1,7 +1,7 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, watch, writeFileSync } from "node:fs";
 import { $$, isArr, Mapper, oAss, obj, oItems, oKeys, oLen } from "./@";
 import { isDir, isFile } from "./@/bun";
-import { __css, atCSS, CSS, kfT } from "./css";
+import { __css, atCSS, CSSinR, kfT } from "./css";
 import { At, Cid, FontFace, Keyframes } from "./props";
 import { _vars } from "./var";
 
@@ -11,9 +11,13 @@ export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
 
-export { $$, CSS };
+export { $$ };
 export { med } from "./media";
 export { _var } from "./var";
+
+export type CSS = obj<
+  CSSinR | CSSinR[] | { [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[] }
+>;
 
 interface saveCSS {
   dir: string | string[];
@@ -38,6 +42,7 @@ export class css {
     face: atCSS;
   };
   save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
+
   cids: Mapper<string, obj<string>> = new Mapper();
   constructor({
     name,
@@ -57,8 +62,8 @@ export class css {
       const css = new __css().load(this);
 
       const _DIR = isArr(dir) ? dir : [dir];
-
       const cssContent = !minify ? parseCSS(css.css) : css.css;
+
       _DIR.forEach((dd) => {
         const pathEnd = dd.endsWith("/") ? "" : "/";
         const cssFilePath = dd + pathEnd + name + ".css";

@@ -65,9 +65,6 @@ interface xtraCSS {
 type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
-type CSS = obj<CSSinR | CSSinR[] | {
-    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
-}>;
 type kfT = obj<{
     from?: CSSinR;
     to?: CSSinR;
@@ -641,6 +638,9 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
+type CSS = obj<CSSinR | CSSinR[] | {
+    [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
+}>;
 interface saveCSS {
     dir: string | string[];
     mapDir?: string;

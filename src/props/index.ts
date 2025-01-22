@@ -1,6 +1,7 @@
-import { CSSinR, CSS, CMapper, atCSS } from "../css";
+import { CSSinR, CMapper, atCSS } from "../css";
 import { isArr, Mapper, obj, oItems } from "../@";
 import { ProcSelector } from "./process";
+import { CSS } from "..";
 
 class Base {
   pre: string;

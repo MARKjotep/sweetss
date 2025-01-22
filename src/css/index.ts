@@ -35,9 +35,7 @@ export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
 
-export type CSS = obj<
-  CSSinR | CSSinR[] | { [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[] }
->;
+
 
 export type kfT = obj<
   | {
