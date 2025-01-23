@@ -3,7 +3,7 @@ import { CMapper, CSSinR, RM, val_xxx } from "../../css";
 import { med, media } from "../../media";
 import { _vars } from "../../var";
 
-const replaceAnim = /\b(_[a-zA-Z]+)\b(?=\s+\d)/g;
+const replaceAnim = /\b(_[a-zA-Z]+)\b(?:\s+\d.*)?/g;
 
 const _props = (sel: string, prp: media, prefix: string = "") => {
   const isAnim = ["animation", "animationName"].includes(sel);
