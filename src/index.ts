@@ -55,7 +55,7 @@ export class css {
   }) {
     //
     this.name = name;
-    this.prefix = prefix ?? name;
+    this.prefix = prefix ?? "";
     loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
 
     this.save = ({ dir, mapDir, mapName, minify }: saveCSS) => {
