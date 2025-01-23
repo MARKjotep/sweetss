@@ -1,11 +1,23 @@
-import { isClassOrId, isObj, Mapper, oItems } from "../../@";
+import { $$, isClassOrId, isObj, Mapper, oItems } from "../../@";
 import { CMapper, CSSinR, RM, val_xxx } from "../../css";
 import { med, media } from "../../media";
 import { _vars } from "../../var";
 
-const _props = (sel: string, prp: media) => {
+const replaceAnim = /\b(_[a-zA-Z]+)\b(?=\s+\d)/g;
+
+const _props = (sel: string, prp: media, prefix: string = "") => {
+  const isAnim = ["animation", "animationName"].includes(sel);
+
   oItems(prp).forEach(([mk, mv]) => {
-    prp[mk] = val_xxx(sel, mv);
+    if (isAnim) {
+      const _mv = mv.replace(
+        replaceAnim,
+        (match: string) => `${prefix}${match.slice(1)}`,
+      );
+      prp[mk] = val_xxx(sel, _mv);
+    } else {
+      prp[mk] = val_xxx(sel, mv);
+    }
   });
   return prp;
 };
@@ -28,7 +40,6 @@ const mapIDClass = (cssContent: string) => {
 };
 
 const applyPrefix = (sel: string, prefix: string) => {
-  
   return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
 };
 
@@ -58,12 +69,12 @@ export class ProcSelector {
       } else if (isClassOrId(k)) {
         this.set(name + k, v, data);
       } else {
-        props.set(k, _props(k, valToMedia(v)));
+        props.set(k, _props(k, valToMedia(v), this.prefix));
       }
     };
 
     if (css instanceof _vars) {
-      props.ass(css._var, _props(css._var, valToMedia(css._val)));
+      props.ass(css._var, _props(css._var, valToMedia(css._val), this.prefix));
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }
@@ -74,6 +85,7 @@ export class ProcSelector {
     });
 
     const prefixedName = this.prefix ? applyPrefix(name, this.prefix) : name;
+
     if (data.has(prefixedName)) {
       data.get(prefixedName)?.map(props);
     } else {

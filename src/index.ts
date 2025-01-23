@@ -1,4 +1,4 @@
-import { readFileSync, watch, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { $$, isArr, Mapper, oAss, obj, oItems, oKeys, oLen } from "./@";
 import { isDir, isFile } from "./@/bun";
 import { __css, atCSS, CSSinR, kfT } from "./css";
@@ -58,11 +58,11 @@ export class css {
     this.prefix = prefix ?? "";
     loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
 
-    this.save = ({ dir, mapDir, mapName, minify }: saveCSS) => {
+    this.save = ({ dir, mapDir, mapName, minify = true }: saveCSS) => {
       const css = new __css().load(this);
-
       const _DIR = isArr(dir) ? dir : [dir];
-      const cssContent = !minify ? parseCSS(css.css) : css.css;
+
+      const cssContent = minify ? parseCSS(css.css) : css.css;
 
       _DIR.forEach((dd) => {
         const pathEnd = dd.endsWith("/") ? "" : "/";
@@ -125,7 +125,7 @@ function loader(this: css, pref: string, loads: css[]) {
     dom: new Cid("", pref),
     id: new Cid("#", pref),
     cx: new Cid(".", pref),
-    kf: new Keyframes(),
+    kf: new Keyframes(pref),
     at: new At(),
     font: new FontFace(),
   };

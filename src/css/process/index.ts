@@ -1,5 +1,5 @@
 import { ensurePropsInitialized, PMtype, val_xxx } from "..";
-import { ngify, obj, oItems, reCamel } from "../../@";
+import { $$, ngify, obj, oItems, reCamel } from "../../@";
 import { At, Cid, Keyframes, FontFace } from "../../props";
 
 const formatContentValue = (key: string, value: string): string => {
@@ -29,6 +29,7 @@ export function CB(az: Cid, props: { [P in PMtype]?: obj<string[]> }) {
       oItems(vv).forEach(([x, y]) => {
         const xx = x as PMtype;
         let pvp = formatContentValue(xx, y);
+
         const stn = ngify({ [reCamel(kk)]: pvp });
         ensurePropsInitialized(props, xx, stn);
         addPropertyValues(props, xx, stn, k);

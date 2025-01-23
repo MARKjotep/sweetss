@@ -1,5 +1,5 @@
 import { CSSinR, CMapper, atCSS } from "../css";
-import { isArr, Mapper, obj, oItems } from "../@";
+import { $$, isArr, Mapper, obj, oItems } from "../@";
 import { ProcSelector } from "./process";
 import { CSS } from "..";
 
@@ -75,13 +75,15 @@ export class Keyframes extends Base {
   PS: ProcSelector;
   constructor(prefix: string = "") {
     super("", prefix);
+
     this.PS = new ProcSelector(this.cid, this.prefix);
   }
   set(target: any, prop: string, val: obj<any>) {
-    const nme = prop;
+    const nme = this.prefix + prop;
     const VL = isArr(val) ? val : [val];
     const kfKEY = `@keyframes ${nme}`;
     const kfKWebkit = `@-webkit-keyframes ${nme}`;
+
     const dx: Mapper<string, CMapper> = new Mapper();
     VL.forEach((vv) => {
       oItems(vv).forEach(([x, y]) => {

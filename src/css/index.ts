@@ -1,4 +1,5 @@
 import {
+  $$,
   isArr,
   isNumber,
   isStr,
@@ -34,8 +35,6 @@ interface xtraCSS {
 export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
-
-
 
 export type kfT = obj<
   | {
@@ -78,6 +77,7 @@ export function val_xxx(
     if (deg) valueStr += "deg";
     return valueStr;
   }
+
   const valStr = val.toString();
   return valStr.includes("(") ? valStr : `${valStr}`;
 }
