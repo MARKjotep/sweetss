@@ -23,24 +23,18 @@ interface mtype {
     xxl?: RM;
     no_hover?: RM;
     print?: RM;
+    dark?: RM;
 }
 declare class media {
     [key: string]: any;
     static default: Exclude<keyof mtype, "no_hover" | "print">;
-    static readonly prop: {
-        xs: string;
-        sm: string;
-        smd: string;
-        md: string;
-        lg: string;
-        xl: string;
-        xxl: string;
-        no_hover: string;
-        print: string;
-    };
+    static readonly prop: obj<string>;
     constructor(defValue: RM, g?: obj<any>);
+    static new(prop: obj<string>): void;
 }
-declare const med: (defValue: RM, g?: mtype) => media;
+declare const med: (defValue: RM, g?: mtype & {
+    [k: string]: undefined | RM;
+}) => media;
 
 declare class _vars {
     _var: string;
@@ -672,4 +666,4 @@ declare class css {
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, _var, c, css, f, fileName, med, ps, v, x };
+export { $$, type CSS, _var, c, css, f, fileName, med, media, ps, v, x };

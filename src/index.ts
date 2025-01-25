@@ -12,7 +12,7 @@ export * from "./@misc/ps";
 export * from "./@misc/f";
 
 export { $$ };
-export { med } from "./media";
+export { med, media } from "./media";
 export { _var } from "./var";
 
 export type CSS = obj<

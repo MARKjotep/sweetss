@@ -112,7 +112,11 @@ export const ensurePropsInitialized = (
   type: PMtype,
   key: string,
 ) => {
-  if (!props[type]![key]) props[type]![key] = [];
+  try {
+    if (!props[type]![key]) props[type]![key] = [];
+  } catch (e) {
+    console.error(`property "${type}" not found!`);
+  }
 };
 
 export class __css {

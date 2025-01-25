@@ -13,12 +13,13 @@ export interface mtype {
   xxl?: RM;
   no_hover?: RM;
   print?: RM;
+  dark?: RM;
 }
 
 export class media {
   [key: string]: any;
   static default: Exclude<keyof mtype, "no_hover" | "print"> = "xs";
-  static readonly prop = {
+  static readonly prop: obj<string> = {
     xs: "@media (width <= 480px)",
     sm: "@media (width >= 480px)",
     smd: "@media (width >= 624px)",
@@ -28,6 +29,8 @@ export class media {
     xxl: "@media (width >= 1536px)",
     no_hover: "@media (pointer: coarse)",
     print: "@media print",
+    screen: "@media screen",
+    dark: "@media (prefers-color-scheme: dark)",
   };
   constructor(defValue: RM, g: obj<any> = {}) {
     const defM = media.default;
@@ -42,8 +45,18 @@ export class media {
     });
     oAss(this, DM);
   }
+  static new(prop: obj<string>) {
+    oItems(prop).forEach(([k, v]) => {
+      if (!this.prop[k]) {
+        this.prop[k] = `@media (${v})`;
+      }
+    });
+  }
 }
 
 // export type PMtype = keyof mtype;
 
-export const med = (defValue: RM, g: mtype = {}) => new media(defValue, g);
+export const med = (
+  defValue: RM,
+  g: mtype & { [k: string]: undefined | RM } = {},
+) => new media(defValue, g);
