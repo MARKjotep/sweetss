@@ -85,18 +85,21 @@ export function val_xxx(
 export function tup_rst(
   sfs: RM[],
   noRem: boolean = true,
-  wcom: boolean = true,
-  ideg: boolean = false,
-  qt: boolean = false,
+  comma: boolean = true,
+  degree: boolean = false,
+  quote: boolean = false,
 ) {
   const fnal: string[] = sfs.map((ff) => {
-    if (isStr(ff)) return qt ? `'${ff}'` : ff;
+    if (isArr(ff)) {
+      return tup_rst(ff, noRem, false, degree, quote);
+    }
+    if (isStr(ff)) return quote ? `'${ff}'` : ff;
     if (ff instanceof _vars) return ff.__();
-    if (isNumber(ff)) return `${ff}${noRem ? "" : ideg ? "deg" : "rem"}`;
+    if (isNumber(ff)) return `${ff}${noRem ? "" : degree ? "deg" : "rem"}`;
     return "";
   });
 
-  return fnal.join(wcom ? ", " : " ");
+  return fnal.join(comma ? ", " : " ");
 }
 
 /*

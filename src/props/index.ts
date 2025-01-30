@@ -1,5 +1,5 @@
 import { CSSinR, CMapper, atCSS } from "../css";
-import { $$, isArr, Mapper, obj, oItems } from "../@";
+import { $$, isArr, isNum, Mapper, obj, oItems } from "../@";
 import { ProcSelector } from "./process";
 import { CSS } from "..";
 

@@ -49,12 +49,13 @@ export function KF(az: Keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
         oItems(y).forEach(([xx, yy]) => {
           const xs = xx as PMtype;
           if (!vls[xs]) vls[xs] = {};
-          vls[xs][x] = yy;
+          vls[xs][reCamel(x)] = yy;
         });
       });
       oItems(vls).forEach(([x, y]) => {
         const xs = x as PMtype;
         ensurePropsInitialized(kprops, xs, k);
+
         kprops[xs]![k].push(toProperty(kk, y));
       });
     });
