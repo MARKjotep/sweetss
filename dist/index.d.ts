@@ -570,7 +570,7 @@ declare class ps {
     static general(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
         [x: string]: obj<any>;
     };
-    static with(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
+    static _with(str: string): (...itm: (CSSinR | _vars | obj<RM>)[]) => {
         [x: string]: obj<any>;
     };
 }

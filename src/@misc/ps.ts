@@ -316,7 +316,7 @@ export class ps {
   static general(str: string) {
     return _pseu(" ~ " + str);
   }
-  static with(str: string) {
+  static _with(str: string) {
     if (!(str.startsWith(".") || str.startsWith("#"))) {
       throw Error("should start with . or # - class / id");
     }
