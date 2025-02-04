@@ -636,7 +636,7 @@ type CSS = obj<CSSinR | CSSinR[] | {
     [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
 }>;
 interface saveCSS {
-    dir: string | string[];
+    dir?: string | string[];
     mapDir?: string;
     mapName?: string;
     minify?: boolean;
@@ -657,11 +657,13 @@ declare class css {
         face: atCSS;
     };
     save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
+    exportMap: boolean;
     cids: Mapper<string, obj<string>>;
-    constructor({ name, prefix, importCSS, }: {
+    constructor({ name, prefix, importCSS, exportMap, }: {
         name: string;
         prefix?: string;
         importCSS?: css | css[];
+        exportMap?: boolean;
     });
 }
 declare function fileName(path: string): string;

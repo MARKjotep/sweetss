@@ -20,7 +20,7 @@ export type CSS = obj<
 >;
 
 interface saveCSS {
-  dir: string | string[];
+  dir?: string | string[];
   mapDir?: string;
   mapName?: string;
   minify?: boolean;
@@ -42,20 +42,23 @@ export class css {
     face: atCSS;
   };
   save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
-
+  exportMap: boolean = true;
   cids: Mapper<string, obj<string>> = new Mapper();
   constructor({
     name,
     prefix,
     importCSS = [],
+    exportMap = true,
   }: {
     name: string;
     prefix?: string;
     importCSS?: css | css[];
+    exportMap?: boolean;
   }) {
     //
     this.name = name;
     this.prefix = prefix ?? "";
+    this.exportMap = exportMap;
     loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
 
     this.save = ({ dir, mapDir, mapName, minify = true }: saveCSS) => {
@@ -65,6 +68,7 @@ export class css {
       const cssContent = minify ? parseCSS(css.css) : css.css;
 
       _DIR.forEach((dd) => {
+        if (!dd) return;
         const pathEnd = dd.endsWith("/") ? "" : "/";
         const cssFilePath = dd + pathEnd + name + ".css";
 
@@ -73,16 +77,18 @@ export class css {
 
         writeFileSync(cssFilePath, cssContent);
       });
-
-      if (dir[0] && (mapDir ??= dir[0])) {
-        const mapEnd = mapDir.endsWith("/") ? "" : "/";
+      const _md = mapDir ? mapDir : (_DIR[0] ?? "");
+      if (_md) {
+        const mapEnd = _md.endsWith("/") ? "" : "/";
         const _mapName = mapName ? mapName : "css";
-        const mapFilePath = mapDir + mapEnd + _mapName + ".js";
+        const mapFilePath = _md + mapEnd + _mapName + ".js";
 
-        isDir(mapDir + mapEnd);
+        isDir(_md + mapEnd);
         isFile(mapFilePath);
 
-        this.cids.set(name, css.cid);
+        this.cids.init(name, {});
+        const ccd = this.cids.get(name)!;
+        oAss(ccd, css.cid);
 
         mapWriter(mapFilePath, this.cids);
       }
@@ -131,14 +137,19 @@ function loader(this: css, pref: string, loads: css[]) {
   };
 
   loads.forEach((l) => {
-    this.cids.set(l.name, {});
-    const cg = this.cids.get(l.name)!;
+    const xp = l.exportMap;
     const cids: obj<string> = {};
+
     oKeys(props).forEach((pr) => {
       props[pr].load(l[pr]);
-      oAss(cids, Object.fromEntries(l[pr].cid));
+      if (xp) oAss(cids, Object.fromEntries(l[pr].cid));
     });
-    oLen(cids) && oAss(cg, cids);
+
+    if (xp && oLen(cids)) {
+      this.cids.set(l.name, {});
+      const cg = this.cids.get(l.name)!;
+      oAss(cg, cids);
+    }
   });
 
   oKeys(props).forEach((pr) => {

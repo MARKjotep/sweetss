@@ -29,5 +29,12 @@
     "url": "https://github.com/MARKjotep/sweetss/issues"
   },
   "homepage": "https://github.com/MARKjotep/sweetss#readme",
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^22.13.1",
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.7.3"
+  }
 }
