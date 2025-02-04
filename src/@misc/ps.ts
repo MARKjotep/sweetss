@@ -1,5 +1,5 @@
 import { CSSinR, RM } from "../css";
-import { isObj, oAss, obj, oItems, V } from "../@";
+import { $$, isObj, isStr, oAss, obj, oItems, V } from "../@";
 
 import { _vars } from "../var";
 
@@ -15,8 +15,12 @@ function _pseu(sel: string) {
     }, {});
 
     if (sel.startsWith("::before") || sel.startsWith("::after")) {
-      const vc = vals.content;
-      vals.content = vc ? `"${vc}"` : "''"; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
+      let vc: string | undefined = vals.content;
+      if (isStr(vc)) {
+        vc = vc.includes("(") ? vc : `"${vc}"`;
+      }
+
+      vals.content = vc ? vc : "''"; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
     }
     return { [sel]: vals };
   };
