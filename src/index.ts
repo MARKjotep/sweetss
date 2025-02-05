@@ -42,13 +42,13 @@ export class css {
     face: atCSS;
   };
   save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
-  exportMap: boolean = true;
+  exportMap: boolean = false;
   cids: Mapper<string, obj<string>> = new Mapper();
   constructor({
     name,
     prefix,
     importCSS = [],
-    exportMap = true,
+    exportMap = false,
   }: {
     name: string;
     prefix?: string;
