@@ -1,6 +1,6 @@
 {
   "name": "sweetss",
-  "version": "2.0.7",
+  "version": "2.0.8",
   "description": "CSS in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -15,16 +15,16 @@
     "init": "bun run dirs && bun run util && bun run @ && bun run ts;",
     "build": "rm -r ./types ; tsc && bun build ./src/index.ts --outdir ./dist --minify --packages external --target bun && rollup -c ./util/rollup.config.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/MARKjotep/sweetss.git"
-  },
   "keywords": [
     "css",
     "js"
   ],
   "author": "MARKjotep",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MARKjotep/sweetss.git"
+  },
   "bugs": {
     "url": "https://github.com/MARKjotep/sweetss/issues"
   },

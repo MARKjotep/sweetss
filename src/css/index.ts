@@ -154,12 +154,17 @@ export class __css {
       cs2[kh as PMtype] = {};
     });
 
+    const animCLSS = new Set<string>();
     oVals(CSS).forEach((az) => {
       if (az instanceof Cid) {
         const CC = CB(az, props, shaker, include);
+        az.animCLS.forEach((an) => {
+          animCLSS.add(an);
+        });
+
         this.updateCid(CC.cid);
       } else if (az instanceof Keyframes) {
-        KF(az, kprops);
+        KF(az, kprops, animCLSS);
       } else if (az instanceof At) {
         AT(az, fin);
       } else if (az instanceof FontFace) {

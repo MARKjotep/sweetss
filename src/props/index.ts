@@ -7,6 +7,8 @@ class Base {
   pre: string;
   data: Mapper<string, any[]> = new Mapper();
   cid: Mapper<string, string> = new Mapper();
+  animCLS = new Set<string>();
+
   DATAX: Mapper<string, Mapper<string, CMapper>> = new Mapper();
   prefix: string;
   constructor(pre: string, prefix: string = "") {
@@ -25,6 +27,8 @@ class Base {
       return this.cid as any;
     } else if (prop == "prefix") {
       return this.prefix as any;
+    } else if (prop == "animCLS") {
+      return this.animCLS as any;
     }
     return undefined;
   }
@@ -53,7 +57,7 @@ export class Cid extends Base {
   PS: ProcSelector;
   constructor(pre: string = "", prefix: string = "") {
     super(pre, prefix);
-    this.PS = new ProcSelector(this.prefix);
+    this.PS = new ProcSelector(this.prefix, this.animCLS);
   }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
@@ -77,7 +81,10 @@ export class Cid extends Base {
 
 export class Keyframes extends Base {
   PS: ProcSelector;
-  constructor(prefix: string = "") {
+  constructor(
+    prefix: string = "",
+    private webkit: boolean = true,
+  ) {
     super("", prefix);
 
     this.PS = new ProcSelector(this.prefix);
@@ -85,8 +92,6 @@ export class Keyframes extends Base {
   set(target: any, prop: string, val: obj<any>) {
     const nme = this.prefix + prop;
     const VL = isArr(val) ? val : [val];
-    const kfKEY = `@keyframes ${nme}`;
-    const kfKWebkit = `@-webkit-keyframes ${nme}`;
 
     const dx: Mapper<string, CMapper> = new Mapper();
     VL.forEach((vv) => {
@@ -96,7 +101,14 @@ export class Keyframes extends Base {
     });
     const initDATA = this.DATAX.init(this.prefix, new Mapper());
     //
-    initDATA.set(kfKEY, dx).set(kfKWebkit, dx);
+
+    const kfKEY = `@keyframes ${nme}`;
+    initDATA.set(kfKEY, dx);
+    if (this.webkit) {
+      const kfKWebkit = `@-webkit-keyframes ${nme}`;
+      initDATA.set(kfKWebkit, dx);
+    }
+
     return true;
   }
   get css(): obj<{ from?: CSSinR; to?: CSSinR; "%"?: CSSinR } | obj<CSSinR>> {

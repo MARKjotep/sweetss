@@ -3,25 +3,6 @@ import { CMapper, CSSinR, RM, val_xxx } from "../../css";
 import { med, media } from "../../media";
 import { _vars } from "../../var";
 
-const replaceAnim = /\b(_[a-zA-Z]+)\b(?:\s+\d.*)?/g;
-
-const _props = (sel: string, prp: media, prefix: string = "") => {
-  const isAnim = ["animation", "animationName"].includes(sel);
-
-  oItems(prp).forEach(([mk, mv]) => {
-    if (isAnim) {
-      const _mv = mv.replace(
-        replaceAnim,
-        (match: string) => `${prefix}${match.slice(1)}`,
-      );
-      prp[mk] = val_xxx(sel, _mv);
-    } else {
-      prp[mk] = val_xxx(sel, mv);
-    }
-  });
-  return prp;
-};
-
 const valToMedia = (val: RM): media => {
   if (val instanceof media) return val;
   if (val instanceof _vars) return med(val.__());
@@ -35,19 +16,14 @@ Clas ID KF process
 */
 
 export class ProcSelector {
-  constructor(private prefix: string) {}
+  constructor(
+    private prefix: string,
+    private anim = new Set<string>(),
+  ) {}
   set(name: string, css: CSSinR, data: CMapper) {
     if (!isObj(css)) return;
 
     const props: Mapper<string, media> = new Mapper();
-
-    const Push = (prefix: string) => {
-      if (data.has(prefix)) {
-        data.get(prefix)?.map(props);
-      } else {
-        data.set(prefix, props);
-      }
-    };
 
     const processProps = (k: string, v: any) => {
       if (k.startsWith(":") || k.startsWith(",")) {
@@ -60,30 +36,41 @@ export class ProcSelector {
       } else if (isClassOrId(k)) {
         this.set(name + k, v, data);
       } else {
-        props.set(k, _props(k, valToMedia(v), this.prefix));
+        props.set(k, this.props(k, valToMedia(v)));
       }
     };
 
     if (css instanceof _vars) {
-      props.ass(css._var, _props(css._var, valToMedia(css._val), this.prefix));
+      props.ass(css._var, this.props(css._var, valToMedia(css._val)));
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }
 
-    // const prefixedName = this.prefix ? applyPrefix(name, this.prefix) : name;
+    data.init(name, props).map(props);
+  }
+  props(sel: string, prp: media) {
+    const isAnim = ["animation", "animationName"].includes(sel);
 
-    // if classes -- use some to get true if one is true
-    // if (this.shaker.length && prefixedName.startsWith(".")) {
-    //   const hasC = classes.some(
-    //     (s) =>
-    //       this.shaker.includes(s) ||
-    //       (this.include.length && this.include.includes(s)),
-    //   );
-    //   if (hasC) {
-    //     Push(prefixedName);
-    //   }
-    // } else {
-    // }
-    Push(name);
+    oItems(prp).forEach(([mk, mv]) => {
+      if (isAnim) {
+        prp[mk] = val_xxx(sel, this.addPrefixToAnimation(mv));
+      } else {
+        prp[mk] = val_xxx(sel, mv);
+      }
+    });
+    return prp;
+  }
+  addPrefixToAnimation(value: string) {
+    const animations = value.split(", ");
+
+    const modifiedAnimations = animations.map((animation) => {
+      const parts = animation.split(" ");
+      const name = parts[0];
+      const rest = parts.slice(1).join(" "); // Rejoin the duration and easing
+      this.anim.add(`${this.prefix}${name}`);
+      return `${this.prefix}${name} ${rest}`;
+    });
+
+    return modifiedAnimations.join(", ");
   }
 }

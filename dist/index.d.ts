@@ -643,6 +643,13 @@ interface saveCSS {
     shaker?: string[];
     include?: string[];
 }
+interface sweetCFG {
+    name: string;
+    prefix?: string;
+    sweetSS?: SweetSS | SweetSS[];
+    exportMap?: boolean;
+    webkitKeyframes?: boolean;
+}
 declare class SweetSS {
     [k: string]: any;
     name: string;
@@ -661,12 +668,7 @@ declare class SweetSS {
     save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
     exportMap: boolean;
     cids: Mapper<string, obj<string>>;
-    constructor({ name, prefix, sweetSS, exportMap, }: {
-        name: string;
-        prefix?: string;
-        sweetSS?: SweetSS | SweetSS[];
-        exportMap?: boolean;
-    });
+    constructor({ name, prefix, sweetSS, exportMap, webkitKeyframes, }: sweetCFG);
 }
 declare function fileName(path: string): string;
 

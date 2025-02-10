@@ -57,7 +57,6 @@ export function CB(
           [classes, ids].flat().forEach((cl) => {
             az.cid.set(cl, prefix + cl);
           });
-
           //
           const prefixedName = prefix ? applyPrefix(name, prefix) : name;
 
@@ -83,7 +82,11 @@ export function CB(
 }
 
 // KEYFRAMES
-export function KF(az: Keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
+export function KF(
+  az: Keyframes,
+  kprops: { [P in PMtype]?: obj<string[]> },
+  anims: Set<string>,
+) {
   az.DATAX.forEach((data, prefix) => {
     data.forEach((v, k) => {
       v.forEach((vv, kk) => {
@@ -96,10 +99,12 @@ export function KF(az: Keyframes, kprops: { [P in PMtype]?: obj<string[]> }) {
           });
         });
         oItems(vls).forEach(([x, y]) => {
-          const xs = x as PMtype;
-          ensurePropsInitialized(kprops, xs, k);
-
-          kprops[xs]![k].push(toProperty(kk, y));
+          const slc = k.split(" ")[1];
+          if (anims.has(slc)) {
+            const xs = x as PMtype;
+            ensurePropsInitialized(kprops, xs, k);
+            kprops[xs]![k].push(toProperty(kk, y));
+          }
         });
       });
     });

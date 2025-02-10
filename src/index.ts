@@ -38,6 +38,14 @@ interface saveCSS {
   include?: string[];
 }
 
+interface sweetCFG {
+  name: string;
+  prefix?: string;
+  sweetSS?: SweetSS | SweetSS[];
+  exportMap?: boolean;
+  webkitKeyframes?: boolean;
+}
+
 export class SweetSS {
   [k: string]: any;
   name: string;
@@ -61,20 +69,15 @@ export class SweetSS {
     prefix,
     sweetSS = [],
     exportMap = false,
-  }: {
-    name: string;
-    prefix?: string;
-    sweetSS?: SweetSS | SweetSS[];
-    exportMap?: boolean;
-  }) {
+    webkitKeyframes,
+  }: sweetCFG) {
     //
     this.name = name;
     this.prefix = prefix ?? "";
     this.exportMap = exportMap;
     const importSS = isArr(sweetSS) ? sweetSS : [sweetSS];
 
-    importSS.forEach((ss) => {});
-    loader.call(this, this.prefix, isArr(sweetSS) ? sweetSS : [sweetSS]);
+    loader.call(this, this.prefix, importSS, webkitKeyframes);
 
     this.save = ({
       dir,
@@ -99,6 +102,7 @@ export class SweetSS {
 
         writeFileSync(cssFilePath, cssContent);
       });
+
       const _md = mapDir ? mapDir : (_DIR[0] ?? "");
       if (_md) {
         const mapEnd = _md.endsWith("/") ? "" : "/";
@@ -159,12 +163,17 @@ const parseCSS = (css: string): string => {
     .trim();
 };
 
-function loader(this: SweetSS, pref: string, loads: SweetSS[]) {
+function loader(
+  this: SweetSS,
+  pref: string,
+  loads: SweetSS[],
+  webkf: boolean = true,
+) {
   const props: Record<string, Cid | At | FontFace> = {
     dom: new Cid("", pref),
     id: new Cid("#", pref),
     cx: new Cid(".", pref),
-    kf: new Keyframes(pref),
+    kf: new Keyframes(pref, webkf),
     at: new At(),
     font: new FontFace(),
   };
