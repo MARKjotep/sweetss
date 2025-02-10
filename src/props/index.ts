@@ -8,7 +8,6 @@ class Base {
   data: Mapper<string, any[]> = new Mapper();
   cid: Mapper<string, string> = new Mapper();
   animCLS = new Set<string>();
-
   DATAX: Mapper<string, Mapper<string, CMapper>> = new Mapper();
   prefix: string;
   constructor(pre: string, prefix: string = "") {
@@ -40,7 +39,9 @@ class Base {
   }
   load(css: Base) {
     if (css.DATAX.size) {
-      this.DATAX.map(css.DATAX);
+      css.DATAX.forEach((dt, prefix) => {
+        this.DATAX.init(prefix, new Mapper()).map(dt);
+      });
     }
     css.data.size && this.data.map(css.data);
 
@@ -101,7 +102,7 @@ export class Keyframes extends Base {
     });
     const initDATA = this.DATAX.init(this.prefix, new Mapper());
     //
-
+    this.animCLS.add(nme);
     const kfKEY = `@keyframes ${nme}`;
     initDATA.set(kfKEY, dx);
     if (this.webkit) {

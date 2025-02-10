@@ -155,13 +155,13 @@ export class __css {
     });
 
     const animCLSS = new Set<string>();
+
     oVals(CSS).forEach((az) => {
       if (az instanceof Cid) {
         const CC = CB(az, props, shaker, include);
         az.animCLS.forEach((an) => {
           animCLSS.add(an);
         });
-
         this.updateCid(CC.cid);
       } else if (az instanceof Keyframes) {
         KF(az, kprops, animCLSS);

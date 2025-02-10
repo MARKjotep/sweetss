@@ -20,13 +20,13 @@ export class media {
   [key: string]: any;
   static default: Exclude<keyof mtype, "no_hover" | "print"> = "xs";
   static readonly prop: obj<string> = {
-    xs: "@media (width <= 480px)",
-    sm: "@media (width >= 480px)",
-    smd: "@media (width >= 624px)",
+    xs: "@media (width < 576px)",
+    sm: "@media (width >= 576px)",
+    smd: "@media (width >= 672px)",
     md: "@media (width >=  768px)",
-    lg: "@media (width >=  1024px)",
-    xl: "@media (width >= 1280px)",
-    xxl: "@media (width >= 1536px)",
+    lg: "@media (width >=  992px)",
+    xl: "@media (width >= 1200px)",
+    xxl: "@media (width >= 1400px)",
     no_hover: "@media (pointer: coarse)",
     print: "@media print",
     screen: "@media screen",
