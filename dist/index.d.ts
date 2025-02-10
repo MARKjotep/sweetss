@@ -632,21 +632,6 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
-declare class SweetShaker {
-    files: string[];
-    classes: Set<string>;
-    importMap: Map<string, string>;
-    resolvedImports: Map<string, string>;
-    StateValues: Map<string, Set<string>>;
-    constructor({ include }?: {
-        include?: string[];
-    });
-    load(src: string): Promise<this>;
-    setState(key: string, val: string): void;
-    export(dir: string, name?: string): Promise<void>;
-    get shaker(): string[];
-}
-
 type CSS = obj<CSSinR | CSSinR[] | {
     [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
 }>;
@@ -686,4 +671,4 @@ declare class css {
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, SweetShaker, _var, c, css, f, fileName, med, media, ps, v, x };
+export { $$, type CSS, _var, c, css, f, fileName, med, media, ps, v, x };

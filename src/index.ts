@@ -20,7 +20,6 @@ export * from "./@misc/x";
 export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
-export * from "./shaker";
 
 export { $$ };
 export { med, media } from "./media";
