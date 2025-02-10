@@ -640,9 +640,10 @@ interface saveCSS {
     mapDir?: string;
     mapName?: string;
     minify?: boolean;
-    shaker?: any;
+    shaker?: string[];
+    include?: string[];
 }
-declare class css {
+declare class SweetSS {
     [k: string]: any;
     name: string;
     prefix: string;
@@ -660,15 +661,13 @@ declare class css {
     save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
     exportMap: boolean;
     cids: Mapper<string, obj<string>>;
-    constructor({ name, prefix, importCSS, exportMap, shaker, include, }: {
+    constructor({ name, prefix, sweetSS, exportMap, }: {
         name: string;
         prefix?: string;
-        importCSS?: css | css[];
+        sweetSS?: SweetSS | SweetSS[];
         exportMap?: boolean;
-        shaker?: string[];
-        include?: string[];
     });
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, _var, c, css, f, fileName, med, media, ps, v, x };
+export { $$, type CSS, SweetSS, _var, c, f, fileName, med, media, ps, v, x };

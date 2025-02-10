@@ -34,10 +34,11 @@ interface saveCSS {
   mapDir?: string;
   mapName?: string;
   minify?: boolean;
-  shaker?: any;
+  shaker?: string[];
+  include?: string[];
 }
 
-export class css {
+export class SweetSS {
   [k: string]: any;
   name: string;
   prefix: string;
@@ -58,28 +59,31 @@ export class css {
   constructor({
     name,
     prefix,
-    importCSS = [],
+    sweetSS = [],
     exportMap = false,
-    shaker = [],
-    include = [],
   }: {
     name: string;
     prefix?: string;
-    importCSS?: css | css[];
+    sweetSS?: SweetSS | SweetSS[];
     exportMap?: boolean;
-    shaker?: string[];
-    include?: string[];
   }) {
     //
     this.name = name;
     this.prefix = prefix ?? "";
     this.exportMap = exportMap;
-    const importSS = isArr(importCSS) ? importCSS : [importCSS];
+    const importSS = isArr(sweetSS) ? sweetSS : [sweetSS];
 
     importSS.forEach((ss) => {});
-    loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
+    loader.call(this, this.prefix, isArr(sweetSS) ? sweetSS : [sweetSS]);
 
-    this.save = ({ dir, mapDir, mapName, minify = true }: saveCSS) => {
+    this.save = ({
+      dir,
+      mapDir,
+      mapName,
+      minify = true,
+      shaker = [],
+      include = [],
+    }: saveCSS) => {
       const css = new __css().load(this, shaker, include);
       const _DIR = isArr(dir) ? dir : [dir];
 
@@ -155,7 +159,7 @@ const parseCSS = (css: string): string => {
     .trim();
 };
 
-function loader(this: css, pref: string, loads: css[]) {
+function loader(this: SweetSS, pref: string, loads: SweetSS[]) {
   const props: Record<string, Cid | At | FontFace> = {
     dom: new Cid("", pref),
     id: new Cid("#", pref),

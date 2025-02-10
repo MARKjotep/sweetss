@@ -12,7 +12,7 @@ import {
   sparse,
   V,
 } from "../@";
-import { css } from "../";
+import { SweetSS } from "../";
 import { At, Cid, FontFace, Keyframes } from "../props";
 import { media, mtype } from "../media";
 import { _vars } from "../var";
@@ -139,7 +139,7 @@ export class __css {
     });
   }
 
-  load(CSS: css, shaker: string[] = [], include: string[] = []) {
+  load(CSS: SweetSS, shaker: string[] = [], include: string[] = []) {
     const mprops = media.prop;
 
     const def = media.default as mtype;
