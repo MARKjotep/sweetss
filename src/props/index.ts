@@ -7,7 +7,7 @@ class Base {
   pre: string;
   data: Mapper<string, any[]> = new Mapper();
   cid: Mapper<string, string> = new Mapper();
-  datax: Mapper<string, CMapper> = new Mapper();
+  DATAX: Mapper<string, Mapper<string, CMapper>> = new Mapper();
   prefix: string;
   constructor(pre: string, prefix: string = "") {
     this.pre = pre;
@@ -19,10 +19,12 @@ class Base {
       return nme;
     } else if (prop == "data") {
       return this.data as any;
-    } else if (prop == "datax") {
-      return this.datax as any;
+    } else if (prop == "DATAX") {
+      return this.DATAX as any;
     } else if (prop == "cid") {
       return this.cid as any;
+    } else if (prop == "prefix") {
+      return this.prefix as any;
     }
     return undefined;
   }
@@ -33,9 +35,11 @@ class Base {
     return new Proxy(this, this);
   }
   load(css: Base) {
-    css.datax.size && this.datax.map(css.datax);
+    if (css.DATAX.size) {
+      this.DATAX.map(css.DATAX);
+    }
     css.data.size && this.data.map(css.data);
-    // css.cid.size && this.cid.map(css.cid);
+
     return this;
   }
 }
@@ -49,13 +53,13 @@ export class Cid extends Base {
   PS: ProcSelector;
   constructor(pre: string = "", prefix: string = "") {
     super(pre, prefix);
-    this.PS = new ProcSelector(this.cid, this.prefix);
+    this.PS = new ProcSelector(this.prefix);
   }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
     const VL = isArr(val) ? val : [val];
     VL.forEach((vv) => {
-      this.PS.set(nme, vv, this.datax);
+      this.PS.set(nme, vv, this.DATAX.init(this.prefix, new Mapper()));
     });
 
     return true;
@@ -76,7 +80,7 @@ export class Keyframes extends Base {
   constructor(prefix: string = "") {
     super("", prefix);
 
-    this.PS = new ProcSelector(this.cid, this.prefix);
+    this.PS = new ProcSelector(this.prefix);
   }
   set(target: any, prop: string, val: obj<any>) {
     const nme = this.prefix + prop;
@@ -90,8 +94,9 @@ export class Keyframes extends Base {
         this.PS.set(x, y as CSSinR, dx);
       });
     });
-    this.datax.set(kfKEY, dx);
-    this.datax.set(kfKWebkit, dx);
+    const initDATA = this.DATAX.init(this.prefix, new Mapper());
+    //
+    initDATA.set(kfKEY, dx).set(kfKWebkit, dx);
     return true;
   }
   get css(): obj<{ from?: CSSinR; to?: CSSinR; "%"?: CSSinR } | obj<CSSinR>> {

@@ -28,21 +28,6 @@ const valToMedia = (val: RM): media => {
   return med(val);
 };
 
-const mapIDClass = (cssContent: string) => {
-  const xmatch = (regex: RegExp) =>
-    Array.from(cssContent.matchAll(regex), (match) => match[1]);
-  const classRegex = /\.(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches .className
-  const idRegex = /#(?![0-9])([a-zA-Z0-9_-]+)(?![^{]*})/g; // Matches #idName
-  return {
-    classes: [...new Set(xmatch(classRegex))],
-    ids: [...new Set(xmatch(idRegex))],
-  };
-};
-
-const applyPrefix = (sel: string, prefix: string) => {
-  return sel.replaceAll(/\.|\#/g, (m) => m + prefix);
-};
-
 /*
 -------------------------
 Clas ID KF process
@@ -50,13 +35,19 @@ Clas ID KF process
 */
 
 export class ProcSelector {
-  constructor(
-    private cid: Mapper<string, string>,
-    private prefix: string,
-  ) {}
+  constructor(private prefix: string) {}
   set(name: string, css: CSSinR, data: CMapper) {
     if (!isObj(css)) return;
+
     const props: Mapper<string, media> = new Mapper();
+
+    const Push = (prefix: string) => {
+      if (data.has(prefix)) {
+        data.get(prefix)?.map(props);
+      } else {
+        data.set(prefix, props);
+      }
+    };
 
     const processProps = (k: string, v: any) => {
       if (k.startsWith(":") || k.startsWith(",")) {
@@ -79,17 +70,20 @@ export class ProcSelector {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }
 
-    const { classes, ids } = mapIDClass(name);
-    [classes, ids].flat().forEach((cl) => {
-      this.cid.set(cl, this.prefix + cl);
-    });
+    // const prefixedName = this.prefix ? applyPrefix(name, this.prefix) : name;
 
-    const prefixedName = this.prefix ? applyPrefix(name, this.prefix) : name;
-
-    if (data.has(prefixedName)) {
-      data.get(prefixedName)?.map(props);
-    } else {
-      data.set(prefixedName, props);
-    }
+    // if classes -- use some to get true if one is true
+    // if (this.shaker.length && prefixedName.startsWith(".")) {
+    //   const hasC = classes.some(
+    //     (s) =>
+    //       this.shaker.includes(s) ||
+    //       (this.include.length && this.include.includes(s)),
+    //   );
+    //   if (hasC) {
+    //     Push(prefixedName);
+    //   }
+    // } else {
+    // }
+    Push(name);
   }
 }

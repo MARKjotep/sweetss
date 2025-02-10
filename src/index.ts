@@ -1,5 +1,15 @@
 import { readFileSync, writeFileSync } from "node:fs";
-import { $$, isArr, Mapper, oAss, obj, oItems, oKeys, oLen } from "./@";
+import {
+  $$,
+  isArr,
+  Mapper,
+  oAss,
+  obj,
+  oFItems,
+  oItems,
+  oKeys,
+  oLen,
+} from "./@";
 import { isDir, isFile } from "./@/bun";
 import { __css, atCSS, CSSinR, kfT } from "./css";
 import { At, Cid, FontFace, Keyframes } from "./props";
@@ -10,6 +20,7 @@ export * from "./@misc/x";
 export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
+export * from "./shaker";
 
 export { $$ };
 export { med, media } from "./media";
@@ -24,6 +35,7 @@ interface saveCSS {
   mapDir?: string;
   mapName?: string;
   minify?: boolean;
+  shaker?: any;
 }
 
 export class css {
@@ -49,20 +61,27 @@ export class css {
     prefix,
     importCSS = [],
     exportMap = false,
+    shaker = [],
+    include = [],
   }: {
     name: string;
     prefix?: string;
     importCSS?: css | css[];
     exportMap?: boolean;
+    shaker?: string[];
+    include?: string[];
   }) {
     //
     this.name = name;
     this.prefix = prefix ?? "";
     this.exportMap = exportMap;
+    const importSS = isArr(importCSS) ? importCSS : [importCSS];
+
+    importSS.forEach((ss) => {});
     loader.call(this, this.prefix, isArr(importCSS) ? importCSS : [importCSS]);
 
     this.save = ({ dir, mapDir, mapName, minify = true }: saveCSS) => {
-      const css = new __css().load(this);
+      const css = new __css().load(this, shaker, include);
       const _DIR = isArr(dir) ? dir : [dir];
 
       const cssContent = minify ? parseCSS(css.css) : css.css;
@@ -88,35 +107,46 @@ export class css {
 
         this.cids.init(name, {});
         const ccd = this.cids.get(name)!;
-        oAss(ccd, css.cid);
 
-        mapWriter(mapFilePath, this.cids);
+        oItems(css.cid).forEach(([k, v]) => {
+          if (ccd[k]) {
+            ccd[k] = v + " " + ccd[k];
+          } else {
+            ccd[k] = v;
+          }
+        });
+
+        mapWriter2(mapFilePath, this.cids);
+        // mapWriter(mapFilePath, this.cids);
       }
     };
   }
 }
 
-const mapWriter = (filePath: string, cids: Mapper<string, obj<string>>) => {
-  let mapFileContent = readFileSync(filePath).toString();
+const mapWriter2 = (filePath: string, cids: Mapper<string, obj<string>>) => {
+  // let mapFileContent = readFileSync(filePath).toString();
 
-  cids.forEach((v, key) => {
-    const exportPrefix = `export const ${key} = `;
-    const cssIdString = JSON.stringify(v);
-    const newExport = exportPrefix + cssIdString + ";";
-    const hasExistingExport = mapFileContent.match(exportPrefix);
+  const consol: obj<string[]> = {};
 
-    if (hasExistingExport) {
-      const exportRegex = new RegExp(`${exportPrefix}.*?};`, "gm");
-      const singleLineContent = mapFileContent.replace(/\n/gm, "");
-      const updatedContent = singleLineContent.replace(exportRegex, newExport);
-      writeFileSync(filePath, updatedContent);
-      mapFileContent = updatedContent;
-    } else {
-      const updatedContent = mapFileContent + newExport;
-      writeFileSync(filePath, updatedContent);
-      mapFileContent = updatedContent;
-    }
+  cids.values().forEach((v) => {
+    oItems(v).forEach(([x, y]) => {
+      if (!consol[x]) {
+        consol[x] = [y];
+      } else {
+        consol[x].push(y);
+      }
+    });
   });
+
+  const NITEM = oItems(consol)
+    .map(([x, y]) => {
+      return `${x} = "${y.join(" ")}"`;
+    })
+    .join();
+
+  writeFileSync(filePath, `export const ${NITEM};`);
+
+  return;
 };
 
 const parseCSS = (css: string): string => {
@@ -137,15 +167,18 @@ function loader(this: css, pref: string, loads: css[]) {
   };
 
   loads.forEach((l) => {
-    const xp = l.exportMap;
+    const xport = l.exportMap;
     const cids: obj<string> = {};
 
     oKeys(props).forEach((pr) => {
+      //
       props[pr].load(l[pr]);
-      if (xp) oAss(cids, Object.fromEntries(l[pr].cid));
+      if (xport) {
+        oAss(cids, oFItems(l[pr].cid));
+      }
     });
 
-    if (xp && oLen(cids)) {
+    if (xport && oLen(cids)) {
       this.cids.set(l.name, {});
       const cg = this.cids.get(l.name)!;
       oAss(cg, cids);

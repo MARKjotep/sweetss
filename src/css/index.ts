@@ -139,8 +139,9 @@ export class __css {
     });
   }
 
-  load(CSS: css) {
+  load(CSS: css, shaker: string[] = [], include: string[] = []) {
     const mprops = media.prop;
+
     const def = media.default as mtype;
     const props: { [P in PMtype]?: obj<string[]> } = {};
     const kprops: { [P in PMtype]?: obj<string[]> } = {};
@@ -155,7 +156,7 @@ export class __css {
 
     oVals(CSS).forEach((az) => {
       if (az instanceof Cid) {
-        const CC = CB(az, props);
+        const CC = CB(az, props, shaker, include);
         this.updateCid(CC.cid);
       } else if (az instanceof Keyframes) {
         KF(az, kprops);

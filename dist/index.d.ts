@@ -632,6 +632,21 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
+declare class SweetShaker {
+    files: string[];
+    classes: Set<string>;
+    importMap: Map<string, string>;
+    resolvedImports: Map<string, string>;
+    StateValues: Map<string, Set<string>>;
+    constructor({ include }?: {
+        include?: string[];
+    });
+    load(src: string): Promise<this>;
+    setState(key: string, val: string): void;
+    export(dir: string, name?: string): Promise<void>;
+    get shaker(): string[];
+}
+
 type CSS = obj<CSSinR | CSSinR[] | {
     [key: `.${string}` | `#${string}`]: CSSinR | CSSinR[];
 }>;
@@ -640,6 +655,7 @@ interface saveCSS {
     mapDir?: string;
     mapName?: string;
     minify?: boolean;
+    shaker?: any;
 }
 declare class css {
     [k: string]: any;
@@ -659,13 +675,15 @@ declare class css {
     save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
     exportMap: boolean;
     cids: Mapper<string, obj<string>>;
-    constructor({ name, prefix, importCSS, exportMap, }: {
+    constructor({ name, prefix, importCSS, exportMap, shaker, include, }: {
         name: string;
         prefix?: string;
         importCSS?: css | css[];
         exportMap?: boolean;
+        shaker?: string[];
+        include?: string[];
     });
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, _var, c, css, f, fileName, med, media, ps, v, x };
+export { $$, type CSS, SweetShaker, _var, c, css, f, fileName, med, media, ps, v, x };
