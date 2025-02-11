@@ -1,6 +1,6 @@
 {
   "name": "sweetss",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "CSS in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
   "homepage": "https://github.com/MARKjotep/sweetss#readme",
   "type": "module",
   "devDependencies": {
-    "@types/node": "^22.13.1",
+    "@types/node": "latest",
     "@types/bun": "latest"
   },
   "peerDependencies": {

@@ -1,5 +1,6 @@
 import { ensurePropsInitialized, PMtype, val_xxx } from "..";
 import { $$, ngify, obj, oItems, reCamel } from "../../@";
+import { mtype } from "../../media";
 import { At, Cid, Keyframes, FontFace } from "../../props";
 
 const formatContentValue = (key: string, value: string): string => {
@@ -48,7 +49,7 @@ export function CB(
     data.forEach((v, name) => {
       v.forEach((vv, kk) => {
         oItems(vv).forEach(([x, y]) => {
-          const xx = x as PMtype;
+          const xx = x;
           let pvp = formatContentValue(xx, y);
           const stn = ngify({ [reCamel(kk)]: pvp });
 

@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import {
   $$,
+  __,
   isArr,
   Mapper,
   oAss,
@@ -21,7 +22,7 @@ export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
 
-export { $$ };
+export { $$, __ };
 export { med, media } from "./media";
 export { _var } from "./var";
 
@@ -124,15 +125,13 @@ export class SweetSS {
         });
 
         mapWriter2(mapFilePath, this.cids);
-        // mapWriter(mapFilePath, this.cids);
       }
     };
   }
 }
 
 const mapWriter2 = (filePath: string, cids: Mapper<string, obj<string>>) => {
-  // let mapFileContent = readFileSync(filePath).toString();
-
+  //
   const consol: obj<string[]> = {};
 
   cids.values().forEach((v) => {
@@ -147,8 +146,9 @@ const mapWriter2 = (filePath: string, cids: Mapper<string, obj<string>>) => {
 
   const NITEM = oItems(consol)
     .map(([x, y]) => {
-      return `${x} = "${y.join(" ")}"`;
+      return `${x}="${y.join(" ")}"`;
     })
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
     .join();
 
   writeFileSync(filePath, `export const ${NITEM};`);

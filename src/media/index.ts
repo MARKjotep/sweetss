@@ -1,9 +1,10 @@
 import { RM } from "../css";
-import { isArr, oAss, obj, oItems, V } from "../@";
-import { tup_rst } from "../css";
+import { $$, isArr, ngify, oAss, obj, oItems, oKeys, sparse, V } from "../@";
+import { tup_rst, val_xxx } from "../css";
 import { _vars } from "../var";
 
 export interface mtype {
+  [k: string]: RM | undefined;
   xs?: RM;
   sm?: RM;
   smd?: RM;
@@ -14,49 +15,84 @@ export interface mtype {
   no_hover?: RM;
   print?: RM;
   dark?: RM;
+  screen?: RM;
 }
+
+const breakpoints = {
+  xs: "480px",
+  sm: "480px",
+  smd: "624px",
+  md: "768px",
+  lg: "1024px",
+  xl: "1280px",
+  xxl: "1536px",
+};
 
 export class media {
   [key: string]: any;
   static default: Exclude<keyof mtype, "no_hover" | "print"> = "xs";
-  static readonly prop: obj<string> = {
-    xs: "@media (max-width: 480px)",
-    sm: "@media (min-width: 480px)",
-    smd: "@media (min-width: 624px)",
-    md: "@media (min-width: 768px)",
-    lg: "@media (min-width:  1024px)",
-    xl: "@media (min-width: 1280px)",
-    xxl: "@media (min-width: 1536px)",
+  static readonly prop: mtype = oItems(breakpoints).reduce<obj<string>>(
+    (r, [k, v], ind) => {
+      r[k] = `@media (${ind == 0 ? "max-width" : "min-width"}: ${v})`;
+      return r;
+    },
+    {},
+  );
+  static readonly extra: mtype = {
     no_hover: "@media (pointer: coarse)",
     print: "@media print",
     screen: "@media screen",
     dark: "@media (prefers-color-scheme: dark)",
   };
-  constructor(defValue: RM, g: obj<any> = {}) {
+
+  constructor(defValue?: RM, g: obj<any> = {}) {
     const defM = media.default;
     const DM: obj<RM> = {};
-    DM[defM] = defValue;
+
+    if (defValue) {
+      DM[defM] = defValue;
+    }
     if (!(defM in g)) {
       g[defM] = defValue;
     }
 
     oItems(g).forEach(([k, v]) => {
-      DM[k] = isArr(v) ? tup_rst(v, false, false) : v;
+      if (v !== undefined) {
+        DM[k] = v;
+      }
     });
     oAss(this, DM);
   }
   static new(prop: obj<string>) {
     oItems(prop).forEach(([k, v]) => {
-      if (!this.prop[k]) {
-        this.prop[k] = `@media (${v})`;
+      if (!this.extra[k]) {
+        this.extra[k] = `@media (${v})`;
       }
     });
+  }
+  static get breakpoints() {
+    const BV = sparse(ngify(breakpoints));
+    delete BV[this.default];
+    return BV;
   }
 }
 
 // export type PMtype = keyof mtype;
 
-export const med = (
+export function med(g: mtype & { [k: string]: undefined | RM }): media;
+export function med(
   defValue: RM,
-  g: mtype & { [k: string]: undefined | RM } = {},
-) => new media(defValue, g);
+  g: mtype & { [k: string]: undefined | RM },
+): media;
+export function med(
+  defValueOrG: RM | (mtype & { [k: string]: undefined | RM }),
+  g?: mtype & { [k: string]: undefined | RM },
+) {
+  if (g) {
+    return new media(defValueOrG as RM, g);
+  }
+  return new media(
+    undefined,
+    defValueOrG as mtype & { [k: string]: undefined | RM },
+  );
+}

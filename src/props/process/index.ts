@@ -1,12 +1,14 @@
-import { $$, isClassOrId, isObj, Mapper, oItems } from "../../@";
-import { CMapper, CSSinR, RM, val_xxx } from "../../css";
+import { $$, isArr, isClassOrId, isObj, Mapper, oItems } from "../../@";
+import { CMapper, CSSinR, RM, tup_rst, val_xxx } from "../../css";
 import { med, media } from "../../media";
 import { _vars } from "../../var";
 
-const valToMedia = (val: RM): media => {
+const ARRcomma = ["transitionProperty"];
+
+const valToMedia = (sel: string, val: RM): media => {
   if (val instanceof media) return val;
-  if (val instanceof _vars) return med(val.__());
-  return med(val);
+  if (val instanceof _vars) return med(val.__(), {});
+  return med(val_xxx(sel, val), {});
 };
 
 /*
@@ -36,12 +38,12 @@ export class ProcSelector {
       } else if (isClassOrId(k)) {
         this.set(name + k, v, data);
       } else {
-        props.set(k, this.props(k, valToMedia(v)));
+        props.set(k, this.props(k, valToMedia(k, v)));
       }
     };
 
     if (css instanceof _vars) {
-      props.ass(css._var, this.props(css._var, valToMedia(css._val)));
+      props.ass(css._var, this.props(css._var, valToMedia(css._var, css._val)));
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }

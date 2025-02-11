@@ -13,7 +13,7 @@ export class _vars {
       const [k, v] = oItems(vr)[0];
       this.k = k;
       this._var = "--" + reCamel(k);
-      this._val = v instanceof media ? v : med(v);
+      this._val = v instanceof media ? v : med(v, {});
     }
   }
   __(fallback?: V): string {

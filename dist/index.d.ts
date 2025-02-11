@@ -13,7 +13,47 @@ declare class $$ {
     static set p(a: any);
 }
 
+declare class __ {
+    static rand(min?: number, max?: number): number;
+    static fill(count: number, fill?: any): any[];
+    static new({ dom, id, inner, }: {
+        dom: keyof HTMLElementTagNameMap;
+        id?: string;
+        inner?: any;
+    }): HTMLElement;
+    static randFrom(arr: any[] | Object): any;
+    static makeID: (length: number) => string;
+    static reClass: (a: obj<any>, classes: string[]) => any[];
+    static get O(): {
+        vals: {
+            <T>(o: {
+                [s: string]: T;
+            } | ArrayLike<T>): T[];
+            (o: {}): any[];
+        };
+        keys: {
+            (o: object): string[];
+            (o: {}): string[];
+        };
+        items: {
+            <T>(o: {
+                [s: string]: T;
+            } | ArrayLike<T>): [string, T][];
+            (o: {}): [string, any][];
+        };
+        has: (o: object, v: PropertyKey) => boolean;
+        ass: {
+            <T extends {}, U>(target: T, source: U): T & U;
+            <T extends {}, U, V>(target: T, source1: U, source2: V): T & U & V;
+            <T extends {}, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W;
+            (target: object, ...sources: any[]): any;
+        };
+        len: (obj?: {}) => number;
+    };
+}
+
 interface mtype {
+    [k: string]: RM | undefined;
     xs?: RM;
     sm?: RM;
     smd?: RM;
@@ -24,17 +64,23 @@ interface mtype {
     no_hover?: RM;
     print?: RM;
     dark?: RM;
+    screen?: RM;
 }
 declare class media {
     [key: string]: any;
     static default: Exclude<keyof mtype, "no_hover" | "print">;
-    static readonly prop: obj<string>;
-    constructor(defValue: RM, g?: obj<any>);
+    static readonly prop: mtype;
+    static readonly extra: mtype;
+    constructor(defValue?: RM, g?: obj<any>);
     static new(prop: obj<string>): void;
+    static get breakpoints(): any;
 }
-declare const med: (defValue: RM, g?: mtype & {
+declare function med(g: mtype & {
     [k: string]: undefined | RM;
-}) => media;
+}): media;
+declare function med(defValue: RM, g: mtype & {
+    [k: string]: undefined | RM;
+}): media;
 
 declare class _vars {
     _var: string;
@@ -672,4 +718,4 @@ declare class SweetSS {
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, SweetSS, _var, c, f, fileName, med, media, ps, v, x };
+export { $$, type CSS, SweetSS, __, _var, c, f, fileName, med, media, ps, v, x };

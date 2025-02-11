@@ -65,28 +65,38 @@ const norems = [
   "lineClamp",
   "webkitLineClamp",
 ];
+const ARRcomma = ["transitionProperty"];
 
 export function val_xxx(
   sel: string,
-  val: V | _vars,
-  options = { rem: true, deg: false },
+  val: RM,
+  options = { rem: true, deg: false, quote: false },
 ): string {
-  const { rem, deg } = options;
+  const { rem, deg, quote } = options;
   if (val instanceof _vars) return val.__();
   if (isArr(val)) {
-    return val.map((item) => val_xxx(sel, item)).join(" ");
+    const fval = val.map((item) => val_xxx(sel, item));
+    return fval.join(ARRcomma.includes(sel) ? ", " : " ");
   }
   if (typeof val === "number") {
     let valueStr = val.toString();
-
     if (rem && !norems.includes(sel)) valueStr += "rem";
     if (secs.includes(sel)) valueStr += "s";
     if (deg) valueStr += "deg";
     return valueStr;
   }
 
-  const valStr = val.toString();
-  return valStr.includes("(") ? valStr : `${valStr}`;
+  if (isStr(val)) {
+    if (val.includes("(")) {
+      return val;
+    } else if (quote) {
+      return `'${val}'`;
+    } else {
+      return val;
+    }
+  }
+
+  return "";
 }
 
 export function tup_rst(
@@ -100,9 +110,18 @@ export function tup_rst(
     if (isArr(ff)) {
       return tup_rst(ff, noRem, false, degree, quote);
     }
-    if (isStr(ff)) return quote ? `'${ff}'` : ff;
     if (ff instanceof _vars) return ff.__();
     if (isNumber(ff)) return `${ff}${noRem ? "" : degree ? "deg" : "rem"}`;
+
+    if (isStr(ff)) {
+      if (ff.includes("(")) {
+        return ff;
+      } else if (quote) {
+        return `'${ff}'`;
+      } else {
+        return ff;
+      }
+    }
     return "";
   });
 
@@ -141,8 +160,9 @@ export class __css {
 
   load(CSS: SweetSS, shaker: string[] = [], include: string[] = []) {
     const mprops = media.prop;
+    oAss(mprops, media.extra);
+    const def = media.default;
 
-    const def = media.default as mtype;
     const props: { [P in PMtype]?: obj<string[]> } = {};
     const kprops: { [P in PMtype]?: obj<string[]> } = {};
     const cs2: obj<obj<obj<string>>> = {};
@@ -178,11 +198,12 @@ export class __css {
     */
     oItems(props).forEach(([kk, vv]) => {
       if (!cs2[kk]) cs2[kk] = {};
-      oItems(vv).forEach(([k, v]) => {
-        const ct = v.join(", ");
-        if (!cs2[kk][ct]) cs2[kk][ct] = {};
-        oAss(cs2[kk][ct], sparse(k));
-      });
+      if (vv !== undefined)
+        oItems(vv).forEach(([k, v]) => {
+          const ct = v.join(", ");
+          if (!cs2[kk][ct]) cs2[kk][ct] = {};
+          oAss(cs2[kk][ct], sparse(k));
+        });
     });
 
     oItems(cs2).forEach(([kk, vv]) => {
