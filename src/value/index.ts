@@ -103,3 +103,39 @@ export function fix_value(
 
   return fnal.join(delimeter);
 }
+
+export function value(
+  val: RM | RM[],
+  config: {
+    rem?: boolean;
+    degree?: boolean;
+    percent?: boolean;
+    second?: boolean;
+    quote?: boolean;
+    delimeter?: string;
+    delimeter_arr?: boolean;
+    percent_arr?: boolean;
+  } = {},
+) {
+  const {
+    rem = false,
+    degree = false,
+    percent = false,
+    second = false,
+    quote = false,
+    delimeter = " ",
+    delimeter_arr = true,
+    percent_arr = false,
+  } = config;
+  //
+  return fix_value(isArr(val) ? val : [val], {
+    rem,
+    degree,
+    percent,
+    second,
+    quote,
+    delimeter,
+    delim_arr: delimeter_arr,
+    perc_arr: percent_arr,
+  });
+}

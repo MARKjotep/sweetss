@@ -12,7 +12,7 @@ import {
   oLen,
 } from "./@";
 import { isDir, isFile } from "./@/bun";
-import { __css, atCSS, CSSinR as CinR, kfT } from "./css";
+import { __css, atCSS, CSSinR as CinR, kfT, RM } from "./css";
 import { At, Cid, FontFace, Keyframes } from "./props";
 import { _vars } from "./var";
 
@@ -25,6 +25,7 @@ export * from "./@misc/f";
 export { $$, __ };
 export { med, media } from "./media";
 export { Var } from "./var";
+export { value } from "./value";
 
 export type CSSinR = CinR | CinR[];
 
@@ -209,8 +210,4 @@ function loader(
 
 export function fileName(path: string) {
   return path.split("/").slice(-1)[0].split(".")[0];
-}
-
-export function Join(delimeter: string, ...val: any[]) {
-  return;
 }

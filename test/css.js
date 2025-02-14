@@ -1,1 +1,1 @@
-export const lol="lol";
+export const _from="_from",lol="lol",to="to";

@@ -1,7 +1,22 @@
-import { ps, f, med, Var, c, v, x, SweetSS, $$ } from "../src";
+import { ps, f, med, Var, value, c, v, x, SweetSS, $$ } from "../src";
 import { cc } from "./ntest";
 
 const fxs = __filename.split("/").slice(-3);
+
+const basic = med("#000", { dark: "#fff" });
+
+export const qt_gradient_from = Var({
+  qt_gradient_from: basic,
+});
+
+//
+export const qt_gradient_to = Var({ qt_gradient_to: basic });
+//
+export const qt_gradient_stops = Var({
+  qt_gradient_stops: value([qt_gradient_from, qt_gradient_to], {
+    delimeter: ", ",
+  }),
+});
 
 const gc = new SweetSS({
   name: fxs[2].split(".")[0],
@@ -10,6 +25,17 @@ const gc = new SweetSS({
 const { cx: cx2, save } = gc;
 
 const v2 = Var({ V2: 5 });
+
+$$.p = v2;
+
+cx2.to = [qt_gradient_to.new("red")];
+
+cx2._from = [
+  qt_gradient_from.new("red"),
+  qt_gradient_stops.new(
+    value([qt_gradient_from, qt_gradient_to], { delimeter: ", " }),
+  ),
+];
 
 cx2.lol = [
   ps.after()({

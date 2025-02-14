@@ -89,34 +89,16 @@ declare function med(defValue: RM, g: mtype & {
 }): media;
 
 declare class _vars {
-    cfg: {
-        rem: boolean;
-        degree: boolean;
-        percent: boolean;
-        quote: boolean;
-        delimeter: string;
-    };
     _var: string;
     k: string;
     _cvar: string;
+    fallback?: RM;
     _val: media;
-    constructor(vr?: obj<RM>, cfg?: {
-        rem: boolean;
-        degree: boolean;
-        percent: boolean;
-        quote: boolean;
-        delimeter: string;
-    });
+    constructor(vr?: obj<RM | RM[]>, fallback?: RM);
     __(fallback?: RM): string;
     new(val: RM): _vars;
 }
-declare const Var: (vr: obj<RM>, cfg?: {
-    rem: boolean;
-    degree: boolean;
-    percent: boolean;
-    quote: boolean;
-    delimeter: string;
-}) => _vars;
+declare const Var: (vr: obj<RM>, fallback?: RM) => _vars;
 
 type RM = V | media | _vars | RM[];
 type atCSS = CSSinR$1 | _vars | obj<RM>;
@@ -720,6 +702,17 @@ declare class f {
     static var(st: string, opt?: RM): string;
 }
 
+declare function value(val: RM | RM[], config?: {
+    rem?: boolean;
+    degree?: boolean;
+    percent?: boolean;
+    second?: boolean;
+    quote?: boolean;
+    delimeter?: string;
+    delimeter_arr?: boolean;
+    percent_arr?: boolean;
+}): string;
+
 type CSSinR = CSSinR$1 | CSSinR$1[];
 type VarType = _vars;
 type CSS = obj<CSSinR | {
@@ -766,6 +759,5 @@ declare class SweetSS {
     constructor({ name, prefix, sweetSS, exportMap, webkitKeyframes, }: sweetCFG);
 }
 declare function fileName(path: string): string;
-declare function Join(delimeter: string, ...val: any[]): void;
 
-export { $$, type CSS, type CSSinR, Join, type KFCSS, SweetSS, Var, type VarType, __, c, f, fileName, med, media, ps, v, x };
+export { $$, type CSS, type CSSinR, type KFCSS, SweetSS, Var, type VarType, __, c, f, fileName, med, media, ps, v, value, x };

@@ -1,4 +1,11 @@
 /* -------------- xs ( default ) */
+.to {
+  --qt_gradient_to: red;
+}
+._from {
+  --qt_gradient_from: red; 
+  --qt_gradient_stops: var(--qt_gradient_from), var(--qt_gradient_to);
+}
 .lol::after {
   color: red; 
   content: 'ss';
