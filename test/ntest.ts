@@ -1,15 +1,15 @@
-import { ps, f, med, _var, c, v, x, css, $$ } from "../dist";
+import { ps, f, med, Var, c, v, x, SweetSS, $$ } from "../src";
 
 const fxs = __filename.split("/").slice(-3);
 
-export const cc = new css({
+export const cc = new SweetSS({
   name: fxs[2].split(".")[0],
   prefix: "g",
 });
 
 const { dom, cx, id, kf, save } = cc;
 
-const _fheight = _var({ _fheight: 10 });
+const _fheight = Var({ _fheight: 10 });
 
 cx.okay = [
   {

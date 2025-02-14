@@ -1,5 +1,5 @@
 import { $$, isArr, isClassOrId, isObj, Mapper, oItems } from "../../@";
-import { CMapper, CSSinR, RM, tup_rst, val_xxx } from "../../css";
+import { CMapper, CSSinR, RM, val_xxx } from "../../css";
 import { med, media } from "../../media";
 import { _vars } from "../../var";
 

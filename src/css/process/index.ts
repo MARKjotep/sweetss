@@ -28,7 +28,11 @@ const addPropertyValues = (
   key: string,
   values: string,
 ) => {
-  props[type]![key].push(...values.split(",").map((s) => s.trim()));
+  if (!props[type]) {
+    props[type] = { [key]: values.split(",").map((s) => s.trim()) };
+  } else {
+    props[type]![key].push(...values.split(",").map((s) => s.trim()));
+  }
 };
 
 export const toProperty = (sel: string, vals: obj<string>) => {

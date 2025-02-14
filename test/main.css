@@ -1,1 +1,4 @@
-.g_okay{color:red;border:1rem red dashed;--_fheight:10rem;}.okay{color:#1020af;margin:1rem;transform:translateX(2rem) scale(1);border:1rem #bad61c dashed;}
+/* -------------- xs ( default ) */
+.lol {
+  background: blur(0.5rem) attr(1) brightness(20%) calc(1rem + var(--v2,orange)) circle(40% left) color-mix(srgb, red 10%, salmon 10%) conic-gradient(red 45, blue) contrast(20%) cubic-bezier(1, 2, 3, 4) drop-shadow(0.8rem 0.8rem 0.1rem grey) hsl(120 100% 50%) hue-rotate(20deg) inset(10% round 2rem) invert(50%) translateX(20rem) translateY(20rem) var(--hello) skewY(20deg) skew(-5deg, 6deg) rotate(20deg) rotate3d(1, 2, 5, 40deg) scale3d(1, 2, 3) scaleX(2) rgba(1 3 4 / 40%) linear-gradient(to right, red 17%, orange 30% 50%) matrix(1, 0, 0, 0, 2, 3) perspective(2cm) polygon(100%, 0%, 0%, 50%, 50%) radial-gradient(closest-side at 60% 50%, red, green 15%) repeating-linear-gradient(45deg, red 30%, green 50%) matrix3d(1, 0, 0, 0, 0, 1, 6, 0, 0, 0, 1, 0, 50, 100, 0, 1.1);
+}

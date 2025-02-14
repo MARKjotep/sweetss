@@ -1,173 +1,328 @@
-import { reCamel } from "../@";
-import { RM, tup_rst } from "../css";
+import { $$, isArr, isNum, isNumber, isStr, reCamel } from "../@";
+import { RM } from "../css";
 import { _vars } from "../var";
 
+export function fix_value(
+  sfs: (RM | undefined)[],
+  {
+    rem = false,
+    degree = false,
+    percent = false,
+    quote = false,
+    delimeter = " ",
+    delim_arr = true,
+    perc_arr = false,
+  } = {},
+) {
+  const fnal: string[] = sfs
+    .filter((mf) => mf !== undefined)
+    .map((ff) => {
+      if (isArr(ff)) {
+        return fix_value(ff, {
+          rem: perc_arr ? false : rem,
+          degree: perc_arr ? false : degree,
+          percent: perc_arr ? perc_arr : percent,
+          delimeter: delim_arr ? delimeter : " ",
+          quote,
+        });
+      }
+      if (ff instanceof _vars) return ff.__();
+      if (isNum(ff))
+        return `${ff}${rem ? "rem" : degree ? "deg" : percent ? "%" : ""}`;
+      if (isStr(ff)) {
+        if (ff.includes("(")) {
+          return ff;
+        } else if (quote) {
+          return `'${ff}'`;
+        } else {
+          return ff;
+        }
+      }
+      return "";
+    });
+
+  return fnal.join(delimeter);
+}
+
 export class f {
-  static attr(...sfs: RM[]) {
-    return `attr(${tup_rst(sfs)})`;
+  static attr(name: RM, type?: RM, fallback?: RM) {
+    return `attr(${fix_value([name, type, fallback])})`;
   }
-  static blur(...sfs: RM[]) {
-    return `blur(${tup_rst(sfs, false, false, false)})`;
+  static blur(blur: RM) {
+    return `blur(${fix_value([blur], { rem: true })})`;
   }
-  static brightness(...sfs: RM[]) {
-    return `brightness(${tup_rst(sfs)})`;
+  static brightness(brightness: RM) {
+    return `brightness(${fix_value([brightness])})`;
   }
-  static calc(...sfs: RM[]) {
-    return `calc(${tup_rst(sfs, false, false, false, false)})`;
+  static calc(...calc: RM[]) {
+    return `calc(${fix_value(calc, { rem: true })})`;
   }
-  static circle(...sfs: RM[]) {
-    return `circle(${tup_rst(sfs, false, false, false, false)})`;
+  static circle(radius: RM, position?: RM) {
+    return `circle(${fix_value([radius, position], { rem: true })})`;
   }
-  static colorMix(...sfs: RM[]) {
-    return `color-mix(${tup_rst(sfs)})`;
+
+  /**
+   *
+   * @param colorInterpolation in + srgb, srgb-linear, display-p3, a98-rgb, prophoto-rgb, rec2020, lab, oklab, xyz, xyz-d50, xyz-d65, hsl, hwb, lch, and oklch
+   * @param color1 color, mix%
+   * @param color2 color,  mix%
+   */
+  static colorMix(colorInterpolation: RM, color1: RM[], color2: RM[]) {
+    return `color-mix(${fix_value([colorInterpolation, fix_value(color1), fix_value(color2)], { delimeter: ", " })})`;
   }
+
   static conicGradient(...sfs: RM[]) {
-    return `conic-gradient(${tup_rst(sfs)})`;
+    return `conic-gradient(${fix_value(sfs, {
+      delimeter: ", ",
+      delim_arr: false,
+    })})`;
   }
-  static contrast(...sfs: RM[]) {
-    return `contrast(${tup_rst(sfs)})`;
+  static contrast(contrast: RM) {
+    return `contrast(${fix_value([contrast])})`;
   }
-  static cubicBezier(...sfs: RM[]) {
-    return `cubic-bezier(${tup_rst(sfs)})`;
+
+  /**
+   * Numeric values. x1 and x2 must be a number from 0 to 1
+   */
+  static cubicBezier(x1: RM, y1: RM, x2: RM, y2: RM) {
+    return `cubic-bezier(${fix_value([x1, y1, x2, y2], { delimeter: ", " })})`;
   }
+  /**
+   * @param sfs h-shadow v-shadow blur spread color
+   */
   static dropShadow(...sfs: RM[]) {
-    return `drop-shadow(${tup_rst(sfs, false, false, false, false)})`;
+    return `drop-shadow(${fix_value(sfs, { rem: true })})`;
   }
-  static env(...sfs: RM[]) {
-    return `env(${tup_rst(sfs, false)})`;
+
+  static grayscale(grayscale: RM) {
+    return `grayscale(${fix_value([grayscale])})`;
   }
-  static grayscale(...sfs: RM[]) {
-    return `grayscale(${tup_rst(sfs)})`;
+
+  static hsl(hue: RM, saturation: RM, lightness: RM) {
+    return `hsl(${fix_value([hue, saturation, lightness])})`;
   }
-  static hsl(...sfs: RM[]) {
-    return `hsl(${tup_rst(sfs)})`;
+  static hsla(hue: RM, saturation: RM, lightness: RM, A?: RM) {
+    return `hsl(${fix_value([hue, saturation, lightness, A ? ["/", A] : A])})`;
   }
-  static hsla(...sfs: RM[]) {
-    return `hsla(${tup_rst(sfs)})`;
-  }
-  static hueRotate(...sfs: RM[]) {
-    return `hue-rotate(${tup_rst(sfs, false, false, true)})`;
+
+  static hueRotate(degree: RM) {
+    return `hue-rotate(${fix_value([degree], {
+      degree: true,
+    })})`;
   }
   static inset(...sfs: RM[]) {
-    return `inset(${tup_rst(sfs)})`;
+    return `inset(${fix_value(sfs, { rem: true })})`;
   }
-  static invert(...sfs: RM[]) {
-    return `invert(${tup_rst(sfs)})`;
+  static invert(percent: RM) {
+    return `invert(${fix_value([percent])})`;
   }
   static linearGradient(...sfs: RM[]) {
-    return `linear-gradient(${tup_rst(sfs)})`;
+    return `linear-gradient(${fix_value(sfs, {
+      delim_arr: false,
+      delimeter: ", ",
+    })})`;
   }
-  static matrix(...sfs: RM[]) {
-    return `matrix(${tup_rst(sfs)})`;
+  static matrix(
+    scaleX: RM,
+    skewY: RM,
+    skewX: RM,
+    scaleY: RM,
+    translateX: RM,
+    translateY: RM,
+  ) {
+    return `matrix(${fix_value(
+      [scaleX, skewY, skewX, scaleY, translateX, translateY],
+      {
+        delimeter: ", ",
+      },
+    )})`;
   }
-  static matrix3d(...sfs: RM[]) {
-    return `matrix3d(${tup_rst(sfs)})`;
+  static matrix3d(a1: RM[], a2: RM[], a3: RM[], t4: RM[]) {
+    return `matrix3d(${fix_value([a1, a2, a3, t4], {
+      delimeter: ", ",
+    })})`;
   }
   static max(...sfs: RM[]) {
-    return `max(${tup_rst(sfs, false)})`;
+    return `max(${fix_value(sfs, {
+      rem: true,
+      delimeter: ", ",
+    })})`;
   }
   static min(...sfs: RM[]) {
-    return `min(${tup_rst(sfs, false)})`;
+    return `min(${fix_value(sfs, {
+      rem: true,
+      delimeter: ", ",
+    })})`;
   }
-  static opacity(...sfs: RM[]) {
-    return `opacity(${tup_rst(sfs)})`;
+  static opacity(percent: RM) {
+    return `opacity(${fix_value([percent])})`;
   }
-  static path(...sfs: RM[]) {
-    return `path(${tup_rst(sfs, true, true, false, true)})`;
+
+  static perspective(value: RM) {
+    return `perspective(${fix_value([value])})`;
   }
-  static perspective(...sfs: RM[]) {
-    return `perspective(${tup_rst(sfs, false, false, false, false)})`;
-  }
-  static polygon(...sfs: RM[]) {
-    return `polygon(${tup_rst(sfs)})`;
+  static polygon(...lengths: RM[]) {
+    return `polygon(${fix_value(lengths, {
+      percent: true,
+      delimeter: ", ",
+    })})`;
   }
   static radialGradient(...sfs: RM[]) {
-    return `radial-gradient(${tup_rst(sfs)})`;
+    return `radial-gradient(${fix_value(sfs, {
+      delim_arr: false,
+      perc_arr: true,
+      delimeter: ", ",
+    })})`;
   }
-  static repeatingConicFunction(...sfs: RM[]) {
-    return `repeating-conic-function(${tup_rst(sfs)})`;
+  static repeatingConicGradient(...sfs: RM[]) {
+    return `repeating-conic-gradient(${fix_value(sfs, {
+      delim_arr: false,
+      degree: true,
+      perc_arr: true,
+      delimeter: ", ",
+    })})`;
   }
   static repeatingLinearGradient(...sfs: RM[]) {
-    return `repeating-linear-gradient(${tup_rst(sfs)})`;
+    return `repeating-linear-gradient(${fix_value(sfs, {
+      delim_arr: false,
+      degree: true,
+      perc_arr: true,
+      delimeter: ", ",
+    })})`;
   }
   static repeatingRadialGradient(...sfs: RM[]) {
-    return `repeating-radial-gradient(${tup_rst(sfs)})`;
+    return `repeating-radial-gradient(${fix_value(sfs, {
+      delim_arr: false,
+      degree: true,
+      perc_arr: true,
+      delimeter: ", ",
+    })})`;
   }
-  static rgb(...sfs: RM[]) {
-    return `rgb(${tup_rst(sfs)})`;
+
+  //
+  static rgb(R: RM, G: RM, B: RM) {
+    return `rgb(${fix_value([R, G, B])})`;
   }
-  static rgba(...sfs: RM[]) {
-    return `rgba(${tup_rst(sfs)})`;
+  static rgba(R: RM, G: RM, B: RM, A?: RM) {
+    return `rgba(${fix_value([R, G, B, A ? ["/", A] : A])})`;
   }
-  static rotate(...sfs: RM[]) {
-    return `rotate(${tup_rst(sfs, false, false, true)})`;
+  static rotate(R: RM) {
+    return `rotate(${fix_value([R], {
+      degree: true,
+    })})`;
   }
-  static rotate3d(x: number, y: number, z: number, angle: string) {
-    return `rotate3d(${x},${x},${x},${angle})`;
+  static rotate3d(x: RM, y: RM, z: RM, angle: RM) {
+    const r3 = fix_value(
+      [
+        fix_value([x, y, z], {
+          delimeter: ", ",
+        }),
+        angle,
+      ],
+      {
+        degree: true,
+        delimeter: ", ",
+      },
+    );
+    return `rotate3d(${r3})`;
   }
-  static rotateX(...sfs: RM[]) {
-    return `rotateX(${tup_rst(sfs, false, false, true)})`;
+  static rotateX(X: RM) {
+    return `rotateX(${fix_value([X], {
+      degree: true,
+    })})`;
   }
-  static rotateY(...sfs: RM[]) {
-    return `rotateY(${tup_rst(sfs, false, false, true)})`;
+  static rotateY(Y: RM) {
+    return `rotateY(${fix_value([Y], {
+      degree: true,
+    })})`;
   }
-  static rotateZ(...sfs: RM[]) {
-    return `rotateZ(${tup_rst(sfs, false, false, true)})`;
+  static rotateZ(Z: RM) {
+    return `rotateZ(${fix_value([Z], {
+      degree: true,
+    })})`;
   }
   static saturate(...sfs: RM[]) {
-    return `saturate(${tup_rst(sfs)})`;
+    return `saturate(${fix_value(sfs)})`;
   }
-  static scale(...sfs: RM[]) {
-    return `scale(${tup_rst(sfs)})`;
+  static scale(sx: RM, sy?: RM) {
+    return `scale(${fix_value([sx, sy], { delimeter: ", " })})`;
   }
-  static scale3d(...sfs: RM[]) {
-    return `scale3d(${tup_rst(sfs)})`;
+  static scale3d(sx: RM, sy: RM, sz: RM) {
+    return `scale3d(${fix_value([sx, sy, sz], {
+      delimeter: ", ",
+    })})`;
   }
-  static scaleX(...sfs: RM[]) {
-    return `scaleX(${tup_rst(sfs)})`;
+  static scaleX(X: RM) {
+    return `scaleX(${fix_value([X])})`;
   }
-  static scaleY(...sfs: RM[]) {
-    return `scaleY(${tup_rst(sfs)})`;
+  static scaleY(Y: RM) {
+    return `scaleY(${fix_value([Y])})`;
   }
-  static scaleZ(...sfs: RM[]) {
-    return `scaleZ(${tup_rst(sfs)})`;
+  static scaleZ(Z: RM) {
+    return `scaleZ(${fix_value([Z])})`;
   }
-  static sepia(...sfs: RM[]) {
-    return `sepia(${tup_rst(sfs)})`;
+  static sepia(percent: RM) {
+    return `sepia(${fix_value([percent])})`;
   }
   static skew(...sfs: RM[]) {
-    return `skew(${tup_rst(sfs, false, true, true)})`;
+    return `skew(${fix_value(sfs, {
+      degree: true,
+      delimeter: ", ",
+    })})`;
   }
-  static skewX(...sfs: RM[]) {
-    return `skewX(${tup_rst(sfs, false, false, true)})`;
+  static skewX(X: RM) {
+    return `skewX(${fix_value([X], {
+      degree: true,
+    })})`;
   }
-  static skewY(...sfs: RM[]) {
-    return `skewY(${tup_rst(sfs, false, false, true)})`;
+  static skewY(Y: RM) {
+    return `skewY(${fix_value([Y], {
+      degree: true,
+    })})`;
   }
   /**
    * Translate(X,Y)
    */
   static translate(...sfs: RM[]) {
-    return `translate(${tup_rst(sfs, false, true)})`;
+    return `translate(${fix_value(sfs, {
+      rem: true,
+      delimeter: ", ",
+    })})`;
   }
   static translate3d(...sfs: RM[]) {
-    return `translate3d(${tup_rst(sfs, false, false)})`;
+    return `translate3d(${fix_value(sfs, {
+      rem: true,
+      delimeter: ", ",
+    })})`;
   }
-  static translateX(...sfs: RM[]) {
-    return `translateX(${tup_rst(sfs, false, false)})`;
+  static translateX(X: RM) {
+    return `translateX(${fix_value([X], {
+      rem: true,
+    })})`;
   }
-  static translateY(...sfs: RM[]) {
-    return `translateY(${tup_rst(sfs, false, false)})`;
+  static translateY(Y: RM) {
+    return `translateY(${fix_value([Y], {
+      rem: true,
+    })})`;
   }
   static translateZ(...sfs: RM[]) {
-    return `translateZ(${tup_rst(sfs, false, false)})`;
+    return `translateZ(${fix_value(sfs, {
+      rem: true,
+      delimeter: ", ",
+    })})`;
   }
-  static url(...sfs: RM[]) {
-    return `url(${tup_rst(sfs)})`;
+  static url(url: RM) {
+    return `url(${fix_value([url])})`;
   }
   static var(st: string, opt: RM = "") {
     st = "--" + reCamel(st);
-    let _opt = opt ? ", " + tup_rst([opt], false, false) : "";
-    return `var(${tup_rst([st], false)}${_opt})`;
+    let _opt = opt
+      ? ", " +
+        fix_value([opt], {
+          rem: true,
+          delimeter: ", ",
+        })
+      : "";
+    return `var(${fix_value([st], { rem: true })}${_opt})`;
   }
 }

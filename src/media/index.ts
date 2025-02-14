@@ -1,6 +1,5 @@
 import { RM } from "../css";
 import { $$, isArr, ngify, oAss, obj, oItems, oKeys, sparse, V } from "../@";
-import { tup_rst, val_xxx } from "../css";
 import { _vars } from "../var";
 
 export interface mtype {
@@ -33,16 +32,16 @@ export class media {
   static default: Exclude<keyof mtype, "no_hover" | "print"> = "xs";
   static readonly prop: mtype = oItems(breakpoints).reduce<obj<string>>(
     (r, [k, v], ind) => {
-      r[k] = `@media (${ind == 0 ? "max-width" : "min-width"}: ${v})`;
+      r[k] = `(${ind == 0 ? "max-width" : "min-width"}: ${v})`;
       return r;
     },
     {},
   );
   static readonly extra: mtype = {
-    no_hover: "@media (pointer: coarse)",
-    print: "@media print",
-    screen: "@media screen",
-    dark: "@media (prefers-color-scheme: dark)",
+    no_hover: "(pointer: coarse)",
+    print: "print",
+    screen: "screen",
+    dark: "(prefers-color-scheme: dark)",
   };
 
   constructor(defValue?: RM, g: obj<any> = {}) {
@@ -50,32 +49,42 @@ export class media {
     const DM: obj<RM> = {};
 
     if (defValue) {
-      DM[defM] = defValue;
-    }
-    if (!(defM in g)) {
-      g[defM] = defValue;
+      reMedia(DM, defM, defValue);
     }
 
     oItems(g).forEach(([k, v]) => {
-      if (v !== undefined) {
-        DM[k] = v;
-      }
+      reMedia(DM, k, v);
     });
     oAss(this, DM);
   }
   static new(prop: obj<string>) {
     oItems(prop).forEach(([k, v]) => {
       if (!this.extra[k]) {
-        this.extra[k] = `@media (${v})`;
+        this.extra[k] = `(${v})`;
       }
     });
   }
   static get breakpoints() {
-    const BV = sparse(ngify(breakpoints));
-    delete BV[this.default];
-    return BV;
+    return sparse(ngify(breakpoints));
   }
 }
+
+const defM = media.default;
+const reMedia = (DM: obj<RM>, k: keyof mtype, v: RM | media) => {
+  if (v !== undefined) {
+    if (v instanceof media) {
+      oItems(v).forEach(([k2, v2]) => {
+        if (k !== k2) {
+          const nm = defM === k2 ? k : `${k}-${k2}`;
+
+          reMedia(DM, nm, v2);
+        }
+      });
+    } else {
+      DM[k] = v;
+    }
+  }
+};
 
 // export type PMtype = keyof mtype;
 

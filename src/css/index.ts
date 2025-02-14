@@ -30,6 +30,7 @@ interface xtraCSS {
   textFillColor?: string;
   lineClamp?: string;
   webkitTextFillColor?: string;
+  webkitFontSmoothing?: string;
 }
 
 export type CSSinR = {
@@ -56,27 +57,42 @@ const norems = [
   "zIndex",
   "opacity",
   "aspectRatio",
-  "flexGrow",
   "order",
   "flexShrink",
-  "flexBasis",
+  "flexGrow",
   "flex",
   "fillOpacity",
   "lineClamp",
+  "order",
   "webkitLineClamp",
+  //
+  "animationIterationCount",
+  //
+  "columnCount",
 ];
 const ARRcomma = ["transitionProperty"];
 
 export function val_xxx(
   sel: string,
   val: RM,
-  options = { rem: true, deg: false, quote: false },
+  options: {
+    rem?: boolean;
+    deg?: boolean;
+    comma?: boolean;
+    quote?: boolean;
+  } = {
+    rem: true,
+    deg: false,
+    comma: false,
+    quote: false,
+  },
 ): string {
-  const { rem, deg, quote } = options;
+  const { rem, deg, quote, comma } = options;
   if (val instanceof _vars) return val.__();
   if (isArr(val)) {
     const fval = val.map((item) => val_xxx(sel, item));
-    return fval.join(ARRcomma.includes(sel) ? ", " : " ");
+    //
+    return fval.join(ARRcomma.includes(sel) ? ", " : comma ? ", " : " ");
   }
   if (typeof val === "number") {
     let valueStr = val.toString();
@@ -99,35 +115,6 @@ export function val_xxx(
   return "";
 }
 
-export function tup_rst(
-  sfs: RM[],
-  noRem: boolean = true,
-  comma: boolean = true,
-  degree: boolean = false,
-  quote: boolean = false,
-) {
-  const fnal: string[] = sfs.map((ff) => {
-    if (isArr(ff)) {
-      return tup_rst(ff, noRem, false, degree, quote);
-    }
-    if (ff instanceof _vars) return ff.__();
-    if (isNumber(ff)) return `${ff}${noRem ? "" : degree ? "deg" : "rem"}`;
-
-    if (isStr(ff)) {
-      if (ff.includes("(")) {
-        return ff;
-      } else if (quote) {
-        return `'${ff}'`;
-      } else {
-        return ff;
-      }
-    }
-    return "";
-  });
-
-  return fnal.join(comma ? ", " : " ");
-}
-
 /*
 -------------------------
  KEYFRAMES SHOULD HAVE THE SAME
@@ -142,6 +129,10 @@ export const ensurePropsInitialized = (
   key: string,
 ) => {
   try {
+    if (!props[type]) {
+      props[type] = {};
+      props[type][key] = [];
+    }
     if (!props[type]![key]) props[type]![key] = [];
   } catch (e) {
     console.error(`property "${type}" not found!`);
@@ -209,9 +200,13 @@ export class __css {
     oItems(cs2).forEach(([kk, vv]) => {
       const mitm: string[] = [];
       oItems(vv).forEach(([k, v]) => mitm.push(toProperty(k, v)));
-      oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
-        mitm.push(`${k} {\n${v.join("\n")}\n}`);
-      });
+
+      if (kprops[kk as PMtype]) {
+        oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
+          mitm.push(`${k} {\n${v.join("\n")}\n}`);
+        });
+      }
+
       if (mitm.length) {
         fin.push(
           `/* -------------- ${kk + (kk == def ? " ( default )" : "")} */`,
@@ -219,7 +214,12 @@ export class __css {
         if (kk == def) {
           fin.push(mitm.join("\n"));
         } else {
-          fin.push(`${mprops[kk as PMtype]}\t{\n${mitm.join("\n")}\n}`);
+          const fmedia = kk
+            .split("-")
+            .map((mp) => mprops[mp])
+            .join(" and ");
+
+          fin.push(`@media ${fmedia}\t{\n${mitm.join("\n")}\n}`);
         }
       }
     });
