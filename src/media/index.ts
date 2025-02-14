@@ -48,7 +48,7 @@ export class media {
     const defM = media.default;
     const DM: obj<RM> = {};
 
-    if (defValue) {
+    if (defValue !== undefined) {
       reMedia(DM, defM, defValue);
     }
 
@@ -76,7 +76,6 @@ const reMedia = (DM: obj<RM>, k: keyof mtype, v: RM | media) => {
       oItems(v).forEach(([k2, v2]) => {
         if (k !== k2) {
           const nm = defM === k2 ? k : `${k}-${k2}`;
-
           reMedia(DM, nm, v2);
         }
       });

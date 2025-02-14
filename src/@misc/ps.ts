@@ -16,11 +16,7 @@ function _pseu(sel: string) {
 
     if (sel.startsWith("::before") || sel.startsWith("::after")) {
       let vc: string | undefined = vals.content;
-      if (isStr(vc)) {
-        vc = vc.includes("(") ? vc : `"${vc}"`;
-      }
-
-      vals.content = vc ? vc : "''"; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
+      vals.content = vc !== undefined ? vc : ""; // Ensure `content` is set for `::before` and `::after` pseudo-elements.
     }
     return { [sel]: vals };
   };

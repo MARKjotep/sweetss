@@ -89,7 +89,13 @@ declare function med(defValue: RM, g: mtype & {
 }): media;
 
 declare class _vars {
-    private cfg;
+    cfg: {
+        rem: boolean;
+        degree: boolean;
+        percent: boolean;
+        quote: boolean;
+        delimeter: string;
+    };
     _var: string;
     k: string;
     _cvar: string;
@@ -104,12 +110,12 @@ declare class _vars {
     __(fallback?: RM): string;
     new(val: RM): _vars;
 }
-declare const Var: (vr: obj<RM>, { rem, degree, percent, quote, delimeter, }?: {
-    rem?: boolean | undefined;
-    degree?: boolean | undefined;
-    percent?: boolean | undefined;
-    quote?: boolean | undefined;
-    delimeter?: string | undefined;
+declare const Var: (vr: obj<RM>, cfg?: {
+    rem: boolean;
+    degree: boolean;
+    percent: boolean;
+    quote: boolean;
+    delimeter: string;
 }) => _vars;
 
 type RM = V | media | _vars | RM[];
@@ -644,15 +650,6 @@ declare class ps {
     };
 }
 
-declare function fix_value(sfs: (RM | undefined)[], { rem, degree, percent, quote, delimeter, delim_arr, perc_arr, }?: {
-    rem?: boolean | undefined;
-    degree?: boolean | undefined;
-    percent?: boolean | undefined;
-    quote?: boolean | undefined;
-    delimeter?: string | undefined;
-    delim_arr?: boolean | undefined;
-    perc_arr?: boolean | undefined;
-}): string;
 declare class f {
     static attr(name: RM, type?: RM, fallback?: RM): string;
     static blur(blur: RM): string;
@@ -771,4 +768,4 @@ declare class SweetSS {
 declare function fileName(path: string): string;
 declare function Join(delimeter: string, ...val: any[]): void;
 
-export { $$, type CSS, type CSSinR, Join, type KFCSS, SweetSS, Var, type VarType, __, c, f, fileName, fix_value, med, media, ps, v, x };
+export { $$, type CSS, type CSSinR, Join, type KFCSS, SweetSS, Var, type VarType, __, c, f, fileName, med, media, ps, v, x };

@@ -12,7 +12,14 @@ const { cx: cx2, save } = gc;
 const v2 = Var({ V2: 5 });
 
 cx2.lol = [
+  ps.after()({
+    color: "red",
+    content: "ss",
+  }),
   {
+    width: 3,
+    transitionDuration: 43,
+    zIndex: 1,
     background: [
       //
       f.blur(0.5),

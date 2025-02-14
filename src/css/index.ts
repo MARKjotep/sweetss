@@ -1,6 +1,7 @@
 import {
   $$,
   isArr,
+  isNum,
   isNumber,
   isStr,
   Mapper,
@@ -45,75 +46,6 @@ export type kfT = obj<
     }
   | obj<CSSinR>
 >;
-
-const secs = [
-  "transitionDuration",
-  "transitionDelay",
-  "animationDelay",
-  "animationDuration",
-];
-const norems = [
-  ...secs,
-  "zIndex",
-  "opacity",
-  "aspectRatio",
-  "order",
-  "flexShrink",
-  "flexGrow",
-  "flex",
-  "fillOpacity",
-  "lineClamp",
-  "order",
-  "webkitLineClamp",
-  //
-  "animationIterationCount",
-  //
-  "columnCount",
-];
-const ARRcomma = ["transitionProperty"];
-
-export function val_xxx(
-  sel: string,
-  val: RM,
-  options: {
-    rem?: boolean;
-    deg?: boolean;
-    comma?: boolean;
-    quote?: boolean;
-  } = {
-    rem: true,
-    deg: false,
-    comma: false,
-    quote: false,
-  },
-): string {
-  const { rem, deg, quote, comma } = options;
-  if (val instanceof _vars) return val.__();
-  if (isArr(val)) {
-    const fval = val.map((item) => val_xxx(sel, item));
-    //
-    return fval.join(ARRcomma.includes(sel) ? ", " : comma ? ", " : " ");
-  }
-  if (typeof val === "number") {
-    let valueStr = val.toString();
-    if (rem && !norems.includes(sel)) valueStr += "rem";
-    if (secs.includes(sel)) valueStr += "s";
-    if (deg) valueStr += "deg";
-    return valueStr;
-  }
-
-  if (isStr(val)) {
-    if (val.includes("(")) {
-      return val;
-    } else if (quote) {
-      return `'${val}'`;
-    } else {
-      return val;
-    }
-  }
-
-  return "";
-}
 
 /*
 -------------------------

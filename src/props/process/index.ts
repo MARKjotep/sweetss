@@ -1,14 +1,13 @@
 import { $$, isArr, isClassOrId, isObj, Mapper, oItems } from "../../@";
-import { CMapper, CSSinR, RM, val_xxx } from "../../css";
+import { CMapper, CSSinR, RM } from "../../css";
 import { med, media } from "../../media";
+import { val_xxx } from "../../value";
 import { _vars } from "../../var";
-
-const ARRcomma = ["transitionProperty"];
 
 const valToMedia = (sel: string, val: RM): media => {
   if (val instanceof media) return val;
   if (val instanceof _vars) return med(val.__(), {});
-  return med(val_xxx(sel, val), {});
+  return med(val, {});
 };
 
 /*

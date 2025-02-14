@@ -1,48 +1,7 @@
 import { $$, isArr, isNum, isNumber, isStr, reCamel } from "../@";
 import { RM } from "../css";
+import { fix_value } from "../value";
 import { _vars } from "../var";
-
-export function fix_value(
-  sfs: (RM | undefined)[],
-  {
-    rem = false,
-    degree = false,
-    percent = false,
-    quote = false,
-    delimeter = " ",
-    delim_arr = true,
-    perc_arr = false,
-  } = {},
-) {
-  const fnal: string[] = sfs
-    .filter((mf) => mf !== undefined)
-    .map((ff) => {
-      if (isArr(ff)) {
-        return fix_value(ff, {
-          rem: perc_arr ? false : rem,
-          degree: perc_arr ? false : degree,
-          percent: perc_arr ? perc_arr : percent,
-          delimeter: delim_arr ? delimeter : " ",
-          quote,
-        });
-      }
-      if (ff instanceof _vars) return ff.__();
-      if (isNum(ff))
-        return `${ff}${rem ? "rem" : degree ? "deg" : percent ? "%" : ""}`;
-      if (isStr(ff)) {
-        if (ff.includes("(")) {
-          return ff;
-        } else if (quote) {
-          return `'${ff}'`;
-        } else {
-          return ff;
-        }
-      }
-      return "";
-    });
-
-  return fnal.join(delimeter);
-}
 
 export class f {
   static attr(name: RM, type?: RM, fallback?: RM) {

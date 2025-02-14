@@ -1,11 +1,7 @@
-import { ensurePropsInitialized, PMtype, val_xxx } from "..";
+import { ensurePropsInitialized, PMtype } from "..";
 import { $$, ngify, obj, oItems, reCamel } from "../../@";
-import { mtype } from "../../media";
 import { At, Cid, Keyframes, FontFace } from "../../props";
-
-const formatContentValue = (key: string, value: string): string => {
-  return key === "content" && !value.includes("(") ? `'${value}'` : value;
-};
+import { val_xxx } from "../../value";
 
 const mapIDClass = (cssContent: string) => {
   const xmatch = (regex: RegExp) =>
@@ -54,8 +50,8 @@ export function CB(
       v.forEach((vv, kk) => {
         oItems(vv).forEach(([x, y]) => {
           const xx = x;
-          let pvp = formatContentValue(xx, y);
-          const stn = ngify({ [reCamel(kk)]: pvp });
+
+          const stn = ngify({ [reCamel(kk)]: y });
 
           const { classes, ids } = mapIDClass(name);
 
