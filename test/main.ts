@@ -5,19 +5,6 @@ const fxs = __filename.split("/").slice(-3);
 
 const basic = med("#000", { dark: "#fff" });
 
-export const qt_gradient_from = Var({
-  qt_gradient_from: basic,
-});
-
-//
-export const qt_gradient_to = Var({ qt_gradient_to: basic });
-//
-export const qt_gradient_stops = Var({
-  qt_gradient_stops: value([qt_gradient_from, qt_gradient_to], {
-    delimeter: ", ",
-  }),
-});
-
 const gc = new SweetSS({
   name: fxs[2].split(".")[0],
 });
@@ -26,15 +13,21 @@ const { cx: cx2, save } = gc;
 
 const v2 = Var({ V2: 5 });
 
-$$.p = v2;
+export const aname = Var({
+  anim: "bounce",
+});
+export const anim = Var({
+  anim: ["okay", "1s", "infinite"],
+});
 
-cx2.to = [qt_gradient_to.new("red")];
-
-cx2._from = [
-  qt_gradient_from.new("red"),
-  qt_gradient_stops.new(
-    value([qt_gradient_from, qt_gradient_to], { delimeter: ", " }),
-  ),
+cx2[`sm_animation_${"bounce"}`] = [
+  {
+    animationName: med([aname, "1s", "infinite"], {
+      sm: ["pop", "1s", "infinite"],
+      lg: anim,
+    }),
+  },
+  anim,
 ];
 
 cx2.lol = [
@@ -88,26 +81,10 @@ cx2.lol = [
     ],
   },
 ];
+
 cx2.okay = [{}];
 
 save({
   dir: __dirname,
   minify: false,
 });
-
-/*
--------------------------
-  noRem: boolean = true,
-  comma: boolean = true,
-  degree: boolean = false,
-  quote: boolean = false,
--------------------------
-*/
-
-/*
--------------------------
-s - Scale
-m - Move
--------------------------
-*/
-// sX,0,0.00,0,0.00,sY,0.00,0,0,0,1,0,mX,mY,sZ,1

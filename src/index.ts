@@ -17,15 +17,13 @@ import { At, Cid, FontFace, Keyframes } from "./props";
 import { _vars } from "./var";
 
 export * from "./@misc/v";
-export * from "./@misc/x";
-export * from "./@misc/colors";
 export * from "./@misc/ps";
 export * from "./@misc/f";
 
 export { $$, __ };
 export { med, media } from "./media";
 export { Var } from "./var";
-export { value } from "./value";
+export { value, join } from "./value";
 
 export type CSSinR = CinR | CinR[];
 
@@ -41,6 +39,7 @@ interface saveCSS {
   minify?: boolean;
   shaker?: string[];
   include?: string[];
+  includeAnimation?: string[];
 }
 
 interface sweetCFG {
@@ -91,6 +90,7 @@ export class SweetSS {
       minify = true,
       shaker = [],
       include = [],
+      includeAnimation = [],
     }: saveCSS) => {
       const css = new __css().load(this, shaker, include);
       const _DIR = isArr(dir) ? dir : [dir];

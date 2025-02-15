@@ -1,1 +1,1 @@
-export const _from="_from",lol="lol",to="to";
+export const lol="lol",sm_animation_bounce="sm_animation_bounce";

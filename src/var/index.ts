@@ -1,5 +1,5 @@
 import { med, media } from "../media";
-import { isArr, obj, oItems, oLen, reCamel, V } from "../@";
+import { $$, isArr, obj, oItems, oLen, reCamel, V } from "../@";
 import { RM } from "../css";
 import { fix_value } from "../value";
 
@@ -8,7 +8,7 @@ export class _vars {
   k = "";
   _cvar = "";
   fallback?: RM;
-  _val: media = {};
+  _val: media;
   constructor(vr: obj<RM | RM[]> = {}, fallback?: RM) {
     if (oLen(vr)) {
       const [k, v] = oItems(vr)[0];
@@ -16,6 +16,8 @@ export class _vars {
       this._var = "--" + reCamel(k);
       this._val = v instanceof media ? v : med(v, {});
       this.fallback = fallback;
+    } else {
+      this._val = med({});
     }
   }
   __(fallback?: RM): string {
@@ -31,6 +33,14 @@ export class _vars {
   }
   new(val: RM) {
     return new _vars({ [this.k]: val });
+  }
+  prefix(pre?: string) {
+    if (pre) {
+      oItems(this._val).forEach(([k, v]) => {
+        //
+        $$.p = [k, v];
+      });
+    }
   }
 }
 
