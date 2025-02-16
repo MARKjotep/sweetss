@@ -72,7 +72,7 @@ export class SweetSS {
     name,
     prefix,
     sweetSS = [],
-    exportMap = false,
+    exportMap = true,
     webkitKeyframes,
   }: sweetCFG) {
     //

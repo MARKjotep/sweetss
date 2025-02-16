@@ -5,6 +5,10 @@ import { CSS } from "..";
 
 type dataType = Mapper<string, Mapper<string, CMapper>>;
 
+class DATABASE {
+  //
+}
+
 class Base {
   pre: string;
   data: Mapper<string, any[]> = new Mapper();
@@ -18,7 +22,7 @@ class Base {
   constructor(
     pre: string,
     prefix: string = "",
-    public exportMap: boolean = false,
+    public exportMap: boolean = true,
   ) {
     this.pre = pre;
     this.prefix = prefix ? prefix + "_" : prefix;
@@ -91,7 +95,7 @@ export class Cid extends Base {
   constructor(
     pre: string = "",
     prefix: string = "",
-    exportMap: boolean = false,
+    exportMap: boolean = true,
   ) {
     super(pre, prefix, exportMap);
     this.PS = new ProcSelector(this.prefix, this.animCLS);
@@ -122,7 +126,7 @@ export class Keyframes extends Base {
     prefix: string = "",
     private webkit: boolean = true,
   ) {
-    super("", prefix);
+    super("", prefix, false);
 
     this.PS = new ProcSelector(this.prefix);
   }

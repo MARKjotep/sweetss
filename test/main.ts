@@ -8,7 +8,6 @@ const basic = med("#000", { dark: "#fff" });
 const gc = new SweetSS({
   name: fxs[2].split(".")[0],
   sweetSS: [cc],
-  exportMap: true,
 });
 
 const { cx: cx2, kf, id, save } = gc;
