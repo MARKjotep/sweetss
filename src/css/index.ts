@@ -74,10 +74,16 @@ export const ensurePropsInitialized = (
 export class __css {
   css: string = "";
   cid: obj<string> = {};
+  cidz: obj<string> = {};
   constructor() {}
   private updateCid(cid: Map<string, string>) {
     cid.forEach((v, k) => {
       this.cid[k] = v;
+    });
+  }
+  private updateCidZ(cid: Map<string, string>) {
+    cid.forEach((v, k) => {
+      this.cidz[k] = v;
     });
   }
 
@@ -108,6 +114,7 @@ export class __css {
           });
         });
         this.updateCid(CC.cid);
+        this.updateCidZ(CC.cidz);
       } else if (az instanceof Keyframes) {
         KF(az, kprops, animCLSS, shaker, include);
       } else if (az instanceof At) {

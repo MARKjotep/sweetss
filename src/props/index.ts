@@ -9,6 +9,7 @@ class Base {
   pre: string;
   data: Mapper<string, any[]> = new Mapper();
   cid: Mapper<string, string> = new Mapper();
+  cidz: Mapper<string, string> = new Mapper();
   animCLS: Mapper<string, Set<string>> = new Mapper();
   DATAX: dataType = new Mapper();
   DATAZ: dataType = new Mapper();
@@ -38,6 +39,8 @@ class Base {
       return this.DATAZ as any;
     } else if (prop == "cid") {
       return this.cid as any;
+    } else if (prop == "cidz") {
+      return this.cidz as any;
     } else if (prop == "prefix") {
       return this.prefix as any;
     } else if (prop == "animCLS") {

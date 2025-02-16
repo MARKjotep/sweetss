@@ -119,14 +119,15 @@ export class SweetSS {
         this.cids.init(name, {});
         const ccd = this.cids.get(name)!;
 
-        oItems(css.cid).forEach(([k, v]) => {
+        const FCID = exportMap ? css.cid : css.cidz;
+
+        oItems(FCID).forEach(([k, v]) => {
           if (ccd[k]) {
             ccd[k] = v + " " + ccd[k];
           } else {
             ccd[k] = v;
           }
         });
-
         mapWriter2(mapFilePath, this.cids);
       }
     };

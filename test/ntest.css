@@ -1,1 +1,1 @@
-.g_okay{color:red;border:1rem red dashed;--_fheight:10rem;}
+.g_okay{color:red;border:1rem red dashed;animation:g_bounce 2s ease;--_fheight:10rem;}@keyframes g_bounce{from{color:red;}}@-webkit-keyframes g_bounce{from{color:red;}}@keyframes g_bouncer{from{color:red;}}@-webkit-keyframes g_bouncer{from{color:red;}}

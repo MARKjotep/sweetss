@@ -60,11 +60,13 @@ export function CB(
 
             const { classes, ids } = mapIDClass(name);
 
-            if (exportMap) {
-              [classes, ids].flat().forEach((cl) => {
+            [classes, ids].flat().forEach((cl) => {
+              if (exportMap) {
                 az.cid.set(cl, prefix + cl);
-              });
-            }
+              } else {
+                az.cidz.set(cl, prefix + cl);
+              }
+            });
 
             //
             const prefixedName = prefix ? applyPrefix(name, prefix) : name;
