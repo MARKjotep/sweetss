@@ -20,6 +20,9 @@ export class f {
     return `circle(${fix_value([radius, position], { rem: true })})`;
   }
 
+  static clamp(min: RM, preferred: RM, max: RM) {
+    return `clamp(${fix_value([min, preferred, max], { rem: true, delimeter: ", " })})`;
+  }
   /**
    *
    * @param colorInterpolation in + srgb, srgb-linear, display-p3, a98-rgb, prophoto-rgb, rec2020, lab, oklab, xyz, xyz-d50, xyz-d65, hsl, hwb, lch, and oklch

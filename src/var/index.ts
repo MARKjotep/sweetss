@@ -28,11 +28,11 @@ export class _vars {
     if (fb) {
       return `var(${this._var}, ${fix_value(isArr(fb) ? fb : [fb])})`;
     } else {
-      return `var(${this._var}${this.fallback ? "," + fix_value(isArr(this.fallback) ? this.fallback : [this.fallback]) : ""})`;
+      return `var(${this._var})`;
     }
   }
   new(val: RM) {
-    return new _vars({ [this.k]: val });
+    return new _vars({ [this.k]: fix_value([val]) });
   }
   prefix(pre?: string) {
     if (pre) {

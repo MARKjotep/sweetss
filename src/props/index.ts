@@ -3,16 +3,28 @@ import { $$, isArr, isNum, Mapper, obj, oItems } from "../@";
 import { ProcSelector } from "./process";
 import { CSS } from "..";
 
+type dataType = Mapper<string, Mapper<string, CMapper>>;
+
 class Base {
   pre: string;
   data: Mapper<string, any[]> = new Mapper();
   cid: Mapper<string, string> = new Mapper();
-  animCLS = new Set<string>();
-  DATAX: Mapper<string, Mapper<string, CMapper>> = new Mapper();
+  animCLS: Mapper<string, Set<string>> = new Mapper();
+  DATAX: dataType = new Mapper();
+  DATAZ: dataType = new Mapper();
   prefix: string;
-  constructor(pre: string, prefix: string = "") {
+  DATA: Mapper<string, CMapper>;
+  constructor(
+    pre: string,
+    prefix: string = "",
+    public exportMap: boolean = false,
+  ) {
     this.pre = pre;
     this.prefix = prefix ? prefix + "_" : prefix;
+
+    this.DATA = this.exportMap
+      ? this.DATAX.init(this.prefix, new Mapper())
+      : this.DATAZ.init(this.prefix, new Mapper());
   }
   get(target: any, prop: string): string | undefined {
     const nme = this.pre + prop;
@@ -22,6 +34,8 @@ class Base {
       return this.data as any;
     } else if (prop == "DATAX") {
       return this.DATAX as any;
+    } else if (prop == "DATAZ") {
+      return this.DATAZ as any;
     } else if (prop == "cid") {
       return this.cid as any;
     } else if (prop == "prefix") {
@@ -43,6 +57,21 @@ class Base {
         this.DATAX.init(prefix, new Mapper()).map(dt);
       });
     }
+    if (css.DATAZ.size) {
+      css.DATAZ.forEach((dt, prefix) => {
+        this.DATAZ.init(prefix, new Mapper()).map(dt);
+      });
+    }
+
+    if (css.animCLS.size) {
+      css.animCLS.forEach((e, key) => {
+        const KK = this.animCLS.init(key, new Set());
+        e.forEach((ee) => {
+          KK.add(ee);
+        });
+      });
+    }
+
     css.data.size && this.data.map(css.data);
 
     return this;
@@ -56,15 +85,19 @@ DOM CLASS ID
 */
 export class Cid extends Base {
   PS: ProcSelector;
-  constructor(pre: string = "", prefix: string = "") {
-    super(pre, prefix);
+  constructor(
+    pre: string = "",
+    prefix: string = "",
+    exportMap: boolean = false,
+  ) {
+    super(pre, prefix, exportMap);
     this.PS = new ProcSelector(this.prefix, this.animCLS);
   }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
     const VL = isArr(val) ? val : [val];
     VL.forEach((vv) => {
-      this.PS.set(nme, vv, this.DATAX.init(this.prefix, new Mapper()));
+      this.PS.set(nme, vv, this.DATA);
     });
 
     return true;
@@ -100,14 +133,14 @@ export class Keyframes extends Base {
         this.PS.set(x, y as CSSinR, dx);
       });
     });
-    const initDATA = this.DATAX.init(this.prefix, new Mapper());
     //
-    this.animCLS.add(nme);
+    this.animCLS.init(nme, new Set());
+
     const kfKEY = `@keyframes ${nme}`;
-    initDATA.set(kfKEY, dx);
+    this.DATA.set(kfKEY, dx);
     if (this.webkit) {
       const kfKWebkit = `@-webkit-keyframes ${nme}`;
-      initDATA.set(kfKWebkit, dx);
+      this.DATA.set(kfKWebkit, dx);
     }
 
     return true;

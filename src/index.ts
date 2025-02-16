@@ -81,7 +81,7 @@ export class SweetSS {
     this.exportMap = exportMap;
     const importSS = isArr(sweetSS) ? sweetSS : [sweetSS];
 
-    loader.call(this, this.prefix, importSS, webkitKeyframes);
+    loader.call(this, this.prefix, importSS, webkitKeyframes, exportMap);
 
     this.save = ({
       dir,
@@ -90,7 +90,6 @@ export class SweetSS {
       minify = true,
       shaker = [],
       include = [],
-      includeAnimation = [],
     }: saveCSS) => {
       const css = new __css().load(this, shaker, include);
       const _DIR = isArr(dir) ? dir : [dir];
@@ -172,33 +171,21 @@ function loader(
   pref: string,
   loads: SweetSS[],
   webkf: boolean = true,
+  exMap: boolean = false,
 ) {
   const props: Record<string, Cid | At | FontFace> = {
-    dom: new Cid("", pref),
-    id: new Cid("#", pref),
-    cx: new Cid(".", pref),
+    dom: new Cid("", pref, exMap),
+    id: new Cid("#", pref, exMap),
+    cx: new Cid(".", pref, exMap),
     kf: new Keyframes(pref, webkf),
     at: new At(),
     font: new FontFace(),
   };
 
   loads.forEach((l) => {
-    const xport = l.exportMap;
-    const cids: obj<string> = {};
-
     oKeys(props).forEach((pr) => {
-      //
       props[pr].load(l[pr]);
-      if (xport) {
-        oAss(cids, oFItems(l[pr].cid));
-      }
     });
-
-    if (xport && oLen(cids)) {
-      this.cids.set(l.name, {});
-      const cg = this.cids.get(l.name)!;
-      oAss(cg, cids);
-    }
   });
 
   oKeys(props).forEach((pr) => {

@@ -1,1 +1,1 @@
-export const lol="lol",sm_animation_bounce="sm_animation_bounce";
+export const hello="hello",hellos="hellos",lol="lol";

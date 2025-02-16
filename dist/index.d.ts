@@ -461,6 +461,7 @@ declare class f {
     static brightness(brightness: RM): string;
     static calc(...calc: RM[]): string;
     static circle(radius: RM, position?: RM): string;
+    static clamp(min: RM, preferred: RM, max: RM): string;
     /**
      *
      * @param colorInterpolation in + srgb, srgb-linear, display-p3, a98-rgb, prophoto-rgb, rec2020, lab, oklab, xyz, xyz-d50, xyz-d65, hsl, hwb, lch, and oklch
@@ -535,16 +536,7 @@ declare function value(val: RM | RM[], config?: {
     delimeter_arr?: boolean;
     percent_arr?: boolean;
 }): string;
-declare function join(val: RM | RM[], config?: {
-    rem?: boolean;
-    degree?: boolean;
-    percent?: boolean;
-    second?: boolean;
-    quote?: boolean;
-    delimeter?: string;
-    delimeter_arr?: boolean;
-    percent_arr?: boolean;
-}): string;
+declare function join(...val: (RM | RM[])[]): string;
 
 type CSSinR = CSSinR$1 | CSSinR$1[];
 type VarType = _vars;

@@ -1,4 +1,4 @@
-import { isArr, isNum, isStr } from "../@";
+import { $$, isArr, isNum, isStr } from "../@";
 import { RM } from "../css";
 import { _vars } from "../var";
 
@@ -33,6 +33,7 @@ const ARRcomma = new Set(["transitionProperty"]);
 
 export function val_xxx(sel: string, val: RM): string {
   //
+
   const _vl = isArr(val) ? val : [val];
 
   return fix_value(_vl, {
@@ -60,6 +61,9 @@ export function fix_value(
     .filter((mf) => mf !== undefined)
     .map((ff) => {
       if (isArr(ff)) {
+        //
+
+        //
         return fix_value(ff, {
           rem: perc_arr ? false : rem,
           degree: perc_arr ? false : degree,
@@ -140,38 +144,16 @@ export function value(
   });
 }
 
-export function join(
-  val: RM | RM[],
-  config: {
-    rem?: boolean;
-    degree?: boolean;
-    percent?: boolean;
-    second?: boolean;
-    quote?: boolean;
-    delimeter?: string;
-    delimeter_arr?: boolean;
-    percent_arr?: boolean;
-  } = {},
-) {
-  const {
-    rem = false,
-    degree = false,
-    percent = false,
-    second = false,
-    quote = false,
-    delimeter = ", ",
-    delimeter_arr = true,
-    percent_arr = false,
-  } = config;
+export function join(...val: (RM | RM[])[]) {
   //
-  return fix_value(isArr(val) ? val : [val], {
-    rem,
-    degree,
-    percent,
-    second,
-    quote,
-    delimeter,
-    delim_arr: delimeter_arr,
-    perc_arr: percent_arr,
+  return fix_value(val, {
+    rem: false,
+    degree: false,
+    percent: false,
+    second: false,
+    quote: false,
+    delimeter: ", ",
+    perc_arr: false,
+    delim_arr: false,
   });
 }

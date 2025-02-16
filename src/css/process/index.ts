@@ -1,7 +1,9 @@
-import { ensurePropsInitialized, PMtype } from "..";
-import { $$, ngify, obj, oItems, reCamel } from "../../@";
+import { CMapper, ensurePropsInitialized, PMtype, RM } from "..";
+import { $$, Mapper, ngify, obj, oItems, reCamel } from "../../@";
+import { med, media } from "../../media";
 import { At, Cid, Keyframes, FontFace } from "../../props";
 import { val_xxx } from "../../value";
+import { _vars } from "../../var";
 
 const mapIDClass = (cssContent: string) => {
   const xmatch = (regex: RegExp) =>
@@ -38,6 +40,8 @@ export const toProperty = (sel: string, vals: obj<string>) => {
   return `${sel} {\n  ${oit}\n}`;
 };
 
+type dataType = Mapper<string, Mapper<string, CMapper>>;
+
 // Basic DOM - CLASS - ID
 export function CB(
   az: Cid,
@@ -45,39 +49,50 @@ export function CB(
   shaker: string[] = [],
   include: string[] = [],
 ) {
-  az.DATAX.forEach((data, prefix) => {
-    data.forEach((v, name) => {
-      v.forEach((vv, kk) => {
-        oItems(vv).forEach(([x, y]) => {
-          const xx = x;
+  const DATA = (data: dataType, exportMap: boolean = false) => {
+    data.forEach((data2, prefix) => {
+      data2.forEach((v, name) => {
+        v.forEach((vv, kk) => {
+          oItems(vv).forEach(([x, y]) => {
+            const xx = x;
 
-          const stn = ngify({ [reCamel(kk)]: y });
+            const stn = ngify({ [reCamel(kk)]: y });
 
-          const { classes, ids } = mapIDClass(name);
+            const { classes, ids } = mapIDClass(name);
 
-          [classes, ids].flat().forEach((cl) => {
-            az.cid.set(cl, prefix + cl);
-          });
-          //
-          const prefixedName = prefix ? applyPrefix(name, prefix) : name;
+            if (exportMap) {
+              [classes, ids].flat().forEach((cl) => {
+                az.cid.set(cl, prefix + cl);
+              });
+            }
 
-          if (shaker.length && prefixedName.startsWith(".")) {
-            const hasC = classes.some(
-              (s) =>
-                shaker.includes(s) || (include.length && include.includes(s)),
-            );
-            if (hasC) {
+            //
+            const prefixedName = prefix ? applyPrefix(name, prefix) : name;
+
+            if (
+              (shaker.length && prefixedName.startsWith(".")) ||
+              prefixedName.startsWith("#")
+            ) {
+              const hasC = [...classes, ...ids].some(
+                (s) =>
+                  shaker.includes(s) || (include.length && include.includes(s)),
+              );
+              if (hasC) {
+                ensurePropsInitialized(props, xx, stn);
+                addPropertyValues(props, xx, stn, prefixedName);
+              }
+            } else {
               ensurePropsInitialized(props, xx, stn);
               addPropertyValues(props, xx, stn, prefixedName);
             }
-          } else {
-            ensurePropsInitialized(props, xx, stn);
-            addPropertyValues(props, xx, stn, prefixedName);
-          }
+          });
         });
       });
     });
-  });
+  };
+
+  DATA(az.DATAX, true);
+  DATA(az.DATAZ);
 
   return az;
 }
@@ -86,9 +101,11 @@ export function CB(
 export function KF(
   az: Keyframes,
   kprops: { [P in PMtype]?: obj<string[]> },
-  anims: Set<string>,
+  anims: Mapper<string, Set<string>>,
+  shaker: string[] = [],
+  include: string[] = [],
 ) {
-  az.DATAX.forEach((data, prefix) => {
+  az.DATAZ.forEach((data, prefix) => {
     data.forEach((v, k) => {
       v.forEach((vv, kk) => {
         const vls: obj<obj<string>> = {};
@@ -99,9 +116,28 @@ export function KF(
             vls[xs][reCamel(x)] = yy;
           });
         });
+
         oItems(vls).forEach(([x, y]) => {
-          const slc = k.split(" ")[1];
-          if (anims.has(slc)) {
+          if (shaker.length) {
+            const slc = k.split(" ")[1];
+
+            if (anims.has(slc)) {
+              const anim_g = [...anims.get(slc)!];
+              const hasC = anim_g.some((s) => {
+                const { classes, ids } = mapIDClass(s);
+                return [...classes, ...ids].some(
+                  (c) =>
+                    shaker.includes(c) ||
+                    (include.length && include.includes(c)),
+                );
+              });
+              if (hasC) {
+                const xs = x as PMtype;
+                ensurePropsInitialized(kprops, xs, k);
+                kprops[xs]![k].push(toProperty(kk, y));
+              }
+            }
+          } else {
             const xs = x as PMtype;
             ensurePropsInitialized(kprops, xs, k);
             kprops[xs]![k].push(toProperty(kk, y));

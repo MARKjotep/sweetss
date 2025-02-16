@@ -97,23 +97,26 @@ export class __css {
       cs2[kh as PMtype] = {};
     });
 
-    const animCLSS = new Set<string>();
+    const animCLSS: Mapper<string, Set<string>> = new Mapper();
 
     oVals(CSS).forEach((az) => {
       if (az instanceof Cid) {
         const CC = CB(az, props, shaker, include);
-        az.animCLS.forEach((an) => {
-          animCLSS.add(an);
+        az.animCLS.forEach((an, ky) => {
+          an.forEach((aa) => {
+            animCLSS.init(ky, new Set()).add(aa);
+          });
         });
         this.updateCid(CC.cid);
       } else if (az instanceof Keyframes) {
-        KF(az, kprops, animCLSS);
+        KF(az, kprops, animCLSS, shaker, include);
       } else if (az instanceof At) {
         AT(az, fin);
       } else if (az instanceof FontFace) {
         FONT(az, fin);
       }
     });
+
     /*
     -------------------------
     

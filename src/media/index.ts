@@ -70,6 +70,7 @@ export class media {
 }
 
 const defM = media.default;
+
 const reMedia = (DM: obj<RM>, k: keyof mtype, v: RM | media) => {
   if (v !== undefined) {
     if (v instanceof media) {

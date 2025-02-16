@@ -16,6 +16,7 @@ import { _vars } from "../../var";
 const valToMedia = (val: RM): media => {
   if (val instanceof media) return val;
   if (val instanceof _vars) return med(val.__(), {});
+
   return med(val, {});
 };
 
@@ -28,7 +29,7 @@ Clas ID KF process
 export class ProcSelector {
   constructor(
     private prefix: string,
-    private anim = new Set<string>(),
+    private anim: Mapper<string, Set<string>> = new Mapper(),
   ) {}
   set(name: string, css: CSSinR, data: CMapper) {
     if (!isObj(css)) return;
@@ -46,14 +47,13 @@ export class ProcSelector {
       } else if (isClassOrId(k)) {
         this.set(name + k, v, data);
       } else {
-        props.set(k, this.props(k, valToMedia(v)));
+        props.set(k, this.props(name, k, valToMedia(v)));
       }
     };
 
     if (css instanceof _vars) {
-      this.saveAnim(css);
-
-      props.ass(css._var, this.props(css._var, valToMedia(css._val)));
+      this.saveAnim(name, css);
+      props.ass(css._var, this.props(name, css._var, valToMedia(css._val)));
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }
@@ -61,11 +61,11 @@ export class ProcSelector {
     data.init(name, props).map(props);
   }
 
-  props(sel: string, prp: media) {
+  props(selector: string, sel: string, prp: media) {
     const isAnim = ["animation", "animationName"].includes(sel);
     oItems(prp).forEach(([mk, mv]) => {
       if (isAnim) {
-        prp[mk] = val_xxx(sel, this.addPrefixToAnimation(mv));
+        prp[mk] = val_xxx(sel, this.addPrefixToAnimation(selector, mv));
       } else {
         prp[mk] = val_xxx(sel, mv);
       }
@@ -74,11 +74,11 @@ export class ProcSelector {
     return prp;
   }
   // Get the value from variable and add it to the list if it's used as value for animations
-  addPrefixToAnimation(val: RM | RM[]) {
+  addPrefixToAnimation(sel: string, val: RM | RM[]) {
     if (val instanceof _vars) {
-      this.saveAnim(val);
+      this.saveAnim(sel, val);
     } else if (isArr(val)) {
-      val[0] = this.addPrefixToAnimation(val[0]);
+      val[0] = this.addPrefixToAnimation(sel, val[0]);
       return val;
     } else if (isStr(val) && !val.includes("(")) {
       const animations = val.split(", ");
@@ -86,7 +86,8 @@ export class ProcSelector {
         const parts = animation.split(" ");
         const name = parts[0];
         const rest = parts.slice(1).join(" "); // Rejoin the duration and easing
-        this.anim.add(`${this.prefix}${name}`);
+        const pname = `${this.prefix}${name}`;
+        this.anim.init(pname, new Set()).add(sel);
         return `${this.prefix}${name} ${rest}`.trim();
       });
       return modifiedAnimations.join(", ");
@@ -95,9 +96,9 @@ export class ProcSelector {
     return val;
   }
 
-  saveAnim(val: _vars) {
+  saveAnim(sel: string, val: _vars) {
     getAnim(val).forEach((vv) => {
-      this.anim.add(`${this.prefix}${vv}`);
+      this.anim.init(`${this.prefix}${vv}`, new Set()).add(sel);
     });
   }
 }

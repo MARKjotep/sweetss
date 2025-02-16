@@ -1,4 +1,4 @@
-import { ps, f, med, Var, value, c, v, x, SweetSS, $$ } from "../src";
+import { ps, f, med, Var, value, v, SweetSS, $$, join } from "../src";
 import { cc } from "./ntest";
 
 const fxs = __filename.split("/").slice(-3);
@@ -7,9 +7,11 @@ const basic = med("#000", { dark: "#fff" });
 
 const gc = new SweetSS({
   name: fxs[2].split(".")[0],
+  sweetSS: [cc],
+  exportMap: true,
 });
 
-const { cx: cx2, save } = gc;
+const { cx: cx2, kf, id, save } = gc;
 
 const v2 = Var({ V2: 5 });
 
@@ -20,15 +22,53 @@ export const anim = Var({
   anim: ["okay", "1s", "infinite"],
 });
 
-cx2[`sm_animation_${"bounce"}`] = [
+export const qt_gradient_from = Var({
+  qt_gradient_from: basic,
+});
+//
+export const qt_gradient_to = Var({ qt_gradient_to: basic }, basic);
+
+cx2.hello = [
   {
     animationName: med([aname, "1s", "infinite"], {
       sm: ["pop", "1s", "infinite"],
       lg: anim,
     }),
+    animation: join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]),
+    color: join(qt_gradient_from, "red", qt_gradient_to),
   },
   anim,
 ];
+
+/*
+-------------------------
+Replace array --- combine everything in comma or the other way around?. array inside array should not be combined with comma. 
+array inside array.
+-------------------------
+*/
+
+cx2.hellos = [
+  {
+    animationName: med(["k", "1s", "infinite"], {
+      sm: ["bouncer", "1s", "infinite"],
+      lg: anim,
+    }),
+    height: f.clamp(12, 23, 0),
+  },
+  anim,
+];
+
+kf.bounce = {
+  from: {
+    color: "red",
+  },
+};
+
+kf.bouncer = {
+  from: {
+    color: "red",
+  },
+};
 
 cx2.lol = [
   ps.after()({
