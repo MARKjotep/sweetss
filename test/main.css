@@ -7,6 +7,9 @@
 .hello, .hellos {
   --anim: okay 1s infinite;
 }
+.okay {
+  color: green;
+}
 .hellos {
   animation-name: k 1s infinite; 
   height: clamp(12rem, 23rem, 0rem);
@@ -34,16 +37,6 @@ from {
 }
 }
 @-webkit-keyframes bounce {
-from {
-  color: red;
-}
-}
-@keyframes bouncer {
-from {
-  color: red;
-}
-}
-@-webkit-keyframes bouncer {
 from {
   color: red;
 }

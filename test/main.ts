@@ -46,6 +46,7 @@ array inside array.
 -------------------------
 */
 
+cx2.okay = { color: "green" };
 cx2.hellos = [
   {
     animationName: med(["k", "1s", "infinite"], {
@@ -58,12 +59,6 @@ cx2.hellos = [
 ];
 
 kf.bounce = {
-  from: {
-    color: "red",
-  },
-};
-
-kf.bouncer = {
   from: {
     color: "red",
   },

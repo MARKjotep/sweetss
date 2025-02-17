@@ -62,9 +62,13 @@ export function CB(
 
             [classes, ids].flat().forEach((cl) => {
               if (exportMap) {
-                az.cid.set(cl, prefix + cl);
+                if (az.cid.lacks(cl)) {
+                  az.cid.set(cl, prefix + cl);
+                }
               } else {
-                az.cidz.set(cl, prefix + cl);
+                if (az.cidz.lacks(cl)) {
+                  az.cidz.set(cl, prefix + cl);
+                }
               }
             });
 
