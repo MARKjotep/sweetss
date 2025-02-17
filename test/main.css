@@ -14,7 +14,7 @@
   animation-name: k 1s infinite; 
   height: clamp(12rem, 23rem, 0rem);
 }
-.lol::after, .g_okay {
+.lol::after, .g_ok {
   color: red;
 }
 .lol::after {
@@ -26,10 +26,8 @@
   z-index: 1; 
   background: blur(0.5rem) attr(1) brightness(20%) calc(1rem + var(--v2, orange)) circle(40% left) color-mix(srgb, red 10%, salmon 10%) conic-gradient(red 45, blue) contrast(20%) cubic-bezier(1, 2, 3, 4) drop-shadow(0.8rem 0.8rem 0.1rem grey) hsl(120 100% 50%) hue-rotate(20deg) inset(10% round 2rem) invert(50%) translateX(20rem) translateY(20rem) var(--hello) skewY(20deg) skew(-5deg, 6deg) rotate(20deg) rotate3d(1, 2, 5, 40deg) scale3d(1, 2, 3) scaleX(2) rgba(1 3 4 / 40%) linear-gradient(to right, red 17%, orange 30% 50%) matrix(1, 0, 0, 0, 2, 3) perspective(2cm) polygon(100%, 0%, 0%, 50%, 50%) radial-gradient(closest-side at 60% 50%, red, green 15%) repeating-linear-gradient(45deg, red 30%, green 50%) matrix3d(1, 0, 0, 0, 0, 1, 6, 0, 0, 0, 1, 0, 50, 100, 0, 1.1);
 }
-.g_okay {
-  border: 1rem red dashed; 
-  animation: g_bounce 2s ease; 
-  --_fheight: 10rem;
+.g_ok {
+  clip-path: path(evenodd, 'M40 0H50V10H40V0Z M60 20H40V10H30V20H20V30H10V20H0V40H60V20Z');
 }
 @keyframes bounce {
 from {
@@ -37,26 +35,6 @@ from {
 }
 }
 @-webkit-keyframes bounce {
-from {
-  color: red;
-}
-}
-@keyframes g_bounce {
-from {
-  color: red;
-}
-}
-@-webkit-keyframes g_bounce {
-from {
-  color: red;
-}
-}
-@keyframes g_bouncer {
-from {
-  color: red;
-}
-}
-@-webkit-keyframes g_bouncer {
 from {
   color: red;
 }

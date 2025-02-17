@@ -491,6 +491,8 @@ declare class f {
     static max(...sfs: RM[]): string;
     static min(...sfs: RM[]): string;
     static opacity(percent: RM): string;
+    static path(path: RM): string;
+    static clipPath(fillRule: RM, path: RM): string;
     static perspective(value: RM): string;
     static polygon(...lengths: RM[]): string;
     static radialGradient(...sfs: RM[]): string;

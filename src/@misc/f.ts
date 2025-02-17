@@ -120,6 +120,12 @@ export class f {
     return `opacity(${fix_value([percent])})`;
   }
 
+  static path(path: RM): string {
+    return `path(${fix_value([path], { quote: true })})`;
+  }
+  static clipPath(fillRule: RM, path: RM): string {
+    return `path(${fix_value([fillRule, fix_value([path], { quote: true })], { delimeter: ", " })})`;
+  }
   static perspective(value: RM) {
     return `perspective(${fix_value([value])})`;
   }
