@@ -1,4 +1,4 @@
-import { $$, isArr, isNum, isStr } from "../@";
+import { $$, isArr, isFN, isNum, isStr } from "../@";
 import { RM } from "../css";
 import { _vars } from "../var";
 
@@ -62,7 +62,6 @@ export function fix_value(
     .map((ff) => {
       if (isArr(ff)) {
         //
-
         //
         return fix_value(ff, {
           rem: perc_arr ? false : rem,
@@ -73,6 +72,18 @@ export function fix_value(
         });
       }
       if (ff instanceof _vars) return ff.__();
+
+      if (isFN(ff)) {
+        const f2 = ff();
+
+        return fix_value(isArr(f2) ? f2 : [f2], {
+          rem: perc_arr ? false : rem,
+          degree: perc_arr ? false : degree,
+          percent: perc_arr ? perc_arr : percent,
+          delimeter: delim_arr ? delimeter : " ",
+          quote,
+        });
+      }
 
       if (quote) {
         ff = String(ff);

@@ -11,6 +11,7 @@
   color: green;
 }
 .hellos {
+  color: var(--anim) 1rem 2rem 3rem; 
   animation-name: k 1s infinite; 
   height: clamp(12rem, 23rem, 0rem);
 }
