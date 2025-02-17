@@ -152,10 +152,9 @@ const mapWriter2 = (filePath: string, cids: Mapper<string, obj<string>>) => {
     .map(([x, y]) => {
       return `${x}="${y.join(" ")}"`;
     })
-    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-    .join();
+    .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 
-  writeFileSync(filePath, `export const ${NITEM};`);
+  writeFileSync(filePath, NITEM.length ? `export const ${NITEM.join()};` : "");
 
   return;
 };

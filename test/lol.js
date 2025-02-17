@@ -1,1 +1,0 @@
-export const okay="g_okay";

@@ -10,29 +10,6 @@ export const cc = new SweetSS({
 
 const { dom, cx, id, kf, save } = cc;
 
-const _fheight = Var({ _fheight: 10 });
-
-cx.okay = [
-  {
-    color: "red",
-    border: [1, "red", "dashed"],
-    animation: "bounce 2s ease",
-  },
-  _fheight,
-];
-
-kf.bounce = {
-  from: {
-    color: "red",
-  },
-};
-
-kf.bouncer = {
-  from: {
-    color: "red",
-  },
-};
-
 /*
 -------------------------
 
