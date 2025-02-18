@@ -16,129 +16,110 @@ import {
 
 //
 
+const startEnd = (
+  TH: cancr,
+  values: [string, string],
+  isRow: boolean,
+  isReversed: boolean,
+  sce: [string, string, string] = ["flex-start", "center", "flex-end"],
+) => {
+  //
+  let prop = "justifyContent";
+  if (isRow) {
+    TH._value = {
+      alignItems: values[0],
+    };
+  } else {
+    if (isReversed) {
+      values.reverse();
+    }
+    TH._value = {
+      justifyContent: values[0],
+    };
+    prop = "alignItems";
+  }
+
+  if (isRow && isReversed) {
+    sce.reverse();
+  }
+  return {
+    get start(): cancr {
+      TH._value = {
+        [prop]: sce[0],
+      };
+      return TH;
+    },
+    get center(): cancr {
+      TH._value = {
+        [prop]: sce[1],
+      };
+      return TH;
+    },
+    get end(): cancr {
+      TH._value = {
+        [prop]: sce[2],
+      };
+      return TH;
+    },
+  };
+};
+
 export class cancr extends Medyas<cancr> {
   private flexDirection: string = "row";
+  private isReversed: boolean = false;
   get center() {
-    let val = "justifyContent";
-    if (this.flexDirection === "row") {
-      this._value = {
-        alignItems: "center",
-      };
-    } else {
-      this._value = {
-        justifyContent: "center",
-      };
-      val = "alignItems";
-    }
-
-    const TH = this;
-
-    return {
-      get center(): cancr {
-        TH._value = {
-          [val]: "center",
-        };
-        return TH;
-      },
-      get start(): cancr {
-        TH._value = {
-          [val]: "flex-start",
-        };
-        return TH;
-      },
-      get end(): cancr {
-        TH._value = {
-          [val]: "flex-end",
-        };
-        return TH;
-      },
-    };
+    return startEnd(
+      this,
+      ["center", "center"],
+      this.flexDirection === "row",
+      this.isReversed,
+    );
   }
   get start() {
-    let val = "justifyContent";
-    const def = "flex-start";
-
-    if (this.flexDirection === "row") {
-      this._value = {
-        alignItems: def,
-      };
-    } else {
-      this._value = {
-        justifyContent: def,
-      };
-      val = "alignItems";
-    }
-    const TH = this;
-
-    return {
-      get center(): cancr {
-        TH._value = {
-          [val]: "center",
-        };
-        return TH;
-      },
-      get start(): cancr {
-        TH._value = {
-          [val]: def,
-        };
-        return TH;
-      },
-      get end(): cancr {
-        TH._value = {
-          [val]: "flex-end",
-        };
-        return TH;
-      },
-    };
+    return startEnd(
+      this,
+      ["flex-start", "flex-end"],
+      this.flexDirection === "row",
+      this.isReversed,
+    );
   }
   get end() {
-    let val = "justifyContent";
-    const def = "flex-end";
-
-    if (this.flexDirection === "row") {
-      this._value = {
-        alignItems: def,
-      };
-    } else {
-      this._value = {
-        justifyContent: def,
-      };
-      val = "alignItems";
-    }
-    const TH = this;
-
-    return {
-      get center(): cancr {
-        TH._value = {
-          [val]: "center",
-        };
-        return TH;
-      },
-      get start(): cancr {
-        TH._value = {
-          [val]: "flex-start",
-        };
-        return TH;
-      },
-      get end(): cancr {
-        TH._value = {
-          [val]: def,
-        };
-        return TH;
-      },
-    };
+    return startEnd(
+      this,
+      ["flex-end", "flex-start"],
+      this.flexDirection === "row",
+      this.isReversed,
+    );
   }
   get column() {
     this.flexDirection = "column";
+    this.isReversed = false;
     this._value = {
       flexDirection: "column",
     };
     return this;
   }
+  get columnReverse() {
+    this.flexDirection = "column";
+    this.isReversed = true;
+    this._value = {
+      flexDirection: "column-reverse",
+    };
+    return this;
+  }
   get row() {
     this.flexDirection = "row";
+    this.isReversed = false;
     this._value = {
       flexDirection: "row",
+    };
+    return this;
+  }
+  get rowReverse() {
+    this.flexDirection = "row";
+    this.isReversed = true;
+    this._value = {
+      flexDirection: "row-reverse",
     };
     return this;
   }

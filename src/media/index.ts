@@ -178,7 +178,7 @@ export class Medyas<T extends Medyas<T>> {
   get DARK() {
     return <T>NEW.call(this, "dark");
   }
-  protected set _value(val: CSSProps) {
+  set _value(val: CSSProps) {
     oItems(val).forEach(([k, v]) => {
       if (!this._values[k]) {
         this._values[k] = med({});
@@ -186,7 +186,7 @@ export class Medyas<T extends Medyas<T>> {
       oAss(this._values[k], VAL.call(this, v));
     });
   }
-  protected get _value() {
+  get _value() {
     //
     return this._values;
   }

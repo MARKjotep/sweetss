@@ -102,8 +102,8 @@ declare class Medyas<T extends Medyas<T>> {
     get PRINT(): T;
     get SCREEN(): T;
     get DARK(): T;
-    protected set _value(val: CSSProps);
-    protected get _value(): CSSProps;
+    set _value(val: CSSProps);
+    get _value(): CSSProps;
 }
 
 declare class _vars {

@@ -29,6 +29,8 @@ export const qt_gradient_from = Var({
 export const qt_gradient_to = Var({ qt_gradient_to: basic }, basic);
 
 cx2.hello = [
+  flex.center.end,
+  flex.LG.columnReverse.center.end,
   {
     animationName: med([aname, "1s", "infinite"], {
       sm: ["pop", "1s", "infinite"],

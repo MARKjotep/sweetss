@@ -1,5 +1,7 @@
 /* -------------- xs ( default ) */
 .hello {
+  align-items: center; 
+  justify-content: flex-end; 
   animation-name: var(--anim) 1s infinite; 
   animation: pop 1s infinite, okay 1s infinite; 
   color: var(--qt_gradient_from), red, var(--qt_gradient_to, );
@@ -50,6 +52,11 @@ from {
 }
 /* -------------- lg */
 @media (min-width: 1024px)	{
+.hello {
+  align-items: flex-end; 
+  justify-content: center; 
+  flex-direction: column-reverse;
+}
 .hello, .hellos {
   animation-name: var(--anim);
 }
