@@ -64,7 +64,13 @@ const startEnd = (
   };
 };
 
-export class cancr extends Medyas<cancr> {
+export class cancr extends Medyas<
+  cancr,
+  {
+    direction: string;
+    reversed: boolean;
+  }
+> {
   private flexDirection: string = "row";
   private isReversed: boolean = false;
   get center() {
@@ -92,6 +98,8 @@ export class cancr extends Medyas<cancr> {
     );
   }
   get column() {
+    this.data.direction = "column";
+    this.data.reversed = false;
     this.flexDirection = "column";
     this.isReversed = false;
     this._value = {
@@ -100,6 +108,8 @@ export class cancr extends Medyas<cancr> {
     return this;
   }
   get columnReverse() {
+    this.data.direction = "column";
+    this.data.reversed = true;
     this.flexDirection = "column";
     this.isReversed = true;
     this._value = {

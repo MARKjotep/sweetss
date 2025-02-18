@@ -124,17 +124,24 @@ function VAL(this: Medyas<any>, val: any) {
     return med({ xs: val });
   }
 }
-function NEW<T extends Medyas<T>>(this: Medyas<T>, mda: string) {
+function NEW<T extends Medyas<T>, Q extends Record<string, any>>(
+  this: Medyas<T, Q>,
+  mda: string,
+) {
   return new (this.constructor as new (
     prefix: string[],
-    _values: Record<string, any>,
-  ) => T)(CX.call(this, mda), this["_values"]);
+    _values: Record<string, media>,
+    data: Q,
+  ) => T)(CX.call(this, mda), this["_values"], this["data"]);
 }
 
-export class Medyas<T extends Medyas<T>> {
+export class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
   private _prefix: Set<string> = new Set();
-  private _values: Record<string, media> = {};
-  constructor(prefix: string[] = [], _values: Record<string, media> = {}) {
+  constructor(
+    prefix: string[] = [],
+    private _values: Record<string, media> = {},
+    public data: Q = {} as Q,
+  ) {
     prefix.forEach((pr) => {
       pr && this._prefix.add(pr);
     });
@@ -144,9 +151,11 @@ export class Medyas<T extends Medyas<T>> {
       }
       oAss(this._values[k], v);
     });
+
+    this.data = data;
   }
   get XS() {
-    return <T>NEW.call(this, "xs");
+    return <Medyas<T, Q>>NEW.call(this as any, "xs");
   }
   get SM() {
     return <T>NEW.call(this, "sm");
@@ -183,7 +192,7 @@ export class Medyas<T extends Medyas<T>> {
       if (!this._values[k]) {
         this._values[k] = med({});
       }
-      oAss(this._values[k], VAL.call(this, v));
+      oAss(this._values[k], VAL.call(this as any, v));
     });
   }
   get _value() {
