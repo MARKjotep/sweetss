@@ -1,6 +1,7 @@
 import { RM } from "../css";
-import { $$, isArr, ngify, oAss, obj, oItems, oKeys, sparse, V } from "../@";
+import { ngify, oAss, obj, oItems, sparse, V } from "../@";
 import { _vars } from "../var";
+import { CSSProps } from "..";
 
 export interface mtype {
   [k: string]: RM | undefined;
@@ -104,4 +105,85 @@ export function med(
     undefined,
     defValueOrG as mtype & { [k: string]: undefined | RM },
   );
+}
+
+function CX(this: Medyas<any>, pref: string) {
+  return [...this["_prefix"], pref];
+}
+function VAL(this: Medyas<any>, val: any) {
+  if (this["_prefix"].size) {
+    const prefs = [...this["_prefix"]].reduce<Record<string, string>>(
+      (a, b) => {
+        a[b] = val;
+        return a;
+      },
+      {},
+    );
+    return med(prefs);
+  } else {
+    return med({ xs: val });
+  }
+}
+function NEW<T extends Medyas<T>>(this: Medyas<T>, mda: string) {
+  return new (this.constructor as new (
+    prefix: string[],
+    _values: Record<string, any>,
+  ) => T)(CX.call(this, mda), this["_values"]);
+}
+
+export class Medyas<T extends Medyas<T>> {
+  private _prefix: Set<string> = new Set();
+  private _values: Record<string, media> = {};
+  constructor(prefix: string[] = [], _values: Record<string, any> = {}) {
+    prefix.forEach((pr) => {
+      pr && this._prefix.add(pr);
+    });
+    oAss(this._values, _values);
+  }
+  get XS() {
+    return <T>NEW.call(this, "xs");
+  }
+  get SM() {
+    return <T>NEW.call(this, "sm");
+  }
+  get SMD() {
+    return <T>NEW.call(this, "smd");
+  }
+  get MD() {
+    return <T>NEW.call(this, "md");
+  }
+  get LG() {
+    return <T>NEW.call(this, "lg");
+  }
+  get XL() {
+    return <T>NEW.call(this, "xl");
+  }
+  get XXL() {
+    return <T>NEW.call(this, "xxl");
+  }
+  get NO_HOVER() {
+    return <T>NEW.call(this, "no_hover");
+  }
+  get PRINT() {
+    return <T>NEW.call(this, "print");
+  }
+  get SCREEN() {
+    return <T>NEW.call(this, "screen");
+  }
+  get DARK() {
+    return <T>NEW.call(this, "dark");
+  }
+  protected set _value(val: CSSProps) {
+    oAss(
+      this._values,
+      oItems(val).reduce<Record<string, media>>((a, [k, v]) => {
+        a[k] = VAL.call(this, v);
+        return a;
+      }, {}),
+    );
+  }
+  protected get _value() {
+    //
+    return this._values;
+  }
 }

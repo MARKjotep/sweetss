@@ -21,14 +21,16 @@ export * from "./@misc/ps";
 export * from "./@misc/f";
 
 export { $$, __ };
-export { med, media } from "./media";
+export { med, media, Medyas } from "./media";
 export { Var } from "./var";
 export { value, join } from "./value";
 
-export type CSSinR = CinR | CinR[];
+export type CSSProps = CinR | CinR[];
 
 export type VarType = _vars;
-export type CSS = obj<CSSinR | { [key: `.${string}` | `#${string}`]: CSSinR }>;
+export type CSS = obj<
+  CSSProps | { [key: `.${string}` | `#${string}`]: CSSProps }
+>;
 
 export type KFCSS = obj<{ from?: CinR; to?: CinR; "%"?: CinR } | obj<CinR>>;
 

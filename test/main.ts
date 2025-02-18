@@ -1,4 +1,4 @@
-import { ps, f, med, Var, value, v, SweetSS, $$, join } from "../src";
+import { ps, f, med, Var, value, v, SweetSS, $$, join, Medyas } from "../src";
 import { cc } from "./ntest";
 
 const fxs = __filename.split("/").slice(-3);
@@ -49,6 +49,7 @@ array inside array.
 cx2.okay = { color: "green" };
 cx2.hellos = [
   {
+    color: () => "red",
     animationName: med(["k", "1s", "infinite"], {
       sm: ["bouncer", "1s", "infinite"],
       lg: anim,

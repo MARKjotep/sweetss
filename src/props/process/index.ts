@@ -9,7 +9,7 @@ import {
   oVals,
 } from "../../@";
 import { CMapper, CSSinR, RM } from "../../css";
-import { med, media } from "../../media";
+import { med, media, Medyas } from "../../media";
 import { fix_value, join, val_xxx, value } from "../../value";
 import { _vars } from "../../var";
 
@@ -54,6 +54,10 @@ export class ProcSelector {
     if (css instanceof _vars) {
       this.saveAnim(name, css);
       props.ass(css._var, this.props(name, css._var, valToMedia(css._val)));
+    } else if (css instanceof Medyas) {
+      oItems(css["_values"]).forEach(([k, v]) => {
+        props.set(k, this.props(name, k, valToMedia(v)));
+      });
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
     }
