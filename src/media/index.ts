@@ -1,5 +1,5 @@
 import { RM } from "../css";
-import { ngify, oAss, obj, oItems, sparse, V } from "../@";
+import { $$, ngify, oAss, obj, oItems, sparse, V } from "../@";
 import { _vars } from "../var";
 import { CSSProps } from "..";
 
@@ -134,11 +134,16 @@ function NEW<T extends Medyas<T>>(this: Medyas<T>, mda: string) {
 export class Medyas<T extends Medyas<T>> {
   private _prefix: Set<string> = new Set();
   private _values: Record<string, media> = {};
-  constructor(prefix: string[] = [], _values: Record<string, any> = {}) {
+  constructor(prefix: string[] = [], _values: Record<string, media> = {}) {
     prefix.forEach((pr) => {
       pr && this._prefix.add(pr);
     });
-    oAss(this._values, _values);
+    oItems(_values).forEach(([k, v]) => {
+      if (!this._values[k]) {
+        this._values[k] = med({});
+      }
+      oAss(this._values[k], v);
+    });
   }
   get XS() {
     return <T>NEW.call(this, "xs");
@@ -174,13 +179,12 @@ export class Medyas<T extends Medyas<T>> {
     return <T>NEW.call(this, "dark");
   }
   protected set _value(val: CSSProps) {
-    oAss(
-      this._values,
-      oItems(val).reduce<Record<string, media>>((a, [k, v]) => {
-        a[k] = VAL.call(this, v);
-        return a;
-      }, {}),
-    );
+    oItems(val).forEach(([k, v]) => {
+      if (!this._values[k]) {
+        this._values[k] = med({});
+      }
+      oAss(this._values[k], VAL.call(this, v));
+    });
   }
   protected get _value() {
     //

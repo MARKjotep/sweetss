@@ -50,20 +50,7 @@ from {
 }
 /* -------------- lg */
 @media (min-width: 1024px)	{
-.hello {
-  justify-content: center; 
-  align-items: center; 
-  flex-shrink: 1;
-}
 .hello, .hellos {
   animation-name: var(--anim);
-}
-}
-/* -------------- xxl */
-@media (min-width: 1536px)	{
-.hello {
-  justify-content: center; 
-  align-items: center; 
-  flex-shrink: 1;
 }
 }

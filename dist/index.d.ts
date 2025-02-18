@@ -90,7 +90,7 @@ declare function med(defValue: RM, g: mtype & {
 declare class Medyas<T extends Medyas<T>> {
     private _prefix;
     private _values;
-    constructor(prefix?: string[], _values?: Record<string, any>);
+    constructor(prefix?: string[], _values?: Record<string, media>);
     get XS(): T;
     get SM(): T;
     get SMD(): T;

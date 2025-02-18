@@ -1,5 +1,6 @@
 import { ps, f, med, Var, value, v, SweetSS, $$, join, Medyas } from "../src";
 import { cc } from "./ntest";
+import { flex } from "./flex";
 
 const fxs = __filename.split("/").slice(-3);
 
