@@ -87,11 +87,16 @@ declare function med(g: mtype & {
 declare function med(defValue: RM, g: mtype & {
     [k: string]: undefined | RM;
 }): media;
-declare class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
-    private _values;
+interface MedCFG<Q = Record<string, any>> {
+    prefix?: string;
     data: Q;
-    private _prefix;
-    constructor(prefix?: string, _values?: Record<string, media>, data?: Q);
+    values: Record<string, media>;
+}
+declare class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
+    private _prefix?;
+    data: Q;
+    private _values;
+    constructor({ prefix, data, values }?: MedCFG);
     get XS(): Medyas<T, Q>;
     get SM(): T;
     get SMD(): T;

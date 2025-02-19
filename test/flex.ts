@@ -126,12 +126,15 @@ export class Flex extends Medyas<
   Flex,
   { direction: string; reversed: boolean }
 > {
-  constructor(
-    prefix: string = "",
-    _values: Record<string, media> = {},
-    data = { direction: "row", reversed: false },
-  ) {
-    super(prefix, _values, data);
+  constructor({
+    prefix = "",
+    data = {
+      direction: "row",
+      reversed: false,
+    },
+    values = {},
+  } = {}) {
+    super({ prefix, data, values });
     if (!prefix.length) {
       this._value = {
         display: "flex",

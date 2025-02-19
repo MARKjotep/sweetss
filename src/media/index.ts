@@ -118,29 +118,39 @@ function NEW<T extends Medyas<T>, Q extends Record<string, any>>(
   this: Medyas<T, Q>,
   mda: string,
 ) {
-  return new (this.constructor as new (
-    prefix: string,
-    _values: Record<string, media>,
-    data: Q,
-  ) => T)(mda, this["_values"], this["data"]);
+  return new (this.constructor as new ({ prefix, data, values }: MedCFG) => T)({
+    prefix: mda,
+    values: this["_values"],
+    data: this["data"],
+  });
+}
+
+interface MedCFG<Q = Record<string, any>> {
+  prefix?: string;
+  data: Q;
+  values: Record<string, media>;
 }
 
 export class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
-  private _prefix: string;
+  private _prefix?: string;
+  public data: Q;
+  private _values: Record<string, media>;
   constructor(
-    prefix: string = "",
-    private _values: Record<string, media> = {},
-    public data: Q = {} as Q,
+    { prefix, data, values }: MedCFG = {
+      data: {},
+      values: {},
+    },
   ) {
     this._prefix = prefix;
-    oItems(_values).forEach(([k, v]) => {
+    this._values = values;
+    oItems(values).forEach(([k, v]) => {
       if (!this._values[k]) {
         this._values[k] = med({});
       }
       oAss(this._values[k], v);
     });
 
-    this.data = data;
+    this.data = data as Q;
   }
   get XS() {
     return <Medyas<T, Q>>NEW.call(this as any, "xs");
