@@ -14,94 +14,149 @@ import {
   CSSProps,
 } from "../src";
 
-//
+class SCB {
+  constructor(
+    protected TH: Flex,
+    protected prop: string,
+    protected startEnd: [string, string] = ["flex-start", "flex-end"],
+    protected _none: string = "flex-start",
+    protected _auto: string = "auto",
+  ) {}
+  get start(): Flex {
+    this.TH._value = {
+      [this.prop]: this.startEnd[0],
+    };
+    return this.TH;
+  }
+  get center(): Flex {
+    this.TH._value = {
+      [this.prop]: "center",
+    };
+    return this.TH;
+  }
+  get end(): Flex {
+    this.TH._value = {
+      [this.prop]: this.startEnd[1],
+    };
+    return this.TH;
+  }
+  get none(): Flex {
+    this.TH._value = {
+      [this.prop]: this._none,
+    };
+    return this.TH;
+  }
+}
 
+class SPACE extends SCB {
+  get around(): Flex {
+    this.TH._value = {
+      [this.prop]: "space-around",
+    };
+    return this.TH;
+  }
+  get between(): Flex {
+    this.TH._value = {
+      [this.prop]: "space-between",
+    };
+    return this.TH;
+  }
+  get even(): Flex {
+    this.TH._value = {
+      [this.prop]: "space-evenly",
+    };
+    return this.TH;
+  }
+}
+
+class STRECHED extends SCB {
+  get stretch(): Flex {
+    this.TH._value = {
+      [this.prop]: "stretch",
+    };
+    return this.TH;
+  }
+  get baseline(): Flex {
+    this.TH._value = {
+      [this.prop]: "baseline",
+    };
+    return this.TH;
+  }
+  get auto(): Flex {
+    this.TH._value = {
+      [this.prop]: this._auto,
+    };
+    return this.TH;
+  }
+}
+
+//
 const startEnd = (
-  TH: cancr,
-  values: [string, string],
-  isRow: boolean,
-  isReversed: boolean,
-  sce: [string, string, string] = ["flex-start", "center", "flex-end"],
+  TH: Flex,
+  value: string,
+  prop = "justifyContent",
+  sce: [string, string] = ["flex-start", "flex-end"],
 ) => {
   //
-  let prop = "justifyContent";
+  const { direction, reversed } = TH.data;
+
+  const isRow = direction === "row";
+
   if (isRow) {
     TH._value = {
-      alignItems: values[0],
+      alignItems: value,
     };
   } else {
-    if (isReversed) {
-      values.reverse();
+    if (reversed) {
+      sce.reverse();
     }
     TH._value = {
-      justifyContent: values[0],
+      alignItems: value,
     };
-    prop = "alignItems";
   }
 
-  if (isRow && isReversed) {
+  if (isRow && reversed) {
     sce.reverse();
   }
-  return {
-    get start(): cancr {
-      TH._value = {
-        [prop]: sce[0],
-      };
-      return TH;
-    },
-    get center(): cancr {
-      TH._value = {
-        [prop]: sce[1],
-      };
-      return TH;
-    },
-    get end(): cancr {
-      TH._value = {
-        [prop]: sce[2],
-      };
-      return TH;
-    },
-  };
+
+  return new SPACE(TH, prop, sce, sce[0]);
 };
 
-export class cancr extends Medyas<
-  cancr,
-  {
-    direction: string;
-    reversed: boolean;
-  }
+export class Flex extends Medyas<
+  Flex,
+  { direction: string; reversed: boolean }
 > {
-  private flexDirection: string = "row";
-  private isReversed: boolean = false;
-  get center() {
-    return startEnd(
-      this,
-      ["center", "center"],
-      this.flexDirection === "row",
-      this.isReversed,
-    );
+  constructor(
+    prefix: string = "",
+    _values: Record<string, media> = {},
+    data = { direction: "row", reversed: false },
+  ) {
+    super(prefix, _values, data);
+    if (!prefix.length) {
+      this._value = {
+        display: "flex",
+      };
+    }
   }
-  get start() {
-    return startEnd(
-      this,
-      ["flex-start", "flex-end"],
-      this.flexDirection === "row",
-      this.isReversed,
-    );
+  get BASELINE() {
+    return startEnd(this, "baseline");
   }
-  get end() {
-    return startEnd(
-      this,
-      ["flex-end", "flex-start"],
-      this.flexDirection === "row",
-      this.isReversed,
-    );
+  get STRETCH() {
+    return startEnd(this, "stretch");
   }
+  get CENTER() {
+    return startEnd(this, "center");
+  }
+  get START() {
+    return startEnd(this, "flex-start");
+  }
+  get END() {
+    return startEnd(this, "flex-end");
+  }
+  //
   get column() {
     this.data.direction = "column";
     this.data.reversed = false;
-    this.flexDirection = "column";
-    this.isReversed = false;
     this._value = {
       flexDirection: "column",
     };
@@ -110,35 +165,28 @@ export class cancr extends Medyas<
   get columnReverse() {
     this.data.direction = "column";
     this.data.reversed = true;
-    this.flexDirection = "column";
-    this.isReversed = true;
     this._value = {
       flexDirection: "column-reverse",
     };
     return this;
   }
   get row() {
-    this.flexDirection = "row";
-    this.isReversed = false;
+    this.data.direction = "row";
+    this.data.reversed = false;
     this._value = {
       flexDirection: "row",
     };
     return this;
   }
   get rowReverse() {
-    this.flexDirection = "row";
-    this.isReversed = true;
+    this.data.direction = "row";
+    this.data.reversed = true;
     this._value = {
       flexDirection: "row-reverse",
     };
     return this;
   }
-  get shrink() {
-    this._value = {
-      flexShrink: 1,
-    };
-    return this;
-  }
+  //
   get wrap() {
     this._value = {
       flexWrap: "wrap",
@@ -157,6 +205,52 @@ export class cancr extends Medyas<
     };
     return this;
   }
+  //
+  get WRAPPED() {
+    return new SPACE(
+      //
+      this,
+      "alignContent",
+      ["flex-start", "flex-end"],
+      "stretch",
+    );
+  }
+  get SELF() {
+    return new STRECHED(
+      //
+      this,
+      "alignSelf",
+      ["flex-start", "flex-end"],
+      "auto",
+    );
+  }
+  //
+  shrink(value: number = 1) {
+    this._value = {
+      flexShrink: value,
+    };
+    return this;
+  }
+  grow(value: number = 1) {
+    this._value = {
+      flexGrow: value,
+    };
+    return this;
+  }
+  basis(value: number = 1) {
+    this._value = {
+      flexBasis: value,
+    };
+    return this;
+  }
+  flex(grow: number, shrink: number, basis: string) {
+    this._value = {
+      flex: [String(grow), String(shrink), basis.toString()],
+    };
+    return this;
+  }
+  //
+  static get flex() {
+    return new Flex();
+  }
 }
-
-export const flex = new cancr();

@@ -91,7 +91,7 @@ declare class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
     private _values;
     data: Q;
     private _prefix;
-    constructor(prefix?: string[], _values?: Record<string, media>, data?: Q);
+    constructor(prefix?: string, _values?: Record<string, media>, data?: Q);
     get XS(): Medyas<T, Q>;
     get SM(): T;
     get SMD(): T;

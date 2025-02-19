@@ -107,19 +107,9 @@ export function med(
   );
 }
 
-function CX(this: Medyas<any>, pref: string) {
-  return [...this["_prefix"], pref];
-}
 function VAL(this: Medyas<any>, val: any) {
-  if (this["_prefix"].size) {
-    const prefs = [...this["_prefix"]].reduce<Record<string, string>>(
-      (a, b) => {
-        a[b] = val;
-        return a;
-      },
-      {},
-    );
-    return med(prefs);
+  if (this["_prefix"]) {
+    return med({ [this["_prefix"]]: val });
   } else {
     return med({ xs: val });
   }
@@ -129,22 +119,20 @@ function NEW<T extends Medyas<T>, Q extends Record<string, any>>(
   mda: string,
 ) {
   return new (this.constructor as new (
-    prefix: string[],
+    prefix: string,
     _values: Record<string, media>,
     data: Q,
-  ) => T)(CX.call(this, mda), this["_values"], this["data"]);
+  ) => T)(mda, this["_values"], this["data"]);
 }
 
 export class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
-  private _prefix: Set<string> = new Set();
+  private _prefix: string;
   constructor(
-    prefix: string[] = [],
+    prefix: string = "",
     private _values: Record<string, media> = {},
     public data: Q = {} as Q,
   ) {
-    prefix.forEach((pr) => {
-      pr && this._prefix.add(pr);
-    });
+    this._prefix = prefix;
     oItems(_values).forEach(([k, v]) => {
       if (!this._values[k]) {
         this._values[k] = med({});

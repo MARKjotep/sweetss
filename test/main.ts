@@ -1,6 +1,6 @@
 import { ps, f, med, Var, value, v, SweetSS, $$, join, Medyas } from "../src";
 import { cc } from "./ntest";
-import { flex } from "./flex";
+import { Flex } from "./flex";
 
 const fxs = __filename.split("/").slice(-3);
 
@@ -28,11 +28,9 @@ export const qt_gradient_from = Var({
 //
 export const qt_gradient_to = Var({ qt_gradient_to: basic }, basic);
 
-//
 cx2.hello = [
   // flex.center.end,
   // flex.LG.columnReverse.center.end,
-  ps.child("*")(flex.center.center),
   {
     animationName: med([aname, "1s", "infinite"], {
       sm: ["pop", "1s", "infinite"],

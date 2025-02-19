@@ -1,8 +1,4 @@
 /* -------------- xs ( default ) */
-.hello > * {
-  align-items: center; 
-  justify-content: center;
-}
 .hello {
   animation-name: var(--anim) 1s infinite; 
   animation: pop 1s infinite, okay 1s infinite; 
