@@ -1,14 +1,18 @@
 /* -------------- xs ( default ) */
-.hello {
-  animation-name: var(--anim) 1s infinite; 
-  animation: pop 1s infinite, okay 1s infinite; 
-  color: var(--qt_gradient_from), red, var(--qt_gradient_to, );
-}
 .hello, .hellos {
+  animation: pop 1s infinite, okay 1s infinite; 
   --anim: okay 1s infinite;
 }
+.okay, .hellos {
+  transition: all 0.25s;
+}
+.hello {
+  animation-delay: 2s; 
+  color: var(--qt_gradient_from), red, var(--qt_gradient_to, );
+}
 .okay {
-  color: green;
+  color: green; 
+  transition-delay: 3s;
 }
 .hellos, .lol::after, .g_ok {
   color: red;
@@ -34,16 +38,8 @@ from {
   color: red;
 }
 }
-@-webkit-keyframes bounce {
-from {
-  color: red;
-}
-}
 /* -------------- sm */
 @media (min-width: 480px)	{
-.hello {
-  animation-name: pop 1s infinite;
-}
 .hellos {
   animation-name: bouncer 1s infinite;
 }
@@ -51,6 +47,12 @@ from {
 /* -------------- lg */
 @media (min-width: 1024px)	{
 .hello, .hellos {
+  animation: pop 1s infinite, okay 1s infinite;
+}
+.hello {
+  animation-delay: 2s;
+}
+.hellos {
   animation-name: var(--anim);
 }
 }

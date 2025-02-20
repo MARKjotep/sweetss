@@ -23,6 +23,8 @@ const norems = new Set([
   "webkitLineClamp",
   //
   "animationIterationCount",
+  "animationTimingFunction",
+  "transitionTimingFunction",
   //
   "columnCount",
 ]);

@@ -173,7 +173,7 @@ function loader(
   this: SweetSS,
   pref: string,
   loads: SweetSS[],
-  webkf: boolean = true,
+  webkf: boolean = false,
   exMap: boolean = false,
 ) {
   const props: Record<string, Cid | At | FontFace> = {

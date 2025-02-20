@@ -141,8 +141,18 @@ export class __css {
 
     oItems(cs2).forEach(([kk, vv]) => {
       const mitm: string[] = [];
-      oItems(vv).forEach(([k, v]) => mitm.push(toProperty(k, v)));
-
+      const anims: string[] = [];
+      oItems(vv).forEach(([k, v]) => {
+        if (v.animation || v.transition) {
+          anims.push(toProperty(k, v));
+        } else {
+          mitm.push(toProperty(k, v));
+        }
+      });
+      if (anims.length) {
+        mitm.unshift(...anims);
+      }
+      //
       if (kprops[kk as PMtype]) {
         oItems(kprops[kk as PMtype]!).forEach(([k, v]) => {
           mitm.push(`${k} {\n${v.join("\n")}\n}`);

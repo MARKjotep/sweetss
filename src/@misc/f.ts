@@ -248,6 +248,20 @@ export class f {
       degree: true,
     })})`;
   }
+
+  static steps(
+    n: RM,
+    position:
+      | "start"
+      | "end"
+      | "no"
+      | "jump-start"
+      | "jump-end"
+      | "jump-none"
+      | "jump-both",
+  ) {
+    return `steps(${fix_value([n, position], {})})`;
+  }
   /**
    * Translate(X,Y)
    */

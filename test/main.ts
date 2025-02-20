@@ -32,11 +32,11 @@ cx2.hello = [
   // flex.center.end,
   // flex.LG.columnReverse.center.end,
   {
-    animationName: med([aname, "1s", "infinite"], {
-      sm: ["pop", "1s", "infinite"],
-      lg: anim,
-    }),
-    animation: join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]),
+    animationDelay: med("2s", { lg: "2s" }),
+    animation: med(
+      join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]),
+      { lg: join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]) },
+    ),
     color: join(qt_gradient_from, "red", qt_gradient_to),
   },
   anim,
@@ -49,7 +49,7 @@ array inside array.
 -------------------------
 */
 
-cx2.okay = { color: "green" };
+cx2.okay = [{ color: "green", transition: "all 0.25s", transitionDelay: "3s" }];
 cx2.hellos = [
   {
     color: () => "red",
@@ -58,6 +58,11 @@ cx2.hellos = [
       lg: anim,
     }),
     height: f.clamp(12, 23, 0),
+    transition: "all 0.25s",
+    animation: med(
+      join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]),
+      { lg: join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]) },
+    ),
   },
   anim,
 ];

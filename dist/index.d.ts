@@ -540,6 +540,7 @@ declare class f {
     static skew(...sfs: RM[]): string;
     static skewX(X: RM): string;
     static skewY(Y: RM): string;
+    static steps(n: RM, position: "start" | "end" | "no" | "jump-start" | "jump-end" | "jump-none" | "jump-both"): string;
     /**
      * Translate(X,Y)
      */
