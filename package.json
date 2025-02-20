@@ -1,6 +1,6 @@
 {
   "name": "sweetss",
-  "version": "2.3.5",
+  "version": "2.3.8",
   "description": "CSS in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

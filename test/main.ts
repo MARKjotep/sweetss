@@ -32,6 +32,10 @@ cx2.hello = [
   // flex.center.end,
   // flex.LG.columnReverse.center.end,
   {
+    background: med({
+      xs: med("orange", { dark: "red" }),
+      md: med("purple", { dark: "red", md: "blue" }),
+    }),
     animationDelay: med("2s", { lg: "2s" }),
     animation: med(
       join(["pop", "1s", "infinite"], ["okay", "1s", "infinite"]),

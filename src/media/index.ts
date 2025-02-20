@@ -50,11 +50,11 @@ export class media {
     const DM: obj<RM> = {};
 
     if (defValue !== undefined) {
-      reMedia(DM, defM, defValue);
+      reMedia(DM, defM, defValue, defM);
     }
 
     oItems(g).forEach(([k, v]) => {
-      reMedia(DM, k, v);
+      reMedia(DM, k, v, defM);
     });
     oAss(this, DM);
   }
@@ -70,15 +70,23 @@ export class media {
   }
 }
 
-const defM = media.default;
-
-const reMedia = (DM: obj<RM>, k: keyof mtype, v: RM | media) => {
+const reMedia = (
+  DM: obj<RM>,
+  k: keyof mtype,
+  v: RM | media,
+  def: keyof mtype,
+) => {
   if (v !== undefined) {
     if (v instanceof media) {
       oItems(v).forEach(([k2, v2]) => {
-        if (k !== k2) {
-          const nm = defM === k2 ? k : `${k}-${k2}`;
-          reMedia(DM, nm, v2);
+        if (def !== k) {
+          if (k !== k2) {
+            reMedia(DM, `${k}-${k2}`, v2, def);
+          } else {
+            reMedia(DM, k2, v2, def);
+          }
+        } else {
+          reMedia(DM, k2, v2, def);
         }
       });
     } else {
@@ -107,7 +115,7 @@ export function med(
   );
 }
 
-function VAL(this: Medyas<any>, val: any) {
+function VAL(this: Medyas<any>, val: any): media {
   if (this["_prefix"]) {
     return med({ [this["_prefix"]]: val });
   } else {
