@@ -81,7 +81,11 @@ const reMedia = (
       oItems(v).forEach(([k2, v2]) => {
         if (def !== k) {
           if (k !== k2) {
-            reMedia(DM, `${k}-${k2}`, v2, def);
+            if (def === k2) {
+              reMedia(DM, k, v2, def);
+            } else {
+              reMedia(DM, `${k}-${k2}`, v2, def);
+            }
           } else {
             reMedia(DM, k2, v2, def);
           }
