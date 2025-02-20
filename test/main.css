@@ -35,7 +35,16 @@
   clip-path: path(evenodd, 'M40 0H50V10H40V0Z M60 20H40V10H30V20H20V30H10V20H0V40H60V20Z');
 }
 @keyframes bounce {
+50% {
+  color: green yellow;
+}
+100% {
+  background: orange;
+}
 from {
+  color: red;
+}
+50%, 100% {
   color: red;
 }
 }
@@ -67,12 +76,6 @@ from {
 @media (prefers-color-scheme: dark)	{
 .hello {
   background: red;
-}
-}
-/* -------------- md-xs */
-@media (min-width: 768px) and (max-width: 480px)	{
-.hello {
-  background: purple;
 }
 }
 /* -------------- md-dark */

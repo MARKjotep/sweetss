@@ -1,13 +1,9 @@
 import { CSSinR, CMapper, atCSS } from "../css";
-import { $$, isArr, isNum, Mapper, obj, oItems } from "../@";
+import { $$, isArr, isNum, isNumber, Mapper, obj, oItems } from "../@";
 import { ProcSelector } from "./process";
-import { CSS } from "..";
+import { CSS, KFCSS } from "..";
 
 type dataType = Mapper<string, Mapper<string, CMapper>>;
-
-class DATABASE {
-  //
-}
 
 class Base {
   pre: string;
@@ -137,7 +133,9 @@ export class Keyframes extends Base {
     const dx: Mapper<string, CMapper> = new Mapper();
     VL.forEach((vv) => {
       oItems(vv).forEach(([x, y]) => {
-        this.PS.set(x, y as CSSinR, dx);
+        $$.p = x;
+        let xx = isNumber(x) ? `${x}%` : x;
+        this.PS.set(xx, y as CSSinR, dx);
       });
     });
     //
@@ -152,7 +150,7 @@ export class Keyframes extends Base {
 
     return true;
   }
-  get css(): obj<{ from?: CSSinR; to?: CSSinR; "%"?: CSSinR } | obj<CSSinR>> {
+  get css(): KFCSS {
     return new Proxy(this, this);
   }
 }

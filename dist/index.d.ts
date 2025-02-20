@@ -138,11 +138,6 @@ interface xtraCSS {
 type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
-type kfT = obj<{
-    from?: CSSinR;
-    to?: CSSinR;
-    "%"?: CSSinR;
-} | obj<CSSinR>>;
 
 declare const v: {
     important: string;
@@ -572,10 +567,10 @@ type CSS = obj<CSSProps | {
     [key: `.${string}` | `#${string}`]: CSSProps;
 }>;
 type KFCSS = obj<{
-    from?: CSSinR;
-    to?: CSSinR;
-    "%"?: CSSinR;
-} | obj<CSSinR>>;
+    from?: CSSProps;
+    to?: CSSProps;
+    "%"?: CSSProps;
+} | Record<number, CSSProps> | obj<CSSProps>>;
 interface saveCSS {
     dir?: string | string[];
     mapDir?: string;
@@ -599,7 +594,7 @@ declare class SweetSS {
     dom: CSS;
     id: CSS;
     cx: CSS;
-    kf: kfT;
+    kf: KFCSS;
     at: {
         import: atCSS;
         charset: atCSS;

@@ -72,7 +72,15 @@ cx2.hellos = [
 ];
 
 kf.bounce = {
-  from: {
+  from: [
+    {
+      color: "red",
+    },
+  ],
+  50: {
+    color: ["green", "yellow"],
+  },
+  "50%, 100%": {
     color: "red",
   },
 };

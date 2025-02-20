@@ -12,7 +12,7 @@ import {
   oLen,
 } from "./@";
 import { isDir, isFile } from "./@/bun";
-import { __css, atCSS, CSSinR as CinR, kfT, RM } from "./css";
+import { __css, atCSS, CSSinR as CinR, RM } from "./css";
 import { At, Cid, FontFace, Keyframes } from "./props";
 import { _vars } from "./var";
 
@@ -33,7 +33,11 @@ export type CSS = obj<
   CSSProps | { [key: `.${string}` | `#${string}`]: CSSProps }
 >;
 
-export type KFCSS = obj<{ from?: CinR; to?: CinR; "%"?: CinR } | obj<CinR>>;
+export type KFCSS = obj<
+  | { from?: CSSProps; to?: CSSProps; "%"?: CSSProps }
+  | Record<number, CSSProps>
+  | obj<CSSProps>
+>;
 
 interface saveCSS {
   dir?: string | string[];
@@ -60,7 +64,7 @@ export class SweetSS {
   declare dom: CSS;
   declare id: CSS;
   declare cx: CSS;
-  declare kf: kfT;
+  declare kf: KFCSS;
   declare at: {
     import: atCSS;
     charset: atCSS;

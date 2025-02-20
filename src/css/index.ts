@@ -38,15 +38,6 @@ export type CSSinR = {
   [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
 };
 
-export type kfT = obj<
-  | {
-      from?: CSSinR;
-      to?: CSSinR;
-      "%"?: CSSinR;
-    }
-  | obj<CSSinR>
->;
-
 /*
 -------------------------
  KEYFRAMES SHOULD HAVE THE SAME

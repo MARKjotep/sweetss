@@ -31,7 +31,7 @@ export class ProcSelector {
     private prefix: string,
     private anim: Mapper<string, Set<string>> = new Mapper(),
   ) {}
-  set(name: string, css: CSSinR, data: CMapper) {
+  set(name: string, css: CSSinR | CSSinR[], data: CMapper) {
     if (!isObj(css)) return;
 
     const props: Mapper<string, media> = new Mapper();
@@ -57,6 +57,10 @@ export class ProcSelector {
     } else if (css instanceof Medyas) {
       oItems(css["_values"]).forEach(([k, v]) => {
         props.set(k, this.props(name, k, valToMedia(v)));
+      });
+    } else if (isArr(css)) {
+      css.forEach((cc) => {
+        oItems(cc).forEach(([k, v]) => processProps(k, v));
       });
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));
