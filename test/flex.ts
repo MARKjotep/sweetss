@@ -98,7 +98,7 @@ const startEnd = (
   sce: [string, string] = ["flex-start", "flex-end"],
 ) => {
   //
-  const { direction, reversed } = TH.data;
+  const { direction, reversed } = TH["data"];
 
   const isRow = direction === "row";
 

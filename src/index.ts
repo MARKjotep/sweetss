@@ -26,6 +26,7 @@ export { Var } from "./var";
 export { value, join } from "./value";
 
 export type CSSProps = CinR | CinR[];
+export type CSSValue = RM;
 
 export type VarType = _vars;
 export type CSS = obj<

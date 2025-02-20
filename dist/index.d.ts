@@ -94,7 +94,7 @@ interface MedCFG<Q = Record<string, any>> {
 }
 declare class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
     private _prefix?;
-    data: Q;
+    protected data: Q;
     private _values;
     constructor({ prefix, data, values }?: MedCFG);
     get XS(): Medyas<T, Q>;
@@ -565,6 +565,7 @@ declare function value(val: RM | RM[], config?: {
 declare function join(...val: (RM | RM[])[]): string;
 
 type CSSProps = CSSinR | CSSinR[];
+type CSSValue = RM;
 type VarType = _vars;
 type CSS = obj<CSSProps | {
     [key: `.${string}` | `#${string}`]: CSSProps;
@@ -612,4 +613,4 @@ declare class SweetSS {
 }
 declare function fileName(path: string): string;
 
-export { $$, type CSS, type CSSProps, type KFCSS, Medyas, SweetSS, Var, type VarType, __, f, fileName, join, med, media, ps, v, value };
+export { $$, type CSS, type CSSProps, type CSSValue, type KFCSS, Medyas, SweetSS, Var, type VarType, __, f, fileName, join, med, media, ps, v, value };
