@@ -1,86 +1,114 @@
 /* -------------- xs ( default ) */
-.hello, .hellos {
-  animation: pop 1s infinite, okay 1s infinite; 
+.hello,
+.hellos {
+  animation:
+    pop 1s infinite,
+    okay 1s infinite;
   --anim: okay 1s infinite;
 }
-.okay, .hellos {
+.okay,
+.hellos {
   transition: all 0.25s;
 }
+div {
+  display: flex;
+  flex-direction: row;
+}
 .hello {
-  background: orange; 
-  animation-delay: 2s; 
-  color: var(--qt_gradient_from), red, var(--qt_gradient_to, );
+  background: orange;
+  animation-delay: 2s;
+  color: var(--qt_gradient_from), red, var(--qt_gradient_to,);
 }
 .okay {
-  color: green; 
+  color: green;
   transition-delay: 3s;
 }
-.hellos, .lol::after, .g_ok {
+.hellos,
+.lol::after,
+.g_ok {
   color: red;
 }
 .hellos {
-  animation-name: k 1s infinite; 
+  animation-name: k 1s infinite;
   height: clamp(12rem, 23rem, 0rem);
 }
 .lol::after {
-  content: 'ss';
+  content: "ss";
 }
 .lol {
-  width: 3rem; 
-  transition-duration: 43s; 
-  z-index: 1; 
-  background: blur(0.5rem) attr(1) brightness(20%) calc(1rem + var(--v2, orange)) circle(40% left) color-mix(srgb, red 10%, salmon 10%) conic-gradient(red 45, blue) contrast(20%) cubic-bezier(1, 2, 3, 4) drop-shadow(0.8rem 0.8rem 0.1rem grey) hsl(120 100% 50%) hue-rotate(20deg) inset(10% round 2rem) invert(50%) translateX(20rem) translateY(20rem) var(--hello) skewY(20deg) skew(-5deg, 6deg) rotate(20deg) rotate3d(1, 2, 5, 40deg) scale3d(1, 2, 3) scaleX(2) rgba(1 3 4 / 40%) linear-gradient(to right, red 17%, orange 30% 50%) matrix(1, 0, 0, 0, 2, 3) perspective(2cm) polygon(100%, 0%, 0%, 50%, 50%) radial-gradient(closest-side at 60% 50%, red, green 15%) repeating-linear-gradient(45deg, red 30%, green 50%) matrix3d(1, 0, 0, 0, 0, 1, 6, 0, 0, 0, 1, 0, 50, 100, 0, 1.1);
+  width: 3rem;
+  transition-duration: 43s;
+  z-index: 1;
+  background: blur(0.5rem) attr(1) brightness(20%)
+    calc(1rem + var(--v2, orange)) circle(40% left)
+    color-mix(srgb, red 10%, salmon 10%) conic-gradient(red 45, blue)
+    contrast(20%) cubic-bezier(1, 2, 3, 4)
+    drop-shadow(0.8rem 0.8rem 0.1rem grey) hsl(120 100% 50%) hue-rotate(20deg)
+    inset(10% round 2rem) invert(50%) translateX(20rem) translateY(20rem)
+    var(--hello) skewY(20deg) skew(-5deg, 6deg) rotate(20deg)
+    rotate3d(1, 2, 5, 40deg) scale3d(1, 2, 3) scaleX(2) rgba(1 3 4 / 40%)
+    linear-gradient(to right, red 17%, orange 30% 50%) matrix(1, 0, 0, 0, 2, 3)
+    perspective(2cm) polygon(100%, 0%, 0%, 50%, 50%)
+    radial-gradient(closest-side at 60% 50%, red, green 15%)
+    repeating-linear-gradient(45deg, red 30%, green 50%)
+    matrix3d(1, 0, 0, 0, 0, 1, 6, 0, 0, 0, 1, 0, 50, 100, 0, 1.1);
 }
 .g_ok {
-  clip-path: path(evenodd, 'M40 0H50V10H40V0Z M60 20H40V10H30V20H20V30H10V20H0V40H60V20Z');
+  clip-path: path(
+    evenodd,
+    "M40 0H50V10H40V0Z M60 20H40V10H30V20H20V30H10V20H0V40H60V20Z"
+  );
 }
 @keyframes bounce {
-50% {
-  color: green yellow;
-}
-100% {
-  background: orange;
-}
-from {
-  color: red;
-}
-50%, 100% {
-  color: red;
-}
+  50% {
+    color: green yellow;
+  }
+  from {
+    display: flex;
+    flex-wrap: nowrap;
+    color: red;
+  }
+  50%,
+  100% {
+    color: red;
+  }
 }
 /* -------------- sm */
-@media (min-width: 480px)	{
-.hellos {
-  animation-name: bouncer 1s infinite;
-}
+@media (min-width: 480px) {
+  .hellos {
+    animation-name: bouncer 1s infinite;
+  }
 }
 /* -------------- md */
-@media (min-width: 768px)	{
-.hello {
-  background: blue;
-}
+@media (min-width: 768px) {
+  .hello {
+    background: blue;
+  }
 }
 /* -------------- lg */
-@media (min-width: 1024px)	{
-.hello, .hellos {
-  animation: pop 1s infinite, okay 1s infinite;
-}
-.hello {
-  animation-delay: 2s;
-}
-.hellos {
-  animation-name: var(--anim);
-}
+@media (min-width: 1024px) {
+  .hello,
+  .hellos {
+    animation:
+      pop 1s infinite,
+      okay 1s infinite;
+  }
+  .hello {
+    animation-delay: 2s;
+  }
+  .hellos {
+    animation-name: var(--anim);
+  }
 }
 /* -------------- dark */
-@media (prefers-color-scheme: dark)	{
-.hello {
-  background: red;
-}
+@media (prefers-color-scheme: dark) {
+  .hello {
+    background: red;
+  }
 }
 /* -------------- md-dark */
-@media (min-width: 768px) and (prefers-color-scheme: dark)	{
-.hello {
-  background: red;
-}
+@media (min-width: 768px) and (prefers-color-scheme: dark) {
+  .hello {
+    background: red;
+  }
 }

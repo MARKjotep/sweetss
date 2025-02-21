@@ -15,6 +15,7 @@ import { isDir, isFile } from "./@/bun";
 import { __css, atCSS, CSSinR as CinR, RM } from "./css";
 import { At, Cid, FontFace, Keyframes } from "./props";
 import { _vars } from "./var";
+import { Medyas } from "./media";
 
 export * from "./@misc/v";
 export * from "./@misc/ps";
@@ -29,14 +30,16 @@ export type CSSProps = CinR | CinR[];
 export type CSSValue = RM;
 
 export type VarType = _vars;
+
 export type CSS = obj<
-  CSSProps | { [key: `.${string}` | `#${string}`]: CSSProps }
+  CSSProps | { [key: `.${string}` | `#${string}`]: CSSProps } | Medyas<any>
 >;
 
 export type KFCSS = obj<
   | { from?: CSSProps; to?: CSSProps; "%"?: CSSProps }
   | Record<number, CSSProps>
   | obj<CSSProps>
+  | Medyas<any>
 >;
 
 interface saveCSS {

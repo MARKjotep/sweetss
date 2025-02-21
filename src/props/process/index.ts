@@ -60,7 +60,7 @@ export class ProcSelector {
       });
     } else if (isArr(css)) {
       css.forEach((cc) => {
-        oItems(cc).forEach(([k, v]) => processProps(k, v));
+        this.set(name, cc, data);
       });
     } else {
       oItems(css).forEach(([k, v]) => processProps(k, v));

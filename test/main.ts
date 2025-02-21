@@ -11,7 +11,7 @@ const gc = new SweetSS({
   sweetSS: [cc],
 });
 
-const { cx: cx2, kf, id, save } = gc;
+const { cx: cx2, kf, id, dom, save } = gc;
 
 const v2 = Var({ V2: 5 });
 
@@ -46,6 +46,8 @@ cx2.hello = [
   anim,
 ];
 
+dom.div = Flex.flex.row;
+
 /*
 -------------------------
 Replace array --- combine everything in comma or the other way around?. array inside array should not be combined with comma. 
@@ -73,6 +75,7 @@ cx2.hellos = [
 
 kf.bounce = {
   from: [
+    Flex.flex.noWrap,
     {
       color: "red",
     },

@@ -130,10 +130,14 @@ type atCSS = CSSinR | _vars | obj<RM>;
 interface xtraCSS {
     src?: string;
     webkitBackdropFilter?: string;
-    textFillColor?: string;
-    lineClamp?: string;
     webkitTextFillColor?: string;
     webkitFontSmoothing?: string;
+    textFillColor?: string;
+    lineClamp?: string;
+    textJustify?: string;
+    webkitBoxDecorationBreak: string;
+    boxDecorationBreak: string;
+    webkitBoxReflect: string;
 }
 type CSSinR = {
     [P in keyof CSSStyleDeclaration | keyof xtraCSS]?: RM;
@@ -565,12 +569,12 @@ type CSSValue = RM;
 type VarType = _vars;
 type CSS = obj<CSSProps | {
     [key: `.${string}` | `#${string}`]: CSSProps;
-}>;
+} | Medyas<any>>;
 type KFCSS = obj<{
     from?: CSSProps;
     to?: CSSProps;
     "%"?: CSSProps;
-} | Record<number, CSSProps> | obj<CSSProps>>;
+} | Record<number, CSSProps> | obj<CSSProps> | Medyas<any>>;
 interface saveCSS {
     dir?: string | string[];
     mapDir?: string;

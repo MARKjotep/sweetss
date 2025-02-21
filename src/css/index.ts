@@ -15,7 +15,7 @@ import {
 } from "../@";
 import { SweetSS } from "../";
 import { At, Cid, FontFace, Keyframes } from "../props";
-import { media, mtype } from "../media";
+import { media, Medyas, mtype } from "../media";
 import { _vars } from "../var";
 
 import { CB, KF, AT, FONT, toProperty } from "./process";
@@ -28,10 +28,15 @@ export type CMapper = Mapper<string, Mapper<string, media>>;
 interface xtraCSS {
   src?: string;
   webkitBackdropFilter?: string;
-  textFillColor?: string;
-  lineClamp?: string;
   webkitTextFillColor?: string;
   webkitFontSmoothing?: string;
+  textFillColor?: string;
+  lineClamp?: string;
+  textJustify?: string;
+  //
+  webkitBoxDecorationBreak: string;
+  boxDecorationBreak: string;
+  webkitBoxReflect: string;
 }
 
 export type CSSinR = {

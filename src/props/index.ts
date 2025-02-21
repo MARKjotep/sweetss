@@ -133,7 +133,6 @@ export class Keyframes extends Base {
     const dx: Mapper<string, CMapper> = new Mapper();
     VL.forEach((vv) => {
       oItems(vv).forEach(([x, y]) => {
-        $$.p = x;
         let xx = isNumber(x) ? `${x}%` : x;
         this.PS.set(xx, y as CSSinR, dx);
       });
