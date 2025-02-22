@@ -7,12 +7,13 @@ const fxs = __filename.split("/").slice(-3);
 const basic = med("#000", { dark: "#fff" });
 
 const gc = new SweetSS({
-  name: fxs[2].split(".")[0],
+  __filename,
   sweetSS: [cc],
 });
 
 const { cx: cx2, kf, id, dom, save } = gc;
 
+$$.p = gc;
 const v2 = Var({ V2: 5 });
 
 export const aname = Var({
@@ -74,12 +75,7 @@ cx2.hellos = [
 ];
 
 kf.bounce = {
-  from: [
-    Flex.flex.noWrap,
-    {
-      color: "red",
-    },
-  ],
+  from: Flex.flex.noWrap,
   50: {
     color: ["green", "yellow"],
   },

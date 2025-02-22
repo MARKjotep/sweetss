@@ -518,6 +518,7 @@ declare class f {
     static clipPath(fillRule: RM, path: RM): string;
     static perspective(value: RM): string;
     static polygon(...lengths: RM[]): string;
+    static ray(...sfs: RM[]): string;
     static radialGradient(...sfs: RM[]): string;
     static repeatingConicGradient(...sfs: RM[]): string;
     static repeatingLinearGradient(...sfs: RM[]): string;
@@ -570,11 +571,12 @@ type VarType = _vars;
 type CSS = obj<CSSProps | {
     [key: `.${string}` | `#${string}`]: CSSProps;
 } | Medyas<any>>;
+type KFX = CSSProps | Medyas<any, {}>;
 type KFCSS = obj<{
-    from?: CSSProps;
-    to?: CSSProps;
-    "%"?: CSSProps;
-} | Record<number, CSSProps> | obj<CSSProps> | Medyas<any>>;
+    from?: KFX;
+    to?: KFX;
+    "%"?: KFX;
+} | Record<any, CSSProps> | obj<CSSProps> | Medyas<any>>;
 interface saveCSS {
     dir?: string | string[];
     mapDir?: string;
@@ -585,7 +587,8 @@ interface saveCSS {
     includeAnimation?: string[];
 }
 interface sweetCFG {
-    name: string;
+    __filename: string;
+    name?: string;
     prefix?: string;
     sweetSS?: SweetSS | SweetSS[];
     exportMap?: boolean;
@@ -593,6 +596,8 @@ interface sweetCFG {
 }
 declare class SweetSS {
     [k: string]: any;
+    path: string;
+    protected _imported: Set<string>;
     name: string;
     prefix: string;
     dom: CSS;
@@ -609,7 +614,8 @@ declare class SweetSS {
     save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
     exportMap: boolean;
     cids: Mapper<string, obj<string>>;
-    constructor({ name, prefix, sweetSS, exportMap, webkitKeyframes, }: sweetCFG);
+    constructor({ __filename, name, prefix, sweetSS, exportMap, webkitKeyframes, }: sweetCFG);
+    get imported(): string[];
 }
 declare function fileName(path: string): string;
 

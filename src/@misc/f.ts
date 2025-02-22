@@ -135,6 +135,11 @@ export class f {
       delimeter: ", ",
     })})`;
   }
+
+  static ray(...sfs: RM[]): string {
+    return `ray(${fix_value(sfs, { degree: true })})`;
+  }
+
   static radialGradient(...sfs: RM[]) {
     return `radial-gradient(${fix_value(sfs, {
       delim_arr: false,
@@ -294,7 +299,7 @@ export class f {
     })})`;
   }
   static url(url: RM) {
-    return `url(${fix_value([url])})`;
+    return `url(${fix_value([url], { quote: true })})`;
   }
   static var(st: string, opt: RM = "") {
     st = "--" + reCamel(st);

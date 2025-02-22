@@ -35,9 +35,15 @@ export type CSS = obj<
   CSSProps | { [key: `.${string}` | `#${string}`]: CSSProps } | Medyas<any>
 >;
 
+type KFX = CSSProps | Medyas<any, {}>;
+
 export type KFCSS = obj<
-  | { from?: CSSProps; to?: CSSProps; "%"?: CSSProps }
-  | Record<number, CSSProps>
+  | {
+      from?: KFX;
+      to?: KFX;
+      "%"?: KFX;
+    }
+  | Record<any, CSSProps>
   | obj<CSSProps>
   | Medyas<any>
 >;
@@ -53,7 +59,8 @@ interface saveCSS {
 }
 
 interface sweetCFG {
-  name: string;
+  __filename: string;
+  name?: string;
   prefix?: string;
   sweetSS?: SweetSS | SweetSS[];
   exportMap?: boolean;
@@ -62,6 +69,8 @@ interface sweetCFG {
 
 export class SweetSS {
   [k: string]: any;
+  path: string;
+  protected _imported = new Set<string>();
   name: string;
   prefix: string;
   declare dom: CSS;
@@ -79,6 +88,7 @@ export class SweetSS {
   exportMap: boolean = false;
   cids: Mapper<string, obj<string>> = new Mapper();
   constructor({
+    __filename,
     name,
     prefix,
     sweetSS = [],
@@ -86,7 +96,8 @@ export class SweetSS {
     webkitKeyframes,
   }: sweetCFG) {
     //
-    this.name = name;
+    this.path = __filename;
+    this.name = name || fileName(__filename);
     this.prefix = prefix ?? "";
     this.exportMap = exportMap;
     const importSS = isArr(sweetSS) ? sweetSS : [sweetSS];
@@ -109,7 +120,7 @@ export class SweetSS {
       _DIR.forEach((dd) => {
         if (!dd) return;
         const pathEnd = dd.endsWith("/") ? "" : "/";
-        const cssFilePath = dd + pathEnd + name + ".css";
+        const cssFilePath = dd + pathEnd + this.name + ".css";
 
         isDir(dd + pathEnd);
         isFile(cssFilePath);
@@ -126,8 +137,8 @@ export class SweetSS {
         isDir(_md + mapEnd);
         isFile(mapFilePath);
 
-        this.cids.init(name, {});
-        const ccd = this.cids.get(name)!;
+        this.cids.init(this.name, {});
+        const ccd = this.cids.get(this.name)!;
 
         const FCID = exportMap ? css.cid : css.cidz;
 
@@ -141,6 +152,9 @@ export class SweetSS {
         mapWriter2(mapFilePath, this.cids);
       }
     };
+  }
+  get imported() {
+    return [...this._imported];
   }
 }
 
@@ -193,6 +207,12 @@ function loader(
   };
 
   loads.forEach((l) => {
+    this._imported.add(l.path);
+
+    l._imported.forEach((fr) => {
+      this._imported.add(fr);
+    });
+
     oKeys(props).forEach((pr) => {
       props[pr].load(l[pr]);
     });
