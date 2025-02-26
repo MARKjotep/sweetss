@@ -11,9 +11,9 @@ const gc = new SweetSS({
   sweetSS: [cc],
 });
 
-const { cx: cx2, kf, id, dom, save } = gc;
+const { cx: cx2, kf, id, dom, save, sweet } = gc;
 
-$$.p = gc;
+//
 const v2 = Var({ V2: 5 });
 
 export const aname = Var({
@@ -140,5 +140,6 @@ cx2.okay = [{}];
 
 save({
   dir: __dirname,
+  mapDir: __dirname,
   minify: false,
 });

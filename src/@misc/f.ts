@@ -1,9 +1,36 @@
 import { $$, isArr, isNum, isNumber, isStr, reCamel } from "../@";
 import { RM } from "../css";
-import { fix_value } from "../value";
+import { fix_value, value } from "../value";
 import { _vars } from "../var";
 
-export class f {
+class g {
+  static minmax(min: RM, max: RM) {
+    return `minmax(${fix_value([min, max], {
+      rem: true,
+      delimeter: ", ",
+    })})`;
+  }
+  static fitContent(len: RM) {
+    return `fit-content(${fix_value([len], {
+      rem: true,
+    })})`;
+  }
+  static repeat(count: RM, ...tracks: RM[]) {
+    return `repeat(${fix_value(
+      [
+        count,
+        fix_value([tracks], {
+          rem: true,
+        }),
+      ],
+      {
+        delimeter: ", ",
+      },
+    )})`;
+  }
+}
+
+export class f extends g {
   static attr(name: RM, type?: RM, fallback?: RM) {
     return `attr(${fix_value([name, type, fallback])})`;
   }

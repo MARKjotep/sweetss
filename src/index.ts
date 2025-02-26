@@ -87,6 +87,7 @@ export class SweetSS {
   save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
   exportMap: boolean = false;
   cids: Mapper<string, obj<string>> = new Mapper();
+  declare sweet: this;
   constructor({
     __filename,
     name,
@@ -103,11 +104,17 @@ export class SweetSS {
     const importSS = isArr(sweetSS) ? sweetSS : [sweetSS];
 
     loader.call(this, this.prefix, importSS, webkitKeyframes, exportMap);
+    const TH = this;
+    Object.assign(this, {
+      get sweet() {
+        return TH;
+      },
+    });
 
     this.save = ({
       dir,
       mapDir,
-      mapName,
+      mapName = "index",
       minify = true,
       shaker = [],
       include = [],
@@ -131,8 +138,8 @@ export class SweetSS {
       const _md = mapDir ? mapDir : (_DIR[0] ?? "");
       if (_md) {
         const mapEnd = _md.endsWith("/") ? "" : "/";
-        const _mapName = mapName ? mapName : "css";
-        const mapFilePath = _md + mapEnd + _mapName + ".js";
+
+        const mapFilePath = _md + mapEnd + mapName + ".js";
 
         isDir(_md + mapEnd);
         isFile(mapFilePath);

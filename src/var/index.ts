@@ -32,7 +32,9 @@ export class _vars {
     }
   }
   new(val: RM) {
-    return new _vars({ [this.k]: fix_value([val]) });
+    return new _vars({
+      [this.k]: val instanceof media ? val : fix_value([val]),
+    });
   }
   prefix(pre?: string) {
     if (pre) {

@@ -27,6 +27,14 @@ const norems = new Set([
   "transitionTimingFunction",
   //
   "columnCount",
+
+  // grid
+  "gridColumn",
+  "gridRow",
+  "gridColumnStart",
+  "gridColumnEnd",
+  "gridRowStart",
+  "gridRowEnd",
 ]);
 
 const toQuote = new Set(["content"]);

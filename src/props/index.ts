@@ -102,7 +102,6 @@ export class Cid extends Base {
     VL.forEach((vv) => {
       this.PS.set(nme, vv, this.DATA);
     });
-
     return true;
   }
   get css(): CSS {
