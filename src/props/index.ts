@@ -98,10 +98,9 @@ export class Cid extends Base {
   }
   set(target: any, prop: string, val: CSSinR | CSSinR[]) {
     const nme = this.pre + prop;
-    const VL = isArr(val) ? val : [val];
-    VL.forEach((vv) => {
-      this.PS.set(nme, vv, this.DATA);
-    });
+
+    this.PS.set(nme, val, this.DATA);
+
     return true;
   }
   get css(): CSS {

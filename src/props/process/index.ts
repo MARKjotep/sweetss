@@ -10,7 +10,7 @@ import {
 } from "../../@";
 import { CMapper, CSSinR, RM } from "../../css";
 import { med, media, Medyas } from "../../media";
-import { fix_value, join, val_xxx, value } from "../../value";
+import { val_xxx } from "../../value";
 import { _vars } from "../../var";
 
 const valToMedia = (val: RM): media => {

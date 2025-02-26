@@ -40,6 +40,54 @@ export const toProperty = (sel: string, vals: obj<string>) => {
   return `${sel} {\n  ${oit}\n}`;
 };
 
+const getIDClass = (
+  az: Cid,
+  name: string,
+  prefix: string,
+  exportMap?: boolean,
+  shaker: string[] = [],
+  include: string[] = [],
+) => {
+  const { classes, ids } = mapIDClass(name);
+  const combined = [...classes, ...ids];
+
+  combined.flat().forEach((cl) => {
+    if (exportMap) {
+      if (az.cid.lacks(cl)) {
+        az.cid.set(cl, prefix + cl);
+      }
+    } else {
+      if (az.cidz.lacks(cl)) {
+        az.cidz.set(cl, prefix + cl);
+      }
+    }
+  });
+
+  return combined.some(
+    (s) => shaker.includes(s) || (include.length && include.includes(s)),
+  );
+};
+
+const pushProp = (
+  props: { [P in PMtype]?: obj<string[]> },
+  prefixedName: string,
+  hasClass: boolean,
+  mediaSize: string,
+  val: string,
+  shakerLength: number,
+) => {
+  if (
+    !(
+      (shakerLength && prefixedName.startsWith(".")) ||
+      prefixedName.startsWith("#")
+    ) ||
+    hasClass
+  ) {
+    ensurePropsInitialized(props, mediaSize, val);
+    addPropertyValues(props, mediaSize, val, prefixedName);
+  }
+};
+
 type dataType = Mapper<string, Mapper<string, CMapper>>;
 
 // Basic DOM - CLASS - ID
@@ -52,47 +100,30 @@ export function CB(
   const DATA = (data: dataType, exportMap: boolean = false) => {
     data.forEach((data2, prefix) => {
       data2.forEach((v, name) => {
-        v.forEach((vv, kk) => {
-          oItems(vv).forEach(([x, y]) => {
-            const xx = x;
-
-            const stn = ngify({ [reCamel(kk)]: y });
-
-            const { classes, ids } = mapIDClass(name);
-
-            [classes, ids].flat().forEach((cl) => {
-              if (exportMap) {
-                if (az.cid.lacks(cl)) {
-                  az.cid.set(cl, prefix + cl);
-                }
-              } else {
-                if (az.cidz.lacks(cl)) {
-                  az.cidz.set(cl, prefix + cl);
-                }
-              }
-            });
-
-            //
-            const prefixedName = prefix ? applyPrefix(name, prefix) : name;
-
-            if (
-              (shaker.length && prefixedName.startsWith(".")) ||
-              prefixedName.startsWith("#")
-            ) {
-              const hasC = [...classes, ...ids].some(
-                (s) =>
-                  shaker.includes(s) || (include.length && include.includes(s)),
+        const hasClass = getIDClass(
+          az,
+          name,
+          prefix,
+          exportMap,
+          shaker,
+          include,
+        );
+        if (v.size) {
+          const prefixedName = prefix ? applyPrefix(name, prefix) : name;
+          v.forEach((vv, kk) => {
+            oItems(vv).forEach(([mediaSize, properties]) => {
+              const stn = ngify({ [reCamel(kk)]: properties });
+              pushProp(
+                props,
+                prefixedName,
+                hasClass,
+                mediaSize,
+                stn,
+                shaker.length,
               );
-              if (hasC) {
-                ensurePropsInitialized(props, xx, stn);
-                addPropertyValues(props, xx, stn, prefixedName);
-              }
-            } else {
-              ensurePropsInitialized(props, xx, stn);
-              addPropertyValues(props, xx, stn, prefixedName);
-            }
+            });
           });
-        });
+        }
       });
     });
   };

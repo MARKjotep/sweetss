@@ -47,6 +47,8 @@ cx2.hello = [
   anim,
 ];
 
+cx2.kk = [];
+
 dom.div = Flex.flex.row;
 
 /*
@@ -135,8 +137,6 @@ cx2.lol = [
     ],
   },
 ];
-
-cx2.okay = [{}];
 
 save({
   dir: __dirname,

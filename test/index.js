@@ -1,1 +1,1 @@
-export const hello="hello",hellos="hellos",lol="lol",ok="g_ok",okay="okay";
+export const hello="hello",hellos="hellos",kk="kk",lol="lol",ok="g_ok",okay="okay";
