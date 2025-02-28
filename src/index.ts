@@ -84,7 +84,7 @@ export class SweetSS {
   declare font: {
     face: atCSS;
   };
-  save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
+  save: ({}: saveCSS) => void;
   exportMap: boolean = false;
   cids: Mapper<string, obj<string>> = new Mapper();
   declare sweet: this;
@@ -135,13 +135,12 @@ export class SweetSS {
         writeFileSync(cssFilePath, cssContent);
       });
 
-      const _md = mapDir ? mapDir : (_DIR[0] ?? "");
-      if (_md) {
-        const mapEnd = _md.endsWith("/") ? "" : "/";
+      if (mapDir) {
+        const mapEnd = mapDir.endsWith("/") ? "" : "/";
 
-        const mapFilePath = _md + mapEnd + mapName + ".js";
+        const mapFilePath = mapDir + mapEnd + mapName + ".js";
 
-        isDir(_md + mapEnd);
+        isDir(mapDir + mapEnd);
         isFile(mapFilePath);
 
         this.cids.init(this.name, {});

@@ -144,9 +144,10 @@ interface MedCFG<Q = Record<string, any>> {
 }
 
 export class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
-  private _prefix?: string;
-  protected data: Q;
-  private _values: Record<string, media>;
+  [k: number]: this;
+  _prefix?: string;
+  data: Q;
+  _values: Record<string, media>;
   constructor(
     { prefix, data, values }: MedCFG = {
       data: {},

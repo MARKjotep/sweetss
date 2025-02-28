@@ -6,10 +6,6 @@
 .okay, .hellos {
   transition: all 0.25s;
 }
-div {
-  display: flex; 
-  flex-direction: row;
-}
 .hello {
   background: orange; 
   animation-delay: 2s; 

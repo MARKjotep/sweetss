@@ -1,6 +1,7 @@
 import { ps, f, med, Var, value, v, SweetSS, $$, join, Medyas } from "../src";
 import { cc } from "./ntest";
 import { Flex } from "./flex";
+import { $ } from "@sweetss/qt";
 
 const fxs = __filename.split("/").slice(-3);
 
@@ -52,8 +53,6 @@ cx2.kk = [
     color: "red",
   },
 ];
-
-dom.div = Flex.flex.row;
 
 /*
 -------------------------
@@ -144,6 +143,5 @@ cx2.lol = [
 
 save({
   dir: __dirname,
-  mapDir: __dirname,
   minify: false,
 });

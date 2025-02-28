@@ -1,6 +1,6 @@
 {
   "name": "sweetss",
-  "version": "2.4.00",
+  "version": "2.4.14",
   "description": "CSS in JS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -32,7 +32,9 @@
   "type": "module",
   "devDependencies": {
     "@types/node": "latest",
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@sweetss/colors": "latest",
+    "@sweetss/qt": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.7.3"

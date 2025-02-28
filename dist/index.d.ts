@@ -137,9 +137,10 @@ interface MedCFG<Q = Record<string, any>> {
     values: Record<string, media>;
 }
 declare class Medyas<T extends Medyas<T>, Q = Record<string, any>> {
-    private _prefix?;
-    protected data: Q;
-    private _values;
+    [k: number]: this;
+    _prefix?: string;
+    data: Q;
+    _values: Record<string, media>;
     constructor({ prefix, data, values }?: MedCFG);
     get XS(): Medyas<T, Q>;
     get SM(): T;
@@ -660,7 +661,7 @@ declare class SweetSS {
     font: {
         face: atCSS;
     };
-    save: ({ dir, mapDir, mapName, minify }: saveCSS) => void;
+    save: ({}: saveCSS) => void;
     exportMap: boolean;
     cids: Mapper<string, obj<string>>;
     sweet: this;
