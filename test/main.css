@@ -15,12 +15,12 @@ div {
   animation-delay: 2s; 
   color: var(--qt_gradient_from), red, var(--qt_gradient_to, );
 }
+.kk, .hellos, .lol::after, .g_ok {
+  color: red;
+}
 .okay {
   color: green; 
   transition-delay: 3s;
-}
-.hellos, .lol::after, .g_ok {
-  color: red;
 }
 .hellos {
   animation-name: k 1s infinite; 

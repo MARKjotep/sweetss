@@ -540,7 +540,7 @@ declare class f extends g {
      * @param color1 color, mix%
      * @param color2 color,  mix%
      */
-    static colorMix(colorInterpolation: RM, color1: RM[], color2: RM[]): string;
+    static colorMix(colorInterpolation: RM, color1: RM | RM[], color2: RM | RM[]): string;
     static conicGradient(...sfs: RM[]): string;
     static contrast(contrast: RM): string;
     /**

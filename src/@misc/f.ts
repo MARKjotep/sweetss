@@ -50,14 +50,26 @@ export class f extends g {
   static clamp(min: RM, preferred: RM, max: RM) {
     return `clamp(${fix_value([min, preferred, max], { rem: true, delimeter: ", " })})`;
   }
+
   /**
    *
    * @param colorInterpolation in + srgb, srgb-linear, display-p3, a98-rgb, prophoto-rgb, rec2020, lab, oklab, xyz, xyz-d50, xyz-d65, hsl, hwb, lch, and oklch
    * @param color1 color, mix%
    * @param color2 color,  mix%
    */
-  static colorMix(colorInterpolation: RM, color1: RM[], color2: RM[]) {
-    return `color-mix(${fix_value([colorInterpolation, fix_value(color1), fix_value(color2)], { delimeter: ", " })})`;
+  static colorMix(
+    colorInterpolation: RM,
+    color1: RM | RM[],
+    color2: RM | RM[],
+  ) {
+    return `color-mix(${fix_value(
+      [
+        colorInterpolation,
+        fix_value(isArr(color1) ? color1 : [color1]),
+        fix_value(isArr(color2) ? color2 : [color2]),
+      ],
+      { delimeter: ", " },
+    )})`;
   }
 
   static conicGradient(...sfs: RM[]) {

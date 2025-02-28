@@ -47,7 +47,11 @@ cx2.hello = [
   anim,
 ];
 
-cx2.kk = [];
+cx2.kk = [
+  {
+    color: "red",
+  },
+];
 
 dom.div = Flex.flex.row;
 
