@@ -84,7 +84,7 @@ export class SweetSS {
   declare font: {
     face: atCSS;
   };
-  save: ({}: saveCSS) => void;
+  save: ({}: saveCSS) => this;
   exportMap: boolean = false;
   cids: Mapper<string, obj<string>> = new Mapper();
   declare sweet: this;
@@ -157,6 +157,8 @@ export class SweetSS {
         });
         mapWriter2(mapFilePath, this.cids);
       }
+
+      return this;
     };
   }
   get imported() {
