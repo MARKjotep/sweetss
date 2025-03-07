@@ -37,7 +37,10 @@ export class ProcSelector {
     const props: Mapper<string, media> = new Mapper();
 
     const processProps = (k: string, v: any) => {
-      if (k.startsWith(":") || k.startsWith(",")) {
+      if (v instanceof _vars) {
+        this.saveAnim(name, v);
+        props.ass(v._var, this.props(name, v._var, valToMedia(v._val)));
+      } else if (k.startsWith(":") || k.startsWith(",")) {
         this.set(name + k, v, data);
       } else if (k.startsWith(" ")) {
         const slc = k.match(/^.*?\w/gm);

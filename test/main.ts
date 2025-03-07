@@ -12,12 +12,31 @@ const gc = new SweetSS({
   sweetSS: [cc],
 });
 
-const { cx: cx2, kf, id, dom, save, sweet } = gc;
+const { cx: cx2, kf, id, dom, at, font, save, sweet } = gc;
 export const tMarky = Var({ tMarky: med("#8b7dfc", { dark: "#AA9EFF" }) });
 
+at.import = "http://google.com/a.css";
+
+const varGRp = {
+  _bgc: Var({ _bgc: "red" }),
+  _clr: Var({ _clr: "#d133e2" }),
+};
 //
 const v2 = Var({ V2: 5 });
 
+dom[`[type="text"]`] = {
+  color: "red",
+};
+
+font.face = {
+  fontFamily: "hello",
+  src: "url(hello.woff)",
+};
+
+dom[":root"] = [
+  //
+  varGRp,
+];
 export const aname = Var({
   anim: "bounce",
 });

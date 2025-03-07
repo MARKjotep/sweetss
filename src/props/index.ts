@@ -163,11 +163,12 @@ export class At extends Base {
   }
   set(target: any, prop: string, val: obj<any>) {
     const nme = this.pre + prop;
-    if (nme in target.data) {
+    if (this.data.has(nme)) {
       this.data.get(nme)?.push(val);
     } else {
       this.data.set(nme, [val]);
     }
+
     return target;
   }
   get css(): {

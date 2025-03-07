@@ -188,16 +188,17 @@ export function KF(
 // At attributes
 export function AT(az: At, fin: string[]) {
   for (const [key, values] of az.data) {
-    for (const value of values) {
+    new Set(values).forEach((value) => {
       const formattedValue = value.includes("(") ? value : `"${value}"`;
       fin.push(`${key} ${formattedValue.trim()};`);
-    }
+    });
   }
 }
 
 // FONT FACE
 export function FONT(az: FontFace, fin: string[]) {
   const FONT_FACE = "@font-face";
+  const FC = new Set<string>();
 
   az.data.get("@font")?.forEach((fontData) => {
     const fontProperties = oItems(fontData)
@@ -206,6 +207,11 @@ export function FONT(az: FontFace, fin: string[]) {
           `${reCamel(property)}: ${val_xxx(property, value as any)}`,
       )
       .join(";\n\t");
-    fin.push(`${FONT_FACE} {\n\t${fontProperties}\n}`);
+
+    FC.add(fontProperties);
+  });
+
+  FC.forEach((ff) => {
+    fin.push(`${FONT_FACE} {\n\t${ff}\n}`);
   });
 }
