@@ -304,7 +304,7 @@ export class f extends g {
       | "jump-none"
       | "jump-both",
   ) {
-    return `steps(${fix_value([n, position], {})})`;
+    return `steps(${fix_value([n, position], { delimeter: ", " })})`;
   }
   /**
    * Translate(X,Y)

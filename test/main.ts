@@ -13,6 +13,7 @@ const gc = new SweetSS({
 });
 
 const { cx: cx2, kf, id, dom, save, sweet } = gc;
+export const tMarky = Var({ tMarky: med("#8b7dfc", { dark: "#AA9EFF" }) });
 
 //
 const v2 = Var({ V2: 5 });
@@ -33,6 +34,14 @@ export const qt_gradient_to = Var({ qt_gradient_to: basic }, basic);
 cx2.hello = [
   // flex.center.end,
   // flex.LG.columnReverse.center.end,
+
+  ps.nthChild(4)(
+    ps.has(".slctd")(
+      tMarky.new(med("#cd71fc", { dark: "#DE9AFF" })),
+
+      //
+    ),
+  ),
   {
     background: med({
       xs: med("orange", { dark: "red" }),
@@ -51,6 +60,9 @@ cx2.hello = [
 cx2.kk = [
   {
     color: "red",
+  },
+  {
+    ".klol": {},
   },
 ];
 

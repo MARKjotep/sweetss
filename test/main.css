@@ -6,6 +6,9 @@
 .okay, .hellos {
   transition: all 0.25s;
 }
+.hello:nth-child(4):has(.slctd) {
+  --t-marky: #cd71fc;
+}
 .hello {
   background: orange; 
   animation-delay: 2s; 
@@ -13,6 +16,9 @@
 }
 .kk, .hellos, .lol::after, .g_ok {
   color: red;
+}
+.kk.klol {
+  color: orange;
 }
 .okay {
   color: green; 
@@ -72,6 +78,9 @@ from {
 }
 /* -------------- dark */
 @media (prefers-color-scheme: dark)	{
+.hello:nth-child(4):has(.slctd) {
+  --t-marky: #DE9AFF;
+}
 .hello {
   background: red;
 }

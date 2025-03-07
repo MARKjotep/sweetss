@@ -30,6 +30,7 @@ interface xtraCSS {
   webkitBackdropFilter?: string;
   webkitTextFillColor?: string;
   webkitFontSmoothing?: string;
+  webkitTapHighlightColor?: string;
   textFillColor?: string;
   lineClamp?: string;
   textJustify?: string;

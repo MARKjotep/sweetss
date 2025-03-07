@@ -2,15 +2,14 @@ import { CSSinR, RM } from "../css";
 import { $$, isObj, isStr, oAss, obj, oItems, V } from "../@";
 
 import { _vars } from "../var";
-import { med, Medyas } from "../media";
+import { med, media, Medyas } from "../media";
 
 function _pseu(sel: string) {
   return function (...itm: (CSSinR | _vars | obj<RM> | Medyas<any>)[]) {
     const vals = itm.reduce<obj<any>>((val, i) => {
       if (i instanceof _vars) {
         val[i._var] = i._val;
-      }
-      if (i instanceof Medyas) {
+      } else if (i instanceof Medyas) {
         oItems(i._value).forEach(([k, v]) => {
           if (!val[k]) {
             val[k] = med({});
